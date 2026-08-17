@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr Steeeck — Handmade Sticks, Staffs & Pokers</title>
+<meta name="description" content="Handcrafted walking sticks, staffs, and pokers. Custom orders welcome.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
+
+  :root{
+    --bark:#241a13;
+    --walnut:#4a2e1e;
+    --honey:#c98a3e;
+    --honey-bright:#e0a854;
+    --parchment:#f1e7d3;
+    --bone:#faf6ef;
+    --moss:#5c6b47;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:var(--parchment);
+    color:var(--bark);
+    line-height:1.6;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:1000;
+    opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  a{color:inherit;}
+  button, .btn{
+    font-family:'Work Sans', sans-serif;
+    cursor:pointer;
+    border:none;
+  }
+  :focus-visible{
+    outline:3px solid var(--honey-bright);
+    outline-offset:3px;
+  }
+
+  /* ===== NAV ===== */
+  nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem 6vw;
+    background:rgba(36,26,19,0.92);
+    backdrop-filter:blur(6px);
+    color:var(--bone);
+  }
+  nav .wordmark{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.25rem;
+    letter-spacing:0.02em;
+  }
+  nav .wordmark span{color:var(--honey-bright);}
+  nav ul{
+    list-style:none;
+    display:flex;
+    gap:1.8rem;
+    font-size:0.92rem;
+  }
+  nav ul a{text-decoration:none; opacity:0.85; transition:opacity 0.2s;}
+  nav ul a:hover{opacity:1;}
+  nav .nav-links{display:flex;}
+  @media (max-width:640px){
+    nav ul{gap:1rem; font-size:0.8rem;}
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    min-height:92vh;
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    align-items:center;
+    gap:2rem;
+    padding:7rem 6vw 4rem;
+    background:
+      radial-gradient(ellipse at 78% 15%, #3f2b18 0%, var(--bark) 55%),
+      repeating-linear-gradient(100deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 5px);
+    color:var(--bone);
+    overflow:hidden;
+  }
+  @media (max-width:880px){
+    .hero{grid-template-columns:1fr; text-align:center; min-height:auto; padding:5.5rem 6vw 3.5rem;}
+    .hero .cta-row{justify-content:center;}
+  }
+  .hero-copy{position:relative; z-index:2;}
+  .hero .eyebrow{
+    font-size:0.8rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--honey-bright);
+    margin-bottom:1.4rem;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 6vw, 5rem);
+    line-height:0.98;
+    color:var(--bone);
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--honey-bright);
+  }
+  .hero p.tagline{
+    max-width:38ch;
+    margin:1.6rem 0 2.4rem;
+    font-size:1.08rem;
+    color:#d8cdbc;
+  }
+  @media (max-width:880px){
+    .hero p.tagline{margin:1.6rem auto 2.4rem;}
+  }
+  .hero .cta-row{
+    display:flex; gap:1rem; flex-wrap:wrap;
+  }
+  .hero-visual{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:420px;
+  }
+  .hero-visual svg{width:100%; max-width:340px; height:auto; filter:drop-shadow(0 30px 40px rgba(0,0,0,0.45));}
+  .hero-visual .glow{
+    position:absolute;
+    width:280px; height:280px;
+    background:radial-gradient(circle, rgba(201,138,62,0.25) 0%, transparent 70%);
+    filter:blur(10px);
+  }
+  @media (max-width:880px){
+    .hero-visual{min-height:260px;}
+    .hero-visual svg{max-width:220px;}
+  }
+  .btn-primary{
+    background:var(--honey-bright);
+    color:var(--bark);
+    padding:0.95rem 1.9rem;
+    border-radius:2px;
+    font-weight:600;
+    font-size:0.95rem;
+    letter-spacing:0.01em;
+    text-decoration:none;
+    display:inline-block;
+    box-shadow:0 8px 20px rgba(201,138,62,0.25);
+    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn-primary:hover{background:#f0bd6f; transform:translateY(-2px); box-shadow:0 12px 26px rgba(201,138,62,0.35);}
+  .btn-secondary{
+    background:transparent;
+    color:var(--bone);
+    border:1px solid rgba(250,246,239,0.35) !important;
+    padding:0.95rem 1.9rem;
+    border-radius:2px;
+    font-weight:500;
+    font-size:0.95rem;
+    text-decoration:none;
+    display:inline-block;
+    transition:border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .btn-secondary:hover{background:rgba(250,246,239,0.08); border-color:var(--bone) !important; transform:translateY(-2px);}
+
+  /* ===== GROWTH RING SIGNATURE ===== */
+  .rings-wrap{
+    display:flex; justify-content:center; margin-top:3.2rem;
+  }
+  .rings-wrap svg{width:min(280px, 60vw); height:auto;}
+  .ring{
+    fill:none;
+    stroke:var(--honey);
+    stroke-width:1.4;
+    opacity:0;
+    transform-origin:center;
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+  }
+  .ring.drawn{
+    animation:draw 1.1s ease forwards;
+  }
+  @keyframes draw{
+    to{opacity:0.85; stroke-dashoffset:0;}
+  }
+  .rings-caption{
+    text-align:center;
+    font-size:0.8rem;
+    color:#b7a892;
+    margin-top:0.8rem;
+    letter-spacing:0.04em;
+  }
+
+  /* ===== SECTION SHARED ===== */
+  section{padding:5.5rem 6vw;}
+  .section-head{max-width:640px; margin:0 auto 3rem;}
+  .section-head .eyebrow{
+    font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--moss); margin-bottom:0.7rem; display:block; font-weight:600;
+  }
+  .section-head h2{font-size:clamp(1.9rem, 4vw, 2.6rem); color:var(--walnut);}
+  .section-head p{color:#5a4b3c; margin-top:0.9rem; font-size:1.02rem;}
+
+  /* ===== STORY / WOOD TYPES ===== */
+  .story{background:var(--bone);}
+  .wood-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:1.6rem;
+    max-width:920px; margin:0 auto;
+  }
+  @media (max-width:700px){.wood-grid{grid-template-columns:1fr;}}
+  .wood-card{
+    background:var(--parchment);
+    border:1px solid #e3d5ba;
+    border-radius:4px;
+    padding:2rem;
+  }
+  .wood-card .tag{
+    font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;
+    font-weight:600; color:var(--honey);
+  }
+  .wood-card h3{font-size:1.35rem; margin:0.4rem 0 0.7rem; color:var(--walnut);}
+  .wood-card p{color:#5a4b3c; font-size:0.95rem;}
+  .wood-card.hard{border-left:5px solid var(--walnut);}
+  .wood-card.soft{border-left:5px solid var(--honey);}
+
+  /* ===== GALLERY ===== */
+  .gallery{background:var(--parchment);}
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:1.4rem;
+    max-width:1080px; margin:0 auto;
+  }
+  .gallery-card{
+    aspect-ratio:4/5;
+    border-radius:4px;
+    background:
+      repeating-linear-gradient(115deg, #d8c6a2 0px, #d8c6a2 8px, #cdb88f 8px, #cdb88f 16px);
+    border:1.5px dashed #a98f63;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:1.2rem;
+    color:#6b5a40;
+  }
+  .gallery-card .icon{font-size:1.8rem; margin-bottom:0.6rem;}
+  .gallery-card .label{font-weight:600; font-size:0.92rem;}
+  .gallery-card .sub{font-size:0.78rem; margin-top:0.3rem; color:#7d6c50;}
+  .gallery-card{transition:transform 0.2s ease, box-shadow 0.2s ease;}
+  .gallery-card:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(74,46,30,0.15);}
+
+  /* ===== PROCESS STRIP ===== */
+  .process{background:var(--bark); color:var(--bone); padding:4rem 6vw;}
+  .process-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:2.2rem;
+    max-width:980px; margin:0 auto;
+  }
+  @media (max-width:760px){.process-grid{grid-template-columns:1fr;}}
+  .process-step{text-align:center;}
+  .process-step .num{
+    font-family:'Fraunces', serif; font-style:italic;
+    color:var(--honey-bright); font-size:1.1rem; margin-bottom:0.8rem;
+  }
+  .process-step h3{font-size:1.15rem; color:var(--bone); margin-bottom:0.5rem;}
+  .process-step p{font-size:0.9rem; color:#c2b39b;}
+
+  /* ===== CUSTOM ORDER ===== */
+  .custom{
+    background:var(--walnut);
+    color:var(--bone);
+  }
+  .custom .section-head h2{color:var(--bone);}
+  .custom .section-head .eyebrow{color:var(--honey-bright);}
+  .custom .section-head p{color:#e0d3bd;}
+  .custom-box{
+    max-width:640px; margin:0 auto;
+    background:rgba(250,246,239,0.06);
+    border:1px solid rgba(250,246,239,0.18);
+    border-radius:4px;
+    padding:2.2rem;
+    text-align:center;
+  }
+  .custom-box p{color:#e0d3bd; margin-bottom:1.4rem;}
+  .custom-box a.email{
+    font-family:'Fraunces', serif;
+    font-size:1.3rem;
+    color:var(--honey-bright);
+    text-decoration:none;
+    border-bottom:1px solid var(--honey-bright);
+  }
+  .custom-note{
+    margin-top:1.6rem;
+    font-size:0.82rem;
+    color:#c2b39b;
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    background:var(--bark);
+    color:#a8998424;
+    color:#8f8171;
+    padding:3rem 6vw 2.2rem;
+    text-align:center;
+    font-size:0.85rem;
+  }
+  footer .wordmark{
+    font-family:'Fraunces', serif;
+    color:var(--bone);
+    font-size:1.1rem;
+    margin-bottom:0.6rem;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wordmark">Mr <span>Steeeck</span></div>
+  <ul class="nav-links">
+    <li><a href="#story">The Craft</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#custom">Custom Order</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">Sticks · Staffs · Pokers — Handmade</p>
+    <h1>Cut from the<br><em>forest floor.</em></h1>
+    <p class="tagline">Every stick is shaped by hand, one piece of wood at a time — built for the trail, not the shelf.</p>
+    <div class="cta-row">
+      <a href="#custom" class="btn-primary">Request a Custom Stick</a>
+      <a href="#gallery" class="btn-secondary">See the Work</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="glow" aria-hidden="true"></div>
+    <svg viewBox="0 0 200 420" aria-hidden="true">
+      <defs>
+        <linearGradient id="stickGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#c98a3e"/>
+          <stop offset="100%" stop-color="#6b4324"/>
+        </linearGradient>
+      </defs>
+      <path d="M100 10 C130 40, 90 90, 110 140 C130 190, 85 230, 105 280 C120 320, 90 360, 100 400"
+            stroke="url(#stickGrad)" stroke-width="14" stroke-linecap="round" fill="none"/>
+      <path d="M100 10 C130 40, 90 90, 110 140 C130 190, 85 230, 105 280 C120 320, 90 360, 100 400"
+            stroke="#2b1d10" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.15" stroke-dasharray="1 13"/>
+      <ellipse cx="100" cy="14" rx="13" ry="7" fill="#e0a854"/>
+    </svg>
+  </div>
+</header>
+
+<div class="rings-wrap" style="background:var(--bark); padding-bottom:3rem; margin-top:-1px;">
+  <svg viewBox="0 0 200 200" aria-hidden="true">
+    <circle class="ring" cx="100" cy="100" r="18"/>
+    <circle class="ring" cx="100" cy="100" r="34"/>
+    <circle class="ring" cx="100" cy="100" r="50"/>
+    <circle class="ring" cx="100" cy="100" r="66"/>
+    <circle class="ring" cx="100" cy="100" r="82"/>
+  </svg>
+</div>
+<p class="rings-caption" style="background:var(--bark); padding-bottom:3.5rem;">Every stick carries the years it took to grow.</p>
+
+<section class="process">
+  <div class="process-grid">
+    <div class="process-step">
+      <div class="num">01</div>
+      <h3>Choose the wood</h3>
+      <p>Hardwood for a lifetime on the trail, pine for a piece built to be seen.</p>
+    </div>
+    <div class="process-step">
+      <div class="num">02</div>
+      <h3>Shape it by hand</h3>
+      <p>Every curve, taper, and grip is carved individually — no two are identical.</p>
+    </div>
+    <div class="process-step">
+      <div class="num">03</div>
+      <h3>Finish and deliver</h3>
+      <p>Sealed, sanded smooth, and sized to you — ready for the next trail.</p>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="story">
+  <div class="section-head">
+    <span class="eyebrow">Know Your Wood</span>
+    <h2>Two woods, two jobs.</h2>
+    <p>Not every stick is built for the same trail — here's how we choose the wood for yours.</p>
+  </div>
+  <div class="wood-grid">
+    <div class="wood-card hard">
+      <span class="tag">Built to Last</span>
+      <h3>Hardwood</h3>
+      <p>Dense, heavy, and durable. This is what goes with you up the mountain — a hardwood staff will outlast years of real climbing and rough use.</p>
+    </div>
+    <div class="wood-card soft">
+      <span class="tag">Made to Show</span>
+      <h3>Softwood — Pine</h3>
+      <p>Our most-used wood. Lighter and easier to carve into detail, pine sticks are the ones you display, gift, or carry for the look as much as the walk.</p>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="section-head">
+    <span class="eyebrow">The Work</span>
+    <h2>Gallery — coming soon</h2>
+    <p>Photos of finished sticks, staffs, and pokers will go here as they're taken. This is where your first pieces will live.</p>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-card">
+      <div class="icon">🪵</div>
+      <div class="label">Photo coming soon</div>
+      <div class="sub">Hardwood staff</div>
+    </div>
+    <div class="gallery-card">
+      <div class="icon">🪵</div>
+      <div class="label">Photo coming soon</div>
+      <div class="sub">Pine walking stick</div>
+    </div>
+    <div class="gallery-card">
+      <div class="icon">🪵</div>
+      <div class="label">Photo coming soon</div>
+      <div class="sub">Children's size</div>
+    </div>
+    <div class="gallery-card">
+      <div class="icon">🪵</div>
+      <div class="label">Photo coming soon</div>
+      <div class="sub">Poker</div>
+    </div>
+  </div>
+</section>
+
+<section class="custom" id="custom">
+  <div class="section-head">
+    <span class="eyebrow">Made For You</span>
+    <h2>Order a custom piece</h2>
+    <p>Tell us the size, the wood, and what it's for — we'll shape it to fit.</p>
+  </div>
+  <div class="custom-box">
+    <p>Custom orders are handled personally right now. Send the details — size, wood preference, and what it's for — and we'll get back to you.</p>
+    <a class="email" href="mailto:thefoodguy421@gmail.com">thefoodguy421@gmail.com</a>
+    <p class="custom-note">Sign up, login, and live order chat are on the way — this page will update the moment they're ready.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wordmark">Mr Steeeck</div>
+  <p>Handmade sticks, staffs &amp; pokers.</p>
+</footer>
+
+<script>
+  // Draw the growth rings in sequence once the hero is visible
+  window.addEventListener('DOMContentLoaded', () => {
+    const rings = document.querySelectorAll('.ring');
+    rings.forEach((ring, i) => {
+      setTimeout(() => ring.classList.add('drawn'), 300 + i * 220);
+    });
+  });
+</script>
+
+</body>
+</html>
