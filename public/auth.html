@@ -81,6 +81,12 @@
     <label for="password">Password</label>
     <input type="password" id="password" required autocomplete="current-password" minlength="6">
 
+    <!-- Honeypot: hidden from real people, bots often fill it in anyway -->
+    <div style="position:absolute; left:-9999px; opacity:0;" aria-hidden="true">
+      <label for="website">Website</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
     <button type="submit" id="submitBtn">Log In</button>
   </form>
 
@@ -97,6 +103,7 @@
     'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
   );
 
+  const pageLoadTime = Date.now();
   let mode = 'login'; // or 'signup'
 
   const form = document.getElementById('authForm');
@@ -137,6 +144,21 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearMsg();
+
+    // Bot check 1: honeypot field should always be empty for a real person
+    const honeypot = document.getElementById('website').value;
+    if (honeypot){
+      // Silently pretend it worked — don't tip off the bot
+      showMsg('Something went wrong. Please try again.', 'error');
+      return;
+    }
+
+    // Bot check 2: real people take at least a couple seconds to fill a form
+    if (mode === 'signup' && Date.now() - pageLoadTime < 2000){
+      showMsg('Please take a moment to fill out the form.', 'error');
+      return;
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = mode === 'signup' ? 'Signing up…' : 'Logging in…';
 
