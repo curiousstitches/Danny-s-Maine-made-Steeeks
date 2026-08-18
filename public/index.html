@@ -17,19 +17,37 @@
     --bone:#faf6ef;
     --moss:#6b7d4f;
     --moss-deep:#3f4b2c;
+    --forest:#2f3b26;
+    --birch:#e8e1d0;
+    --birch-mark:#3a332a;
+    --sap:#b8792f;
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
+  .wood-card, .gallery-card, .process-step{transform-style:preserve-3d;}
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.revealed{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
   html, body{max-width:100%; overflow-x:hidden;}
   img, svg{max-width:100%; height:auto;}
   html{scroll-behavior:smooth;}
   body{
     font-family:'Work Sans', sans-serif;
     background:
-      radial-gradient(ellipse 600px 400px at 8% 8%, rgba(107,125,79,0.10), transparent 60%),
-      radial-gradient(ellipse 500px 350px at 95% 30%, rgba(107,125,79,0.08), transparent 55%),
-      radial-gradient(ellipse 700px 500px at 50% 90%, rgba(201,138,62,0.08), transparent 60%),
-      var(--parchment);
+      radial-gradient(ellipse 600px 400px at 8% 8%, rgba(107,125,79,0.14), transparent 60%),
+      radial-gradient(ellipse 500px 350px at 95% 30%, rgba(63,75,44,0.12), transparent 55%),
+      radial-gradient(ellipse 700px 500px at 50% 90%, rgba(201,138,62,0.10), transparent 60%),
+      repeating-linear-gradient(0deg,
+        transparent 0px, transparent 38px,
+        rgba(58,51,42,0.05) 38px, rgba(58,51,42,0.05) 40px,
+        transparent 40px, transparent 74px,
+        rgba(58,51,42,0.09) 74px, rgba(58,51,42,0.09) 77px),
+      repeating-linear-gradient(90deg,
+        rgba(58,51,42,0.02) 0px, rgba(58,51,42,0.02) 2px,
+        transparent 2px, transparent 5px),
+      var(--birch);
     color:var(--bark);
     line-height:1.6;
     position:relative;
@@ -42,6 +60,16 @@
     opacity:0.035;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     mix-blend-mode:multiply;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:999;
+    opacity:0.5;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg stroke='%233a332a' stroke-linecap='round' fill='none'%3E%3Cpath d='M12 24 q8 -2 16 0' stroke-width='2.4' opacity='0.55'/%3E%3Cpath d='M60 15 q10 -3 20 1' stroke-width='2' opacity='0.4'/%3E%3Cpath d='M140 40 q9 -2 18 0' stroke-width='2.6' opacity='0.5'/%3E%3Cpath d='M200 20 q7 -2 14 1' stroke-width='1.8' opacity='0.35'/%3E%3Cpath d='M30 110 q9 -2 17 1' stroke-width='2.2' opacity='0.45'/%3E%3Cpath d='M100 130 q11 -3 21 0' stroke-width='2.6' opacity='0.5'/%3E%3Cpath d='M180 150 q8 -2 16 1' stroke-width='2' opacity='0.4'/%3E%3Cpath d='M230 100 q7 -2 13 0' stroke-width='1.8' opacity='0.3'/%3E%3Cpath d='M50 200 q9 -2 18 0' stroke-width='2.3' opacity='0.45'/%3E%3Cpath d='M150 220 q10 -3 19 1' stroke-width='2.4' opacity='0.5'/%3E%3Cpath d='M220 230 q8 -2 15 0' stroke-width='1.9' opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
+    background-size:260px 260px;
   }
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
@@ -87,7 +115,18 @@
     gap:1.8rem;
     font-size:0.92rem;
   }
-  nav ul a{text-decoration:none; opacity:0.85; transition:opacity 0.2s;}
+  nav ul a{
+    text-decoration:none; opacity:0.85; transition:opacity 0.2s;
+    position:relative; padding-bottom:3px;
+  }
+  nav ul a::after{
+    content:"";
+    position:absolute; left:0; bottom:0;
+    width:0%; height:1.5px;
+    background:var(--honey-bright);
+    transition:width 0.25s ease;
+  }
+  nav ul a:hover::after{width:100%;}
   nav ul a:hover{opacity:1;}
   nav .nav-links{display:flex;}
   @media (max-width:640px){
@@ -121,6 +160,22 @@
     .hero .cta-row{justify-content:center;}
   }
   .hero-copy{position:relative; z-index:2;}
+  .leaves{position:absolute; inset:0; overflow:hidden; z-index:1; pointer-events:none;}
+  .leaf{
+    position:absolute; top:-30px;
+    font-size:1.1rem;
+    opacity:0.55;
+    animation:leafFall linear infinite;
+  }
+  @keyframes leafFall{
+    0%{transform:translateY(0) translateX(0) rotate(0deg); opacity:0;}
+    8%{opacity:0.6;}
+    92%{opacity:0.5;}
+    100%{transform:translateY(110vh) translateX(var(--drift, 40px)) rotate(340deg); opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .leaf{animation:none; display:none;}
+  }
   .hero .eyebrow{
     font-size:0.8rem;
     letter-spacing:0.22em;
@@ -300,7 +355,7 @@
   .section-head p{color:#4a3c2e; margin-top:0.9rem; font-size:1.06rem; line-height:1.7;}
 
   /* ===== STORY / WOOD TYPES ===== */
-  .story{background:var(--bone);}
+  .story{background:rgba(250,246,239,0.35);}
   .wood-grid{
     display:grid; grid-template-columns:1fr 1fr; gap:1.6rem;
     max-width:920px; margin:0 auto;
@@ -322,7 +377,7 @@
   .wood-card.soft{border-left:5px solid var(--moss);}
 
   /* ===== GALLERY ===== */
-  .gallery{background:var(--parchment);}
+  .gallery{background:rgba(239,230,208,0.3);}
   .gallery-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
@@ -442,6 +497,7 @@
 </nav>
 
 <header class="hero">
+  <div class="leaves" id="leaves" aria-hidden="true"></div>
   <div class="hero-copy">
     <p class="eyebrow">Sticks · Staffs · Pokers — Handmade</p>
     <h1>Cut from the<br><em>forest floor.</em></h1>
@@ -593,6 +649,49 @@
     rings.forEach((ring, i) => {
       setTimeout(() => ring.classList.add('drawn'), 300 + i * 220);
     });
+
+    // Floating leaves in the hero
+    const leafEmojis = ['🍂', '🍁', '🌿'];
+    const leafWrap = document.getElementById('leaves');
+    if (leafWrap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      for (let i = 0; i < 10; i++){
+        const leaf = document.createElement('span');
+        leaf.className = 'leaf';
+        leaf.textContent = leafEmojis[i % leafEmojis.length];
+        leaf.style.left = Math.random() * 100 + '%';
+        leaf.style.setProperty('--drift', (Math.random() * 100 - 50) + 'px');
+        leaf.style.animationDuration = (10 + Math.random() * 10) + 's';
+        leaf.style.animationDelay = (Math.random() * 12) + 's';
+        leaf.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
+        leafWrap.appendChild(leaf);
+      }
+    }
+
+    // Scroll-reveal: fade+rise elements into view as the user scrolls
+    const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head');
+    revealEls.forEach(el => el.classList.add('reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Gentle tilt-on-hover for cards (desktop only)
+    if (window.matchMedia('(hover: hover)').matches){
+      document.querySelectorAll('.wood-card, .gallery-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `translateY(-4px) scale(1.02) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      });
+    }
 
     // Live shop carousel: auto-rotates through sample items
     const carousel = document.getElementById('shopCarousel');
