@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Mr Steeeck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
+  :root{
+    --bark:#241a13; --walnut:#4a2e1e; --honey:#c98a3e; --honey-bright:#e0a854;
+    --parchment:#efe6d0; --bone:#faf6ef; --moss:#6b7d4f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(ellipse at 78% 15%, #45301a 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 85%, rgba(107,125,79,0.3) 0%, transparent 50%),
+      var(--bark);
+    color:var(--bone);
+    padding:1.5rem;
+  }
+  .wordmark{
+    position:fixed; top:1.6rem; left:6vw;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.2rem;
+    text-decoration:none; color:var(--bone);
+  }
+  .wordmark span{color:var(--honey-bright);}
+  .card{
+    width:100%; max-width:400px;
+    background:rgba(250,246,239,0.05);
+    border:1px solid rgba(250,246,239,0.15);
+    border-radius:6px;
+    padding:2.4rem 2rem;
+  }
+  h1{font-family:'Fraunces', serif; font-size:1.7rem; margin-bottom:0.4rem;}
+  p.sub{color:#c2b39b; font-size:0.9rem; margin-bottom:1.8rem;}
+  label{display:block; font-size:0.82rem; color:#d8cdbc; margin-bottom:0.4rem;}
+  input{
+    width:100%; padding:0.75rem 0.9rem; margin-bottom:1.1rem;
+    background:rgba(0,0,0,0.25); border:1px solid rgba(250,246,239,0.2);
+    border-radius:3px; color:var(--bone); font-size:0.95rem; font-family:inherit;
+  }
+  input:focus{outline:2px solid var(--honey-bright); border-color:transparent;}
+  button{
+    width:100%; padding:0.85rem; border:none; border-radius:3px;
+    background:var(--honey-bright); color:var(--bark); font-weight:600;
+    font-size:0.95rem; cursor:pointer; transition:transform 0.15s ease, background 0.15s ease;
+  }
+  button:hover{background:#f0bd6f; transform:translateY(-1px);}
+  button:disabled{opacity:0.6; cursor:default; transform:none;}
+  .toggle{
+    text-align:center; margin-top:1.4rem; font-size:0.88rem; color:#c2b39b;
+  }
+  .toggle a{color:var(--honey-bright); text-decoration:none; font-weight:600; cursor:pointer;}
+  .msg{
+    font-size:0.85rem; margin-bottom:1rem; padding:0.7rem 0.9rem;
+    border-radius:3px; display:none;
+  }
+  .msg.show{display:block;}
+  .msg.error{background:rgba(180,60,50,0.18); color:#f0a898; border:1px solid rgba(180,60,50,0.3);}
+  .msg.success{background:rgba(107,125,79,0.22); color:#c8d6b0; border:1px solid rgba(107,125,79,0.4);}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="wordmark">Mr <span>Steeeck</span></a>
+
+<div class="card">
+  <h1 id="formTitle">Welcome back</h1>
+  <p class="sub" id="formSub">Log in to track your custom orders.</p>
+
+  <div class="msg" id="msgBox"></div>
+
+  <form id="authForm">
+    <label for="email">Email</label>
+    <input type="email" id="email" required autocomplete="email">
+
+    <label for="password">Password</label>
+    <input type="password" id="password" required autocomplete="current-password" minlength="6">
+
+    <button type="submit" id="submitBtn">Log In</button>
+  </form>
+
+  <div class="toggle" id="toggleWrap">
+    Don't have an account? <a id="toggleLink">Sign up</a>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+
+  let mode = 'login'; // or 'signup'
+
+  const form = document.getElementById('authForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const submitBtn = document.getElementById('submitBtn');
+  const toggleLink = document.getElementById('toggleLink');
+  const toggleWrap = document.getElementById('toggleWrap');
+  const formTitle = document.getElementById('formTitle');
+  const formSub = document.getElementById('formSub');
+  const msgBox = document.getElementById('msgBox');
+
+  function showMsg(text, type){
+    msgBox.textContent = text;
+    msgBox.className = 'msg show ' + type;
+  }
+  function clearMsg(){
+    msgBox.className = 'msg';
+  }
+
+  toggleLink.addEventListener('click', () => {
+    mode = mode === 'login' ? 'signup' : 'login';
+    clearMsg();
+    if (mode === 'signup'){
+      formTitle.textContent = 'Create your account';
+      formSub.textContent = 'Sign up to place and track custom orders.';
+      submitBtn.textContent = 'Sign Up';
+      toggleWrap.innerHTML = 'Already have an account? <a id="toggleLink">Log in</a>';
+    } else {
+      formTitle.textContent = 'Welcome back';
+      formSub.textContent = 'Log in to track your custom orders.';
+      submitBtn.textContent = 'Log In';
+      toggleWrap.innerHTML = 'Don\'t have an account? <a id="toggleLink">Sign up</a>';
+    }
+    document.getElementById('toggleLink').addEventListener('click', () => toggleLink.click());
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearMsg();
+    submitBtn.disabled = true;
+    submitBtn.textContent = mode === 'signup' ? 'Signing up…' : 'Logging in…';
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    try {
+      if (mode === 'signup'){
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        showMsg('Account created! Check your email to confirm, then log in.', 'success');
+        mode = 'login';
+        formTitle.textContent = 'Welcome back';
+        submitBtn.textContent = 'Log In';
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        window.location.href = 'index.html';
+      }
+    } catch (err) {
+      showMsg(err.message || 'Something went wrong. Try again.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      if (submitBtn.textContent.includes('…')) submitBtn.textContent = mode === 'signup' ? 'Sign Up' : 'Log In';
+    }
+  });
+</script>
+
+</body>
+</html>

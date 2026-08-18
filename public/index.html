@@ -386,6 +386,20 @@
     font-size:0.82rem;
     color:#c2b39b;
   }
+  .pay-row{
+    display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap;
+    margin-top:1.6rem;
+  }
+  .pay-btn{
+    padding:0.7rem 1.4rem;
+    border-radius:3px;
+    font-size:0.88rem; font-weight:600;
+    text-decoration:none;
+    transition:transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .pay-btn.cashapp{background:#00d64f; color:#0a2e16;}
+  .pay-btn.venmo{background:#3d95ce; color:#0a1f2e;}
+  .pay-btn:hover{transform:translateY(-2px) scale(1.03); box-shadow:0 10px 22px rgba(0,0,0,0.3);}
 
   /* ===== FOOTER ===== */
   footer{
@@ -412,6 +426,7 @@
     <li><a href="#story">The Craft</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#custom">Custom Order</a></li>
+    <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
   </ul>
 </nav>
 
@@ -545,7 +560,13 @@
   <div class="custom-box">
     <p>Custom orders are handled personally right now. Send the details — size, wood preference, and what it's for — and we'll get back to you.</p>
     <a class="email" href="mailto:thegoodguy421@gmail.com">thegoodguy421@gmail.com</a>
-    <p class="custom-note">Sign up, login, and live order chat are on the way — this page will update the moment they're ready.</p>
+
+    <div class="pay-row">
+      <a class="pay-btn cashapp" href="https://cash.app/$HerDannyBoi" target="_blank" rel="noopener">Pay with Cash App</a>
+      <a class="pay-btn venmo" href="https://venmo.com/HerDannyBoi" target="_blank" rel="noopener">Pay with Venmo</a>
+    </div>
+
+    <p class="custom-note">Sign up or log in to track your order — <a href="auth.html" style="color:var(--honey-bright);">create an account here</a>.</p>
   </div>
 </section>
 
@@ -591,6 +612,30 @@
     carousel.addEventListener('mouseenter', stopAuto);
     carousel.addEventListener('mouseleave', startAuto);
     carousel.addEventListener('touchstart', stopAuto, {passive:true});
+  });
+</script>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const ADMIN_EMAIL = 'thegoodguy421@gmail.com';
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+
+  // Log this visit (fire and forget)
+  supabase.from('site_visits').insert({ page: 'home' }).then(() => {});
+
+  // Swap "Sign In" for "Admin" if Danny is logged in
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session && session.user.email === ADMIN_EMAIL){
+      const slot = document.getElementById('navAuthSlot');
+      if (slot) slot.innerHTML = '<a href="admin.html">Admin</a>';
+    } else if (session){
+      const slot = document.getElementById('navAuthSlot');
+      if (slot) slot.innerHTML = '<a href="auth.html">Account</a>';
+    }
   });
 </script>
 

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Mr Steeeck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
+  :root{
+    --bark:#241a13; --walnut:#4a2e1e; --honey:#c98a3e; --honey-bright:#e0a854;
+    --parchment:#efe6d0; --bone:#faf6ef; --moss:#6b7d4f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:var(--parchment);
+    color:var(--bark);
+    min-height:100vh;
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem 6vw;
+    background:var(--bark); color:var(--bone);
+  }
+  nav .wordmark{font-family:'Fraunces', serif; font-weight:700; font-size:1.2rem;}
+  nav .wordmark span{color:var(--honey-bright);}
+  nav a.logout{color:#e0d3bd; font-size:0.85rem; text-decoration:none; cursor:pointer;}
+
+  main{padding:3rem 6vw; max-width:900px; margin:0 auto;}
+  h1{font-family:'Fraunces', serif; font-size:2rem; color:var(--walnut); margin-bottom:0.4rem;}
+  p.sub{color:#6b5a40; margin-bottom:2.4rem;}
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:1.2rem;
+    margin-bottom:2.6rem;
+  }
+  @media (max-width:520px){.stat-grid{grid-template-columns:1fr;}}
+  .stat-card{
+    background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
+    padding:1.6rem;
+  }
+  .stat-card .num{font-family:'Fraunces', serif; font-size:2.4rem; color:var(--walnut);}
+  .stat-card .label{font-size:0.85rem; color:#8a7960; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.3rem;}
+
+  table{width:100%; border-collapse:collapse; background:var(--bone); border-radius:5px; overflow:hidden;}
+  th, td{text-align:left; padding:0.8rem 1rem; font-size:0.9rem; border-bottom:1px solid #e3d5ba;}
+  th{background:var(--walnut); color:var(--bone); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+
+  .gate{
+    display:flex; align-items:center; justify-content:center; min-height:80vh;
+    text-align:center; padding:2rem;
+  }
+  .gate p{color:#6b5a40; max-width:32ch;}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <p>Checking access…</p>
+</div>
+
+<div id="dashboard" class="hidden">
+  <nav>
+    <div class="wordmark">Mr <span>Steeeck</span> <span style="font-weight:400; font-size:0.8rem; opacity:0.7;">— Admin</span></div>
+    <a class="logout" id="logoutBtn">Log out</a>
+  </nav>
+  <main>
+    <h1>Dashboard</h1>
+    <p class="sub">Only you can see this page.</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="num" id="visitCount">–</div>
+        <div class="label">Total site visits</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="userCount">–</div>
+        <div class="label">Registered customers</div>
+      </div>
+    </div>
+
+    <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Registered customers</h2>
+    <table>
+      <thead><tr><th>Email</th><th>Signed up</th></tr></thead>
+      <tbody id="userTableBody">
+        <tr><td colspan="2">Loading…</td></tr>
+      </tbody>
+    </table>
+  </main>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const ADMIN_EMAIL = 'thegoodguy421@gmail.com';
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+
+  const gate = document.getElementById('gate');
+  const dashboard = document.getElementById('dashboard');
+
+  async function init(){
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session || session.user.email !== ADMIN_EMAIL){
+      gate.innerHTML = `<div><p>This page is only for the site owner.</p>
+        <p style="margin-top:1rem;"><a href="auth.html" style="color:#4a2e1e; font-weight:600;">Log in</a> with the admin account to view it.</p></div>`;
+      return;
+    }
+
+    gate.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    loadStats();
+  }
+
+  async function loadStats(){
+    const { count: visitCount } = await supabase
+      .from('site_visits')
+      .select('*', { count: 'exact', head: true });
+
+    const { data: profiles, count: userCount } = await supabase
+      .from('profiles')
+      .select('email, created_at', { count: 'exact' })
+      .order('created_at', { ascending: false });
+
+    document.getElementById('visitCount').textContent = visitCount ?? '0';
+    document.getElementById('userCount').textContent = userCount ?? '0';
+
+    const tbody = document.getElementById('userTableBody');
+    if (!profiles || profiles.length === 0){
+      tbody.innerHTML = '<tr><td colspan="2">No customers registered yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = profiles.map(p => `
+      <tr>
+        <td>${p.email}</td>
+        <td>${new Date(p.created_at).toLocaleDateString()}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+  });
+
+  init();
+</script>
+
+</body>
+</html>
