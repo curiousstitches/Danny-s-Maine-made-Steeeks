@@ -31,10 +31,11 @@
   p.sub{color:#6b5a40; margin-bottom:2.4rem;}
 
   .stat-grid{
-    display:grid; grid-template-columns:repeat(2, 1fr); gap:1.2rem;
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;
     margin-bottom:2.6rem;
   }
-  @media (max-width:520px){.stat-grid{grid-template-columns:1fr;}}
+  @media (max-width:700px){.stat-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:420px){.stat-grid{grid-template-columns:1fr;}}
   .stat-card{
     background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
     padding:1.6rem;
@@ -79,7 +80,19 @@
         <div class="num" id="userCount">–</div>
         <div class="label">Registered customers</div>
       </div>
+      <div class="stat-card">
+        <div class="num" id="orderCount">–</div>
+        <div class="label">Custom order requests</div>
+      </div>
     </div>
+
+    <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Custom order requests</h2>
+    <table style="margin-bottom:2.6rem;">
+      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Date</th></tr></thead>
+      <tbody id="orderTableBody">
+        <tr><td colspan="6">Loading…</td></tr>
+      </tbody>
+    </table>
 
     <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Registered customers</h2>
     <table>
@@ -127,8 +140,30 @@
       .select('email, created_at', { count: 'exact' })
       .order('created_at', { ascending: false });
 
+    const { data: orders, count: orderCount } = await supabase
+      .from('custom_orders')
+      .select('name, email, size, wood, notes, created_at', { count: 'exact' })
+      .order('created_at', { ascending: false });
+
     document.getElementById('visitCount').textContent = visitCount ?? '0';
     document.getElementById('userCount').textContent = userCount ?? '0';
+    document.getElementById('orderCount').textContent = orderCount ?? '0';
+
+    const orderBody = document.getElementById('orderTableBody');
+    if (!orders || orders.length === 0){
+      orderBody.innerHTML = '<tr><td colspan="6">No custom order requests yet.</td></tr>';
+    } else {
+      orderBody.innerHTML = orders.map(o => `
+        <tr>
+          <td>${o.name}</td>
+          <td>${o.email}</td>
+          <td>${o.size}</td>
+          <td>${o.wood}</td>
+          <td>${o.notes || '—'}</td>
+          <td>${new Date(o.created_at).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    }
 
     const tbody = document.getElementById('userTableBody');
     if (!profiles || profiles.length === 0){
