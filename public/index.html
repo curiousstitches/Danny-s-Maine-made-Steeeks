@@ -20,6 +20,8 @@
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
+  html, body{max-width:100%; overflow-x:hidden;}
+  img, svg{max-width:100%; height:auto;}
   html{scroll-behavior:smooth;}
   body{
     font-family:'Work Sans', sans-serif;
@@ -91,6 +93,10 @@
   @media (max-width:640px){
     nav ul{gap:1rem; font-size:0.8rem;}
   }
+  @media (max-width:400px){
+    nav{padding:0.9rem 5vw; flex-wrap:wrap; gap:0.6rem; justify-content:center; text-align:center;}
+    nav ul{gap:0.7rem; font-size:0.74rem;}
+  }
 
   /* ===== HERO ===== */
   .hero{
@@ -134,10 +140,11 @@
     text-shadow:0 4px 24px rgba(224,168,84,0.25);
   }
   .hero p.tagline{
-    max-width:38ch;
+    max-width:40ch;
     margin:1.6rem 0 2.4rem;
-    font-size:1.08rem;
-    color:#d8cdbc;
+    font-size:1.2rem;
+    line-height:1.7;
+    color:#ecdfc8;
   }
   @media (max-width:880px){
     .hero p.tagline{margin:1.6rem auto 2.4rem;}
@@ -150,29 +157,30 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    min-height:420px;
+    min-height:460px;
   }
   .hero-visual .glow{
     position:absolute;
-    width:300px; height:300px;
+    width:360px; height:360px;
     background:radial-gradient(circle, rgba(107,125,79,0.28) 0%, rgba(201,138,62,0.18) 45%, transparent 72%);
     filter:blur(14px);
   }
   @media (max-width:880px){
-    .hero-visual{min-height:300px;}
+    .hero-visual{min-height:340px;}
   }
 
   /* Live shop carousel */
   .shop-carousel{
     position:relative;
-    width:280px; height:280px;
+    width:340px; height:340px;
     border-radius:50%;
     overflow:hidden;
     border:3px solid rgba(224,168,84,0.5);
     box-shadow:0 25px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.35);
     cursor:pointer;
   }
-  @media (max-width:880px){.shop-carousel{width:220px; height:220px;}}
+  @media (max-width:880px){.shop-carousel{width:270px; height:270px;}}
+  @media (max-width:400px){.shop-carousel{width:220px; height:220px;}}
   .shop-slide{
     position:absolute; inset:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -280,13 +288,16 @@
 
   /* ===== SECTION SHARED ===== */
   section{padding:5.5rem 6vw;}
+  @media (max-width:480px){
+    section{padding:3.6rem 5.5vw;}
+  }
   .section-head{max-width:640px; margin:0 auto 3rem;}
   .section-head .eyebrow{
     font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase;
     color:var(--moss); margin-bottom:0.7rem; display:block; font-weight:600;
   }
   .section-head h2{font-size:clamp(1.9rem, 4vw, 2.6rem); color:var(--walnut);}
-  .section-head p{color:#5a4b3c; margin-top:0.9rem; font-size:1.02rem;}
+  .section-head p{color:#4a3c2e; margin-top:0.9rem; font-size:1.06rem; line-height:1.7;}
 
   /* ===== STORY / WOOD TYPES ===== */
   .story{background:var(--bone);}
@@ -306,7 +317,7 @@
     font-weight:600; color:var(--honey);
   }
   .wood-card h3{font-size:1.35rem; margin:0.4rem 0 0.7rem; color:var(--walnut);}
-  .wood-card p{color:#5a4b3c; font-size:0.95rem;}
+  .wood-card p{color:#4a3c2e; font-size:1rem; line-height:1.65;}
   .wood-card.hard{border-left:5px solid var(--walnut);}
   .wood-card.soft{border-left:5px solid var(--moss);}
 
@@ -434,7 +445,7 @@
   <div class="hero-copy">
     <p class="eyebrow">Sticks · Staffs · Pokers — Handmade</p>
     <h1>Cut from the<br><em>forest floor.</em></h1>
-    <p class="tagline">Every stick is shaped by hand, one piece of wood at a time — built for the trail, not the shelf.</p>
+    <p class="tagline">Hand-carved walking sticks, staffs, and pokers — made from real hardwood and pine, sized for adults or kids, and built to hold up on the trail.</p>
     <div class="cta-row">
       <a href="#custom" class="btn-primary">Request a Custom Stick</a>
       <a href="#gallery" class="btn-secondary">See the Work</a>
