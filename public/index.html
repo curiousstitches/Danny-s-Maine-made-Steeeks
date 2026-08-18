@@ -446,16 +446,42 @@
     font-size:0.82rem;
     color:#c2b39b;
   }
+  .pay-warning{
+    margin-top:1.6rem;
+    background:rgba(180,60,50,0.16);
+    border:1px solid rgba(200,90,70,0.35);
+    color:#f0c4b8;
+    font-size:0.85rem;
+    line-height:1.55;
+    padding:0.9rem 1.1rem;
+    border-radius:4px;
+    text-align:left;
+  }
+  .pay-confirm{
+    display:flex; align-items:center; gap:0.6rem;
+    justify-content:center;
+    margin-top:1.1rem;
+    font-size:0.88rem;
+    color:#e0d3bd;
+    cursor:pointer;
+  }
+  .pay-confirm input{width:16px; height:16px; accent-color:var(--honey-bright); cursor:pointer;}
   .pay-row{
     display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap;
     margin-top:1.6rem;
+    transition:opacity 0.3s ease;
+  }
+  .pay-row.locked .pay-btn{
+    pointer-events:none;
+    opacity:0.4;
+    filter:grayscale(0.6);
   }
   .pay-btn{
     padding:0.7rem 1.4rem;
     border-radius:3px;
     font-size:0.88rem; font-weight:600;
     text-decoration:none;
-    transition:transform 0.18s ease, box-shadow 0.18s ease;
+    transition:transform 0.18s ease, box-shadow 0.18s ease, opacity 0.3s ease, filter 0.3s ease;
   }
   .pay-btn.cashapp{background:#00d64f; color:#0a2e16;}
   .pay-btn.venmo{background:#3d95ce; color:#0a1f2e;}
@@ -620,9 +646,18 @@
     <p>Custom orders are handled personally right now. Send the details — size, wood preference, and what it's for — and we'll get back to you.</p>
     <a class="email" href="mailto:thegoodguy421@gmail.com">thegoodguy421@gmail.com</a>
 
-    <div class="pay-row">
-      <a class="pay-btn cashapp" href="https://cash.app/$HerDannyBoi" target="_blank" rel="noopener">Pay with Cash App</a>
-      <a class="pay-btn venmo" href="https://venmo.com/HerDannyBoi" target="_blank" rel="noopener">Pay with Venmo</a>
+    <div class="pay-warning">
+      ⚠️ Email your order details first. Orders can stack up, and payments sent before your order is confirmed by email are <strong>not eligible for a refund</strong>.
+    </div>
+
+    <label class="pay-confirm">
+      <input type="checkbox" id="emailedConfirm">
+      <span>I've already emailed my order details</span>
+    </label>
+
+    <div class="pay-row locked" id="payRow">
+      <a class="pay-btn cashapp" href="https://cash.app/$HerDannyBoi" target="_blank" rel="noopener" id="cashAppBtn">Pay with Cash App</a>
+      <a class="pay-btn venmo" href="https://venmo.com/HerDannyBoi" target="_blank" rel="noopener" id="venmoBtn">Pay with Venmo</a>
     </div>
 
     <p class="custom-note">Sign up or log in to track your order — <a href="auth.html" style="color:var(--honey-bright);">create an account here</a>.</p>
@@ -637,6 +672,15 @@
 <script>
   // Draw the growth rings in sequence once the hero is visible
   window.addEventListener('DOMContentLoaded', () => {
+    // Payment buttons stay locked until customer confirms they've emailed their order
+    const emailedConfirm = document.getElementById('emailedConfirm');
+    const payRow = document.getElementById('payRow');
+    if (emailedConfirm && payRow){
+      emailedConfirm.addEventListener('change', () => {
+        payRow.classList.toggle('locked', !emailedConfirm.checked);
+      });
+    }
+
     const rings = document.querySelectorAll('.ring');
     rings.forEach((ring, i) => {
       setTimeout(() => ring.classList.add('drawn'), 300 + i * 220);
