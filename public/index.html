@@ -571,6 +571,7 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#custom">Custom Order</a></li>
     <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
+    <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
   </ul>
 </nav>
 
@@ -969,14 +970,23 @@
   // Log this visit (fire and forget)
   supabase.from('site_visits').insert({ page: 'home' }).then(() => {});
 
-  // Swap "Sign In" for "Admin" if Danny is logged in
+  // Reveal the hidden Admin tab only when Danny is logged in — invisible to everyone else
   supabase.auth.getSession().then(({ data: { session } }) => {
+    const adminSlot = document.getElementById('navAdminSlot');
+    const authSlot = document.getElementById('navAuthSlot');
+
     if (session && session.user.email === ADMIN_EMAIL){
-      const slot = document.getElementById('navAuthSlot');
-      if (slot) slot.innerHTML = '<a href="admin.html">Admin</a>';
+      if (adminSlot) adminSlot.style.display = '';
+      if (authSlot){
+        authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+        document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
+          e.preventDefault();
+          await supabase.auth.signOut();
+          window.location.reload();
+        });
+      }
     } else if (session){
-      const slot = document.getElementById('navAuthSlot');
-      if (slot) slot.innerHTML = '<a href="auth.html">Account</a>';
+      if (authSlot) authSlot.innerHTML = '<a href="auth.html">Account</a>';
     }
   });
 
