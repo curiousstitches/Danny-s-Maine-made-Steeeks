@@ -37,13 +37,13 @@
 <div class="page-header bark-bg">
   <a href="index.html" class="back-btn">&larr; Back to Home</a>
   <h1>Gallery</h1>
-  <p>Real, handmade pieces — more added as they're finished.</p>
+  <p>Real, handmade pieces — tap any photo for details.</p>
 </div>
 <section class="gallery" id="gallery">
   <div class="section-head">
     <span class="eyebrow">The Work</span>
     <h2>Gallery</h2>
-    <p>Real finished pieces, each one-of-a-kind — for adults, kids, pets, and babies alike. Some shown here are examples of past work rather than current stock; ask about availability.</p>
+    <p>Real finished pieces, each one-of-a-kind — for adults, kids, pets, and babies alike. Tap a photo to see more. Some shown here are examples of past work rather than current stock; ask about availability.</p>
   </div>
 
   <div class="gallery-filters" role="tablist" aria-label="Filter gallery">
@@ -55,59 +55,11 @@
     <button class="filter-btn" data-filter="pet">Pet-Friendly</button>
   </div>
 
-  <div class="gallery-grid">
-    <div class="gallery-card has-photo" data-category="walking-stick">
-      <img src="images/gallery-walking-stick.webp" alt="Handmade wood walking stick, 'The Wanderer'" loading="lazy">
-      <div class="info">
-        <div class="label">"The Wanderer"</div>
-        <div class="sub">Walking Steeeck — hand-carved, natural finish</div>
-        <div class="status">Ask about availability</div>
-      </div>
-    </div>
-    <div class="gallery-card has-photo" data-category="poker">
-      <img src="images/gallery-fire-poker.webp" alt="Handmade wood fire poker, 'The Ember Keeper'" loading="lazy">
-      <div class="info">
-        <div class="label">"The Ember Keeper"</div>
-        <div class="sub">Fire Poker — built for the fire pit</div>
-        <div class="status">Ask about availability</div>
-      </div>
-    </div>
-    <div class="gallery-card has-photo" data-category="staff">
-      <img src="images/gallery-softwood-staff.webp" alt="Softwood walking staff, 'The Trailblazer'" loading="lazy">
-      <div class="info">
-        <div class="label">"The Trailblazer"</div>
-        <div class="sub">Softwood Staff — pine, built to show</div>
-        <div class="status">Ask about availability</div>
-      </div>
-    </div>
-    <div class="gallery-card has-photo" data-category="staff">
-      <img src="images/gallery-hardwood-staff.webp" alt="Hardwood walking staff, 'The Ridgeback'" loading="lazy">
-      <div class="info">
-        <div class="label">"The Ridgeback"</div>
-        <div class="sub">Hardwood Staff — built to last on the trail</div>
-        <div class="status">Ask about availability</div>
-      </div>
-    </div>
-    <div class="gallery-card has-photo" data-category="staff">
-      <img src="images/gallery-defense-staff.webp" alt="Two-handed walking staff, 'The Guardian'" loading="lazy">
-      <div class="info">
-        <div class="label">"The Guardian"</div>
-        <div class="sub">Two-Handed Steeeck — sturdy grip, all-purpose build</div>
-        <div class="status">Ask about availability</div>
-      </div>
-    </div>
+  <div class="gallery-grid" id="galleryGrid">
     <div class="gallery-card" data-category="pet">
       <div class="icon">🐾</div>
       <div class="label">Photo coming soon</div>
       <div class="sub">Pet-size steeeck</div>
-    </div>
-    <div class="gallery-card has-photo" data-category="kids-baby">
-      <img src="images/gallery-baby-first.webp" alt="Baby's first softwood walking stick, 'Li'l Sprout'" loading="lazy">
-      <div class="info">
-        <div class="label">"Li'l Sprout"</div>
-        <div class="sub">Baby's First Steeeck — softwood</div>
-        <div class="status">Ask about availability</div>
-      </div>
     </div>
     <div class="gallery-card" data-category="kids-baby">
       <div class="icon">🧒</div>
@@ -116,17 +68,73 @@
     </div>
   </div>
 </section>
+
+<!-- Photo detail modal -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    <div class="rainbow-frame">
+      <img id="modalImg" src="" alt="">
+    </div>
+    <div class="modal-info">
+      <h3 id="modalName">—</h3>
+      <p class="modal-category" id="modalCategory"></p>
+      <p class="modal-desc" id="modalDesc"></p>
+      <div class="modal-status" id="modalStatus"></div>
+
+      <div id="modalAdminControls" class="modal-admin" hidden>
+        <div class="admin-divider">Admin — visible only to you</div>
+        <label>Name
+          <input id="editName" type="text">
+        </label>
+        <label>Description
+          <textarea id="editDesc" rows="3"></textarea>
+        </label>
+        <label>Status
+          <select id="editStatus">
+            <option value="ask">Ask about availability</option>
+            <option value="available">Available</option>
+            <option value="priced">Priced</option>
+            <option value="sold">Sold</option>
+          </select>
+        </label>
+        <label id="editPriceWrap" hidden>Price
+          <input id="editPrice" type="text" placeholder="$45">
+        </label>
+        <button id="saveItemBtn" class="btn-primary" type="button">Save Changes</button>
+        <div class="msg" id="saveMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer class="bark-bg">
   <div class="wordmark">Mr Steeeck</div>
   <p>Handmade steeecks, staffs &amp; pokers.</p>
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
+
 <script type="module">
   import { supabase, ADMIN_EMAILS } from './supabase-client.js';
+
+  const CATEGORY_LABELS = {
+    'walking-stick': 'Walking Steeeck',
+    'staff': 'Staff',
+    'poker': 'Fire Poker',
+    'kids-baby': 'Kids & Baby',
+    'pet': 'Pet-Friendly'
+  };
+
+  let isAdmin = false;
+  let galleryItems = [];
+  let activeItem = null;
+
+  // --- Nav auth state ---
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
     if (session && ADMIN_EMAILS.includes(session.user.email)){
+      isAdmin = true;
       if (adminSlot) adminSlot.style.display = '';
       if (authSlot){
         authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
@@ -139,41 +147,176 @@
     } else if (session){
       if (authSlot) authSlot.innerHTML = '<a href="profile.html">My Profile</a>';
     }
+    loadGallery();
   });
-</script>
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    // Scroll-reveal: fade+rise elements into view as the user scrolls
-    const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head, .faq-item, .size-table-wrap');
-    revealEls.forEach(el => el.classList.add('reveal'));
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting){
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    revealEls.forEach(el => observer.observe(el));
 
-    // Category filter buttons
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.gallery-card');
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        cards.forEach(card => {
-          const match = filter === 'all' || card.dataset.category === filter;
-          card.hidden = !match;
-        });
-      });
+  async function loadGallery(){
+    const { data, error } = await supabase
+      .from('gallery_items')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (error){
+      console.error('Could not load gallery items', error);
+      return;
+    }
+    galleryItems = data || [];
+    renderGallery();
+  }
+
+  function statusLabel(item){
+    if (item.status === 'sold') return 'Sold';
+    if (item.status === 'priced') return item.price ? item.price : 'Priced';
+    if (item.status === 'available') return 'Available';
+    return 'Ask about availability';
+  }
+
+  function renderGallery(){
+    const grid = document.getElementById('galleryGrid');
+    // Remove any previously-rendered photo cards (keep the static "coming soon" ones)
+    grid.querySelectorAll('.gallery-card.has-photo').forEach(el => el.remove());
+
+    galleryItems.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'gallery-card has-photo';
+      card.dataset.category = item.category;
+      card.dataset.id = item.id;
+      const statusClass = item.status === 'sold' ? 'sold' : (item.status === 'priced' ? 'priced' : '');
+      card.innerHTML = `
+        <img src="${item.image_path}" alt="${item.name}" loading="lazy">
+        <div class="info">
+          <div class="label">"${item.name}"</div>
+          <div class="sub">${CATEGORY_LABELS[item.category] || item.category}</div>
+          <div class="status ${statusClass}">${statusLabel(item)}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => openModal(item));
+      grid.prepend(card);
     });
 
-    // Gentle tilt-on-hover for cards (desktop only)
+    setupRevealAndTilt();
+    applyActiveFilter();
+  }
+
+  function applyActiveFilter(){
+    const active = document.querySelector('.filter-btn.active');
+    const filter = active ? active.dataset.filter : 'all';
+    document.querySelectorAll('.gallery-card').forEach(card => {
+      card.hidden = !(filter === 'all' || card.dataset.category === filter);
+    });
+  }
+
+  // --- Filter buttons ---
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyActiveFilter();
+    });
+  });
+
+  // --- Modal ---
+  const overlay = document.getElementById('modalOverlay');
+  const modalImg = document.getElementById('modalImg');
+  const modalName = document.getElementById('modalName');
+  const modalCategory = document.getElementById('modalCategory');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalStatus = document.getElementById('modalStatus');
+  const adminControls = document.getElementById('modalAdminControls');
+  const editName = document.getElementById('editName');
+  const editDesc = document.getElementById('editDesc');
+  const editStatus = document.getElementById('editStatus');
+  const editPrice = document.getElementById('editPrice');
+  const editPriceWrap = document.getElementById('editPriceWrap');
+  const saveMsg = document.getElementById('saveMsg');
+
+  function openModal(item){
+    activeItem = item;
+    modalImg.src = item.image_path;
+    modalImg.alt = item.name;
+    modalName.textContent = `"${item.name}"`;
+    modalCategory.textContent = CATEGORY_LABELS[item.category] || item.category;
+    modalDesc.textContent = item.description || 'No description yet.';
+    modalStatus.textContent = statusLabel(item);
+    modalStatus.className = 'modal-status ' + (item.status === 'sold' ? 'sold' : (item.status === 'priced' ? 'priced' : ''));
+
+    if (isAdmin){
+      adminControls.hidden = false;
+      editName.value = item.name;
+      editDesc.value = item.description || '';
+      editStatus.value = item.status || 'ask';
+      editPrice.value = item.price || '';
+      editPriceWrap.hidden = editStatus.value !== 'priced';
+      saveMsg.textContent = '';
+    } else {
+      adminControls.hidden = true;
+    }
+
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    activeItem = null;
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+
+  editStatus.addEventListener('change', () => {
+    editPriceWrap.hidden = editStatus.value !== 'priced';
+  });
+
+  document.getElementById('saveItemBtn').addEventListener('click', async () => {
+    if (!activeItem) return;
+    saveMsg.textContent = 'Saving...';
+    const updates = {
+      name: editName.value.trim(),
+      description: editDesc.value.trim(),
+      status: editStatus.value,
+      price: editStatus.value === 'priced' ? editPrice.value.trim() : null
+    };
+    const { error } = await supabase.from('gallery_items').update(updates).eq('id', activeItem.id);
+    if (error){
+      saveMsg.textContent = 'Could not save — try again.';
+      console.error(error);
+      return;
+    }
+    Object.assign(activeItem, updates);
+    const idx = galleryItems.findIndex(g => g.id === activeItem.id);
+    if (idx !== -1) galleryItems[idx] = activeItem;
+    saveMsg.textContent = 'Saved!';
+    modalName.textContent = `"${activeItem.name}"`;
+    modalDesc.textContent = activeItem.description || 'No description yet.';
+    modalStatus.textContent = statusLabel(activeItem);
+    renderGallery();
+  });
+
+  // --- Reveal + tilt (re-run after each render since cards are recreated) ---
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  function setupRevealAndTilt(){
+    const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head, .faq-item, .size-table-wrap');
+    revealEls.forEach(el => {
+      if (!el.classList.contains('reveal')){
+        el.classList.add('reveal');
+        revealObserver.observe(el);
+      }
+    });
+
     if (window.matchMedia('(hover: hover)').matches){
-      document.querySelectorAll('.wood-card, .gallery-card').forEach(card => {
+      document.querySelectorAll('.gallery-card').forEach(card => {
+        if (card.dataset.tiltBound) return;
+        card.dataset.tiltBound = '1';
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
           const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -183,9 +326,9 @@
         card.addEventListener('mouseleave', () => { card.style.transform = ''; });
       });
     }
+  }
 
-
-  });
+  setupRevealAndTilt();
 </script>
 <script type="module" src="chat-widget.js"></script>
 </body>
