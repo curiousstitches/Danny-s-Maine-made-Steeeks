@@ -544,6 +544,19 @@
   .gallery-card.has-photo .status.sold{color:#a44;}
   .gallery-card.has-photo .status.priced{color:var(--honey);}
 
+  .gallery-filters{
+    display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center;
+    margin-bottom:1.8rem;
+  }
+  .filter-btn{
+    background:transparent; border:1.5px solid var(--walnut); color:var(--walnut);
+    padding:0.45rem 1.1rem; border-radius:999px; font-size:0.85rem; font-weight:600;
+    cursor:pointer; transition:all 0.18s ease; font-family:inherit;
+  }
+  .filter-btn:hover{background:rgba(74,46,30,0.08);}
+  .filter-btn.active{background:var(--walnut); color:var(--bone); border-color:var(--walnut);}
+  .gallery-card[hidden]{display:none;}
+
   /* ===== PROCESS STRIP ===== */
   .process{
     background:

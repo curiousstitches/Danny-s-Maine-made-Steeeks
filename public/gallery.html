@@ -43,63 +43,73 @@
   <div class="section-head">
     <span class="eyebrow">The Work</span>
     <h2>Gallery</h2>
-    <p>Real finished pieces — for adults, kids, pets, and babies alike. Some shown here are examples of past work rather than current stock; ask about availability.</p>
+    <p>Real finished pieces, each one-of-a-kind — for adults, kids, pets, and babies alike. Some shown here are examples of past work rather than current stock; ask about availability.</p>
   </div>
+
+  <div class="gallery-filters" role="tablist" aria-label="Filter gallery">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="walking-stick">Walking Sticks</button>
+    <button class="filter-btn" data-filter="staff">Staffs</button>
+    <button class="filter-btn" data-filter="poker">Pokers</button>
+    <button class="filter-btn" data-filter="kids-baby">Kids &amp; Baby</button>
+    <button class="filter-btn" data-filter="pet">Pet-Friendly</button>
+  </div>
+
   <div class="gallery-grid">
-    <div class="gallery-card has-photo">
-      <img src="images/gallery-walking-stick.webp" alt="Handmade wood walking stick" loading="lazy">
+    <div class="gallery-card has-photo" data-category="walking-stick">
+      <img src="images/gallery-walking-stick.webp" alt="Handmade wood walking stick, 'The Wanderer'" loading="lazy">
       <div class="info">
-        <div class="label">Walking Steeeck</div>
-        <div class="sub">Hand-carved, natural finish</div>
+        <div class="label">"The Wanderer"</div>
+        <div class="sub">Walking Steeeck — hand-carved, natural finish</div>
         <div class="status">Ask about availability</div>
       </div>
     </div>
-    <div class="gallery-card has-photo">
-      <img src="images/gallery-fire-poker.webp" alt="Handmade wood fire poker" loading="lazy">
+    <div class="gallery-card has-photo" data-category="poker">
+      <img src="images/gallery-fire-poker.webp" alt="Handmade wood fire poker, 'The Ember Keeper'" loading="lazy">
       <div class="info">
-        <div class="label">Fire Poker</div>
-        <div class="sub">Built for the fire pit</div>
+        <div class="label">"The Ember Keeper"</div>
+        <div class="sub">Fire Poker — built for the fire pit</div>
         <div class="status">Ask about availability</div>
       </div>
     </div>
-    <div class="gallery-card has-photo">
-      <img src="images/gallery-softwood-staff.webp" alt="Softwood walking staff" loading="lazy">
+    <div class="gallery-card has-photo" data-category="staff">
+      <img src="images/gallery-softwood-staff.webp" alt="Softwood walking staff, 'The Trailblazer'" loading="lazy">
       <div class="info">
-        <div class="label">Softwood Staff</div>
-        <div class="sub">Pine — built to show</div>
+        <div class="label">"The Trailblazer"</div>
+        <div class="sub">Softwood Staff — pine, built to show</div>
         <div class="status">Ask about availability</div>
       </div>
     </div>
-    <div class="gallery-card has-photo">
-      <img src="images/gallery-hardwood-staff.webp" alt="Hardwood walking staff" loading="lazy">
+    <div class="gallery-card has-photo" data-category="staff">
+      <img src="images/gallery-hardwood-staff.webp" alt="Hardwood walking staff, 'The Ridgeback'" loading="lazy">
       <div class="info">
-        <div class="label">Hardwood Staff</div>
-        <div class="sub">Built to last on the trail</div>
+        <div class="label">"The Ridgeback"</div>
+        <div class="sub">Hardwood Staff — built to last on the trail</div>
         <div class="status">Ask about availability</div>
       </div>
     </div>
-    <div class="gallery-card has-photo">
-      <img src="images/gallery-defense-staff.webp" alt="Two-handed walking staff" loading="lazy">
+    <div class="gallery-card has-photo" data-category="staff">
+      <img src="images/gallery-defense-staff.webp" alt="Two-handed walking staff, 'The Guardian'" loading="lazy">
       <div class="info">
-        <div class="label">Two-Handed Steeeck</div>
-        <div class="sub">Sturdy grip, all-purpose build</div>
+        <div class="label">"The Guardian"</div>
+        <div class="sub">Two-Handed Steeeck — sturdy grip, all-purpose build</div>
         <div class="status">Ask about availability</div>
       </div>
     </div>
-    <div class="gallery-card">
+    <div class="gallery-card" data-category="pet">
       <div class="icon">🐾</div>
       <div class="label">Photo coming soon</div>
       <div class="sub">Pet-size steeeck</div>
     </div>
-    <div class="gallery-card has-photo">
-      <img src="images/gallery-baby-first.webp" alt="Baby's first softwood walking stick" loading="lazy">
+    <div class="gallery-card has-photo" data-category="kids-baby">
+      <img src="images/gallery-baby-first.webp" alt="Baby's first softwood walking stick, 'Li'l Sprout'" loading="lazy">
       <div class="info">
-        <div class="label">Baby's First Steeeck</div>
-        <div class="sub">Softwood</div>
+        <div class="label">"Li'l Sprout"</div>
+        <div class="sub">Baby's First Steeeck — softwood</div>
         <div class="status">Ask about availability</div>
       </div>
     </div>
-    <div class="gallery-card">
+    <div class="gallery-card" data-category="kids-baby">
       <div class="icon">🧒</div>
       <div class="label">Photo coming soon</div>
       <div class="sub">Children's size</div>
@@ -145,6 +155,21 @@
       });
     }, { threshold: 0.15 });
     revealEls.forEach(el => observer.observe(el));
+
+    // Category filter buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.gallery-card');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        cards.forEach(card => {
+          const match = filter === 'all' || card.dataset.category === filter;
+          card.hidden = !match;
+        });
+      });
+    });
 
     // Gentle tilt-on-hover for cards (desktop only)
     if (window.matchMedia('(hover: hover)').matches){
