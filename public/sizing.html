@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sizing Guide — Mr Steeeck</title>
+<meta name="description" content="Sizing guide for walking sticks, staffs, pokers, and pet-size steeecks.">
+<meta name="theme-color" content="#241a13">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav>
+  <div class="wordmark"><a href="index.html" style="color:inherit; text-decoration:none;">Mr <span>Steeeck</span></a></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="craft.html">The Craft</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="sizing.html" class="active">Sizing</a></li>
+    <li><a href="pets.html">Pet-Friendly</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="custom.html">Custom Order</a></li>
+    <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
+    <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
+  </ul>
+</nav>
+<div class="page-header bark-bg">
+  <a href="index.html" class="back-btn">&larr; Back to Home</a>
+  <h1>Sizing Guide</h1>
+  <p>Not sure what to order? Start here.</p>
+</div>
+<section class="sizing" id="sizing">
+  <div class="section-head">
+    <span class="eyebrow">Get It Right</span>
+    <h2>Sizing guide</h2>
+    <p>Not sure what to order? Use these as a starting point — every steeeck can still be custom-cut to an exact length.</p>
+  </div>
+  <div class="size-table-wrap">
+    <table class="size-table">
+      <thead><tr><th>Who it's for</th><th>Typical length</th></tr></thead>
+      <tbody>
+        <tr><td>Adult (5'4"–6'0")</td><td>48"–55"</td></tr>
+        <tr><td>Adult, taller (6'1"+)</td><td>55"–60"</td></tr>
+        <tr><td>Kids (ages 6–12)</td><td>30"–40"</td></tr>
+        <tr><td>Baby's first steeeck (display, not for walking on)</td><td>12"–18"</td></tr>
+        <tr><td>Pets (small–medium breeds)</td><td>14"–22"</td></tr>
+        <tr><td>Fire poker</td><td>28"–34"</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="text-align:center; margin-top:1.2rem; font-size:0.88rem; color:#6b5a40;">Rule of thumb for adults: a steeeck should reach about wrist height when your arm hangs relaxed at your side.</p>
+</section>
+<footer class="bark-bg">
+  <div class="wordmark">Mr Steeeck</div>
+  <p>Handmade steeecks, staffs &amp; pokers.</p>
+  <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
+</footer>
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    const adminSlot = document.getElementById('navAdminSlot');
+    const authSlot = document.getElementById('navAuthSlot');
+    if (session && ADMIN_EMAILS.includes(session.user.email)){
+      if (adminSlot) adminSlot.style.display = '';
+      if (authSlot){
+        authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+        document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
+          e.preventDefault();
+          await supabase.auth.signOut();
+          window.location.reload();
+        });
+      }
+    } else if (session){
+      if (authSlot) authSlot.innerHTML = '<a href="auth.html">Account</a>';
+    }
+  });
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // Scroll-reveal: fade+rise elements into view as the user scrolls
+    const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head, .faq-item, .size-table-wrap');
+    revealEls.forEach(el => el.classList.add('reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Gentle tilt-on-hover for cards (desktop only)
+    if (window.matchMedia('(hover: hover)').matches){
+      document.querySelectorAll('.wood-card, .gallery-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `translateY(-4px) scale(1.02) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      });
+    }
+
+
+  });
+</script>
+</body>
+</html>

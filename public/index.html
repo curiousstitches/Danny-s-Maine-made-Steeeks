@@ -3,638 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mr Steeeck — Handmade Steeecks, Staffs & Pokers</title>
-<meta name="description" content="Handcrafted walking steeecks, staffs, and pokers for adults, kids, pets, and babies. Custom orders welcome.">
+<title>Mr Steeeck — Handmade Sticks, Staffs & Pokers</title>
+<meta name="description" content="Handcrafted walking sticks, staffs, and pokers for adults, kids, pets, and babies. Custom orders welcome.">
 <meta name="theme-color" content="#241a13">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
-
-  :root{
-    --bark:#241a13;
-    --walnut:#4a2e1e;
-    --honey:#c98a3e;
-    --honey-bright:#e0a854;
-    --parchment:#efe6d0;
-    --bone:#faf6ef;
-    --moss:#6b7d4f;
-    --moss-deep:#3f4b2c;
-    --forest:#2f3b26;
-    --birch:#e8e1d0;
-    --birch-mark:#3a332a;
-    --sap:#b8792f;
-  }
-
-  *{margin:0;padding:0;box-sizing:border-box;}
-
-  /* Real bark texture: vertical ridges + cracks + scattered moss patches */
-  .bark-bg{
-    background:
-      radial-gradient(circle 85px at 12% 18%, rgba(120,140,90,0.32), transparent 70%),
-      radial-gradient(circle 55px at 88% 12%, rgba(63,75,44,0.3), transparent 70%),
-      radial-gradient(circle 110px at 78% 68%, rgba(107,125,79,0.22), transparent 70%),
-      radial-gradient(circle 45px at 18% 78%, rgba(63,75,44,0.28), transparent 70%),
-      radial-gradient(circle 65px at 48% 40%, rgba(107,125,79,0.14), transparent 70%),
-      radial-gradient(circle 40px at 60% 90%, rgba(120,140,90,0.2), transparent 70%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.12) 7px, rgba(0,0,0,0.12) 9px,
-        transparent 9px, transparent 19px),
-      repeating-linear-gradient(93deg,
-        rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px,
-        transparent 1px, transparent 13px),
-      repeating-linear-gradient(86deg,
-        rgba(0,0,0,0.28) 0px, rgba(0,0,0,0.28) 1px,
-        transparent 1px, transparent 41px),
-      radial-gradient(ellipse at 30% 0%, #3a2818 0%, transparent 60%),
-      var(--bark);
-  }
-  .wood-card, .gallery-card, .process-step{transform-style:preserve-3d;}
-  .reveal{opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease;}
-  .reveal.revealed{opacity:1; transform:translateY(0);}
-  @media (prefers-reduced-motion: reduce){
-    .reveal{opacity:1; transform:none; transition:none;}
-  }
-  html, body{max-width:100%; overflow-x:hidden;}
-  img, svg{max-width:100%; height:auto;}
-  html{scroll-behavior:smooth;}
-  body{
-    font-family:'Work Sans', sans-serif;
-    background:
-      radial-gradient(ellipse 600px 400px at 8% 8%, rgba(107,125,79,0.14), transparent 60%),
-      radial-gradient(ellipse 500px 350px at 95% 30%, rgba(63,75,44,0.12), transparent 55%),
-      radial-gradient(ellipse 700px 500px at 50% 90%, rgba(201,138,62,0.10), transparent 60%),
-      repeating-linear-gradient(0deg,
-        transparent 0px, transparent 38px,
-        rgba(58,51,42,0.05) 38px, rgba(58,51,42,0.05) 40px,
-        transparent 40px, transparent 74px,
-        rgba(58,51,42,0.09) 74px, rgba(58,51,42,0.09) 77px),
-      repeating-linear-gradient(90deg,
-        rgba(58,51,42,0.02) 0px, rgba(58,51,42,0.02) 2px,
-        transparent 2px, transparent 5px),
-      var(--birch);
-    color:var(--bark);
-    line-height:1.6;
-    position:relative;
-  }
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    pointer-events:none;
-    z-index:1000;
-    opacity:0.035;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    mix-blend-mode:multiply;
-  }
-  body::after{
-    content:"";
-    position:fixed; inset:0;
-    pointer-events:none;
-    z-index:999;
-    opacity:0.5;
-    mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg stroke='%233a332a' stroke-linecap='round' fill='none'%3E%3Cpath d='M12 24 q8 -2 16 0' stroke-width='2.4' opacity='0.55'/%3E%3Cpath d='M60 15 q10 -3 20 1' stroke-width='2' opacity='0.4'/%3E%3Cpath d='M140 40 q9 -2 18 0' stroke-width='2.6' opacity='0.5'/%3E%3Cpath d='M200 20 q7 -2 14 1' stroke-width='1.8' opacity='0.35'/%3E%3Cpath d='M30 110 q9 -2 17 1' stroke-width='2.2' opacity='0.45'/%3E%3Cpath d='M100 130 q11 -3 21 0' stroke-width='2.6' opacity='0.5'/%3E%3Cpath d='M180 150 q8 -2 16 1' stroke-width='2' opacity='0.4'/%3E%3Cpath d='M230 100 q7 -2 13 0' stroke-width='1.8' opacity='0.3'/%3E%3Cpath d='M50 200 q9 -2 18 0' stroke-width='2.3' opacity='0.45'/%3E%3Cpath d='M150 220 q10 -3 19 1' stroke-width='2.4' opacity='0.5'/%3E%3Cpath d='M220 230 q8 -2 15 0' stroke-width='1.9' opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
-    background-size:260px 260px;
-  }
-  @media (prefers-reduced-motion: reduce){
-    html{scroll-behavior:auto;}
-    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
-  }
-
-  h1,h2,h3{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    letter-spacing:-0.01em;
-  }
-
-  a{color:inherit;}
-  button, .btn{
-    font-family:'Work Sans', sans-serif;
-    cursor:pointer;
-    border:none;
-  }
-  :focus-visible{
-    outline:3px solid var(--honey-bright);
-    outline-offset:3px;
-  }
-
-  /* ===== NAV ===== */
-  nav{
-    position:sticky; top:0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:1.1rem 6vw;
-    background:rgba(36,26,19,0.92);
-    backdrop-filter:blur(6px);
-    color:var(--bone);
-  }
-  nav .wordmark{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:1.25rem;
-    letter-spacing:0.02em;
-  }
-  nav .wordmark span{color:var(--honey-bright);}
-  nav ul{
-    list-style:none;
-    display:flex;
-    gap:1.8rem;
-    font-size:0.92rem;
-  }
-  nav ul a{
-    text-decoration:none; opacity:0.85; transition:opacity 0.2s;
-    position:relative; padding-bottom:3px;
-  }
-  nav ul a::after{
-    content:"";
-    position:absolute; left:0; bottom:0;
-    width:0%; height:1.5px;
-    background:var(--honey-bright);
-    transition:width 0.25s ease;
-  }
-  nav ul a:hover::after{width:100%;}
-  nav ul a:hover{opacity:1;}
-  nav .nav-links{display:flex;}
-  @media (max-width:640px){
-    nav ul{gap:1rem; font-size:0.8rem;}
-  }
-  @media (max-width:400px){
-    nav{padding:0.9rem 5vw; flex-wrap:wrap; gap:0.6rem; justify-content:center; text-align:center;}
-    nav ul{gap:0.7rem; font-size:0.74rem;}
-  }
-
-  /* ===== HERO ===== */
-  .hero{
-    position:relative;
-    min-height:78vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
-    padding:7rem 6vw 3.5rem;
-    background:
-      radial-gradient(ellipse at 78% 15%, #45301a 0%, transparent 55%),
-      radial-gradient(circle 90px at 12% 18%, rgba(120,140,90,0.32), transparent 70%),
-      radial-gradient(circle 60px at 85% 68%, rgba(63,75,44,0.3), transparent 70%),
-      radial-gradient(circle 50px at 22% 82%, rgba(107,125,79,0.24), transparent 70%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.12) 7px, rgba(0,0,0,0.12) 9px,
-        transparent 9px, transparent 19px),
-      repeating-linear-gradient(93deg,
-        rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px,
-        transparent 1px, transparent 13px),
-      repeating-linear-gradient(86deg,
-        rgba(0,0,0,0.28) 0px, rgba(0,0,0,0.28) 1px,
-        transparent 1px, transparent 41px),
-      var(--bark);
-    color:var(--bone);
-    overflow:hidden;
-  }
-  @media (max-width:880px){
-    .hero{min-height:auto; padding:5.5rem 6vw 3.5rem;}
-  }
-  .hero-copy{position:relative; z-index:2; max-width:760px;}
-  .leaves{position:absolute; inset:0; overflow:hidden; z-index:1; pointer-events:none;}
-  .leaf{
-    position:absolute; top:-30px;
-    font-size:1.1rem;
-    opacity:0.55;
-    animation:leafFall linear infinite;
-  }
-  @keyframes leafFall{
-    0%{transform:translateY(0) translateX(0) rotate(0deg); opacity:0;}
-    8%{opacity:0.6;}
-    92%{opacity:0.5;}
-    100%{transform:translateY(110vh) translateX(var(--drift, 40px)) rotate(340deg); opacity:0;}
-  }
-  @media (prefers-reduced-motion: reduce){
-    .leaf{animation:none; display:none;}
-  }
-  .hero .eyebrow{
-    font-size:0.8rem;
-    letter-spacing:0.22em;
-    text-transform:uppercase;
-    color:var(--honey-bright);
-    margin-bottom:1.4rem;
-  }
-  .hero h1{
-    font-size:clamp(2.6rem, 6vw, 5rem);
-    line-height:0.98;
-    color:var(--bone);
-    text-shadow:0 4px 24px rgba(0,0,0,0.4);
-  }
-  .hero h1 em{
-    font-style:italic;
-    color:var(--honey-bright);
-    text-shadow:0 4px 24px rgba(224,168,84,0.25);
-  }
-  .hero p.tagline{
-    max-width:56ch;
-    margin:1.6rem auto 2.4rem;
-    font-size:1.2rem;
-    line-height:1.7;
-    color:#ecdfc8;
-  }
-  .hero .cta-row{
-    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
-  }
-  .tree-showcase{
-    position:relative;
-    display:grid;
-    place-items:center;
-    min-height:420px;
-    padding:2rem 0;
-  }
-  .tree-showcase > *{grid-area:1 / 1;}
-  .tree-showcase .glow{
-    position:relative;
-    width:360px; height:360px;
-    background:radial-gradient(circle, rgba(107,125,79,0.28) 0%, rgba(201,138,62,0.18) 45%, transparent 72%);
-    filter:blur(14px);
-  }
-  .tree-showcase svg{width:min(440px, 88vw); height:auto; position:relative;}
-  @media (max-width:500px){
-    .tree-showcase{min-height:320px;}
-  }
-
-  /* Live shop carousel */
-  .shop-carousel{
-    position:relative;
-    width:340px; height:340px;
-    border-radius:50%;
-    overflow:hidden;
-    border:3px solid rgba(224,168,84,0.5);
-    box-shadow:0 25px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.35);
-    cursor:pointer;
-  }
-  @media (max-width:880px){.shop-carousel{width:270px; height:270px;}}
-  @media (max-width:400px){.shop-carousel{width:220px; height:220px;}}
-  .shop-slide{
-    position:absolute; inset:0;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center;
-    padding:1.2rem;
-    opacity:0;
-    transform:scale(1.06);
-    transition:opacity 0.7s ease, transform 0.7s ease;
-  }
-  .shop-slide.active{opacity:1; transform:scale(1);}
-  .shop-slide .swatch{
-    width:64px; height:64px; border-radius:50%;
-    margin-bottom:0.8rem;
-    box-shadow:inset 0 0 18px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.3);
-  }
-  .shop-slide .item-name{
-    font-family:'Fraunces', serif; font-weight:600;
-    color:var(--bone); font-size:1.05rem; margin-bottom:0.35rem;
-  }
-  .shop-slide .item-price{
-    color:var(--honey-bright); font-weight:600; font-size:0.95rem;
-    background:rgba(0,0,0,0.25);
-    padding:0.2rem 0.7rem; border-radius:20px;
-  }
-  .shop-dots{
-    display:flex; gap:0.4rem; justify-content:center;
-    position:absolute; bottom:14px; left:0; right:0; z-index:3;
-  }
-  .shop-dots span{
-    width:6px; height:6px; border-radius:50%;
-    background:rgba(250,246,239,0.35);
-    transition:background 0.3s ease, transform 0.3s ease;
-  }
-  .shop-dots span.active{background:var(--honey-bright); transform:scale(1.3);}
-
-  /* Hover-pop on clickable things, site-wide */
-  nav ul a, .wood-card, .gallery-card, .process-step, .btn-primary, .btn-secondary, .shop-carousel{
-    transition:transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, opacity 0.22s ease;
-  }
-  nav ul a:hover{transform:translateY(-1px) scale(1.06);}
-  .wood-card:hover{transform:translateY(-3px) scale(1.015); box-shadow:0 16px 32px rgba(74,46,30,0.18);}
-  .process-step{border-radius:6px; padding:0.4rem;}
-  .process-step:hover{transform:translateY(-4px) scale(1.03);}
-  .shop-carousel:hover{transform:scale(1.04);}
-  .btn-primary{
-    background:var(--honey-bright);
-    color:var(--bark);
-    padding:0.95rem 1.9rem;
-    border-radius:2px;
-    font-weight:600;
-    font-size:0.95rem;
-    letter-spacing:0.01em;
-    text-decoration:none;
-    display:inline-block;
-    box-shadow:0 8px 20px rgba(201,138,62,0.25);
-    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
-  }
-  .btn-primary:hover{background:#f0bd6f; transform:translateY(-2px); box-shadow:0 12px 26px rgba(201,138,62,0.35);}
-  .btn-secondary{
-    background:transparent;
-    color:var(--bone);
-    border:1px solid rgba(250,246,239,0.35) !important;
-    padding:0.95rem 1.9rem;
-    border-radius:2px;
-    font-weight:500;
-    font-size:0.95rem;
-    text-decoration:none;
-    display:inline-block;
-    transition:border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
-  }
-  .btn-secondary:hover{background:rgba(250,246,239,0.08); border-color:var(--bone) !important; transform:translateY(-2px);}
-
-  /* ===== GROWTH RING SIGNATURE ===== */
-  .ring{
-    fill:none;
-    stroke:var(--honey);
-    stroke-width:1.4;
-    opacity:0;
-    transform-origin:center;
-    stroke-dasharray:900;
-    stroke-dashoffset:900;
-  }
-  .ring.drawn{
-    animation:draw 1.1s ease forwards;
-  }
-  @keyframes draw{
-    to{opacity:0.85; stroke-dashoffset:0;}
-  }
-  .rings-caption{
-    text-align:center;
-    font-size:0.8rem;
-    color:#b7a892;
-    margin-top:1rem;
-    letter-spacing:0.04em;
-  }
-  .rings-subcaption{
-    text-align:center;
-    font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase;
-    color:#8f8171; margin-top:0.4rem;
-  }
-
-  /* ===== SECTION SHARED ===== */
-  section{padding:5.5rem 6vw;}
-  @media (max-width:480px){
-    section{padding:3.6rem 5.5vw;}
-  }
-  .section-head{max-width:640px; margin:0 auto 3rem;}
-  .section-head .eyebrow{
-    font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase;
-    color:var(--moss); margin-bottom:0.7rem; display:block; font-weight:600;
-  }
-  .section-head h2{font-size:clamp(1.9rem, 4vw, 2.6rem); color:var(--walnut);}
-  .section-head p{color:#4a3c2e; margin-top:0.9rem; font-size:1.06rem; line-height:1.7;}
-
-  /* ===== STORY / WOOD TYPES ===== */
-  .story{background:rgba(250,246,239,0.35);}
-  .wood-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:1.6rem;
-    max-width:920px; margin:0 auto;
-  }
-  @media (max-width:700px){.wood-grid{grid-template-columns:1fr;}}
-  .wood-card{
-    background:var(--parchment);
-    border:1px solid #e3d5ba;
-    border-radius:4px;
-    padding:2rem;
-  }
-  .wood-card .tag{
-    font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;
-    font-weight:600; color:var(--honey);
-  }
-  .wood-card h3{font-size:1.35rem; margin:0.4rem 0 0.7rem; color:var(--walnut);}
-  .wood-card p{color:#4a3c2e; font-size:1rem; line-height:1.65;}
-  .wood-card.hard{border-left:5px solid var(--walnut);}
-  .wood-card.soft{border-left:5px solid var(--moss);}
-
-  /* ===== GALLERY ===== */
-  .gallery{background:rgba(239,230,208,0.3);}
-  .gallery-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-    gap:1.4rem;
-    max-width:1080px; margin:0 auto;
-  }
-  .gallery-card{
-    aspect-ratio:4/5;
-    border-radius:4px;
-    background:
-      repeating-linear-gradient(115deg, #d8c6a2 0px, #d8c6a2 8px, #cdb88f 8px, #cdb88f 16px);
-    border:1.5px dashed #a98f63;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:1.2rem;
-    color:#6b5a40;
-  }
-  .gallery-card .icon{font-size:1.8rem; margin-bottom:0.6rem;}
-  .gallery-card .label{font-weight:600; font-size:0.92rem;}
-  .gallery-card .sub{font-size:0.78rem; margin-top:0.3rem; color:#7d6c50;}
-  .gallery-card{transition:transform 0.2s ease, box-shadow 0.2s ease;}
-  .gallery-card:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(74,46,30,0.15);}
-
-  /* ===== PROCESS STRIP ===== */
-  .process{
-    background:
-      radial-gradient(circle 90px at 10% 20%, rgba(107,125,79,0.28), transparent 65%),
-      radial-gradient(circle 70px at 90% 80%, rgba(63,75,44,0.24), transparent 65%),
-      radial-gradient(circle 45px at 55% 30%, rgba(120,140,90,0.16), transparent 65%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.12) 7px, rgba(0,0,0,0.12) 9px,
-        transparent 9px, transparent 19px),
-      repeating-linear-gradient(93deg,
-        rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px,
-        transparent 1px, transparent 13px),
-      var(--bark);
-    color:var(--bone); padding:4rem 6vw;
-  }
-  .process-grid{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:2.2rem;
-    max-width:980px; margin:0 auto;
-  }
-  @media (max-width:760px){.process-grid{grid-template-columns:1fr;}}
-  .process-step{text-align:center;}
-  .process-step .num{
-    font-family:'Fraunces', serif; font-style:italic;
-    color:var(--honey-bright); font-size:1.1rem; margin-bottom:0.8rem;
-  }
-  .process-step h3{font-size:1.15rem; color:var(--bone); margin-bottom:0.5rem;}
-  .process-step p{font-size:0.9rem; color:#c2b39b;}
-
-  /* ===== CUSTOM ORDER ===== */
-  .custom{
-    background:
-      radial-gradient(circle 100px at 85% 10%, rgba(107,125,79,0.26), transparent 65%),
-      radial-gradient(circle 55px at 15% 75%, rgba(63,75,44,0.22), transparent 65%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.16) 0px, rgba(0,0,0,0.16) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.09) 7px, rgba(0,0,0,0.09) 9px,
-        transparent 9px, transparent 19px),
-      repeating-linear-gradient(93deg,
-        rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
-        transparent 1px, transparent 13px),
-      var(--walnut);
-    color:var(--bone);
-  }
-  .custom .section-head h2{color:var(--bone);}
-  .custom .section-head .eyebrow{color:var(--honey-bright);}
-  .custom .section-head p{color:#e0d3bd;}
-  .custom-box{
-    max-width:640px; margin:0 auto;
-    background:rgba(250,246,239,0.06);
-    border:1px solid rgba(250,246,239,0.18);
-    border-radius:4px;
-    padding:2.2rem;
-    text-align:center;
-  }
-  .custom-box p{color:#e0d3bd; margin-bottom:1.4rem;}
-  .custom-box a.email{
-    font-family:'Fraunces', serif;
-    font-size:1.3rem;
-    color:var(--honey-bright);
-    text-decoration:none;
-    border-bottom:1px solid var(--honey-bright);
-  }
-  .custom-note{
-    margin-top:1.6rem;
-    font-size:0.82rem;
-    color:#c2b39b;
-  }
-  /* ===== SIZING GUIDE ===== */
-  .sizing{background:rgba(250,246,239,0.35);}
-  .size-table-wrap{max-width:640px; margin:0 auto; overflow-x:auto;}
-  .size-table{width:100%; border-collapse:collapse; background:var(--bone); border-radius:5px; overflow:hidden;}
-  .size-table th, .size-table td{text-align:left; padding:0.85rem 1.1rem; font-size:0.92rem; border-bottom:1px solid #e3d5ba;}
-  .size-table th{background:var(--walnut); color:var(--bone); font-weight:600;}
-  .size-table tr:last-child td{border-bottom:none;}
-  .size-table tr:hover td{background:rgba(201,138,62,0.08);}
-
-  /* ===== CARE ===== */
-  .care{background:rgba(239,230,208,0.3);}
-
-  /* ===== FAQ ===== */
-  .faq{background:rgba(250,246,239,0.35);}
-  .faq-list{max-width:640px; margin:0 auto;}
-  .faq-item{
-    background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
-    padding:1rem 1.3rem; margin-bottom:0.8rem;
-  }
-  .faq-item summary{
-    font-family:'Fraunces', serif; font-weight:600; font-size:1.02rem;
-    color:var(--walnut); cursor:pointer; list-style:none;
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .faq-item summary::-webkit-details-marker{display:none;}
-  .faq-item summary::after{
-    content:"+"; font-size:1.3rem; color:var(--honey); margin-left:1rem;
-    transition:transform 0.2s ease;
-  }
-  .faq-item[open] summary::after{transform:rotate(45deg);}
-  .faq-item p{margin-top:0.8rem; font-size:0.92rem; line-height:1.65; color:#4a3c2e;}
-
-  /* ===== ORDER FORM ===== */
-  .order-form{text-align:left; margin-bottom:0.4rem;}
-  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:0.9rem;}
-  @media (max-width:520px){.form-row{grid-template-columns:1fr;}}
-  .form-field{margin-bottom:1rem;}
-  .form-field label{display:block; font-size:0.82rem; color:#d8cdbc; margin-bottom:0.4rem;}
-  .form-field input, .form-field select, .form-field textarea{
-    width:100%; padding:0.7rem 0.85rem;
-    background:rgba(0,0,0,0.25); border:1px solid rgba(250,246,239,0.2);
-    border-radius:3px; color:var(--bone); font-size:0.92rem; font-family:inherit;
-  }
-  .form-field textarea{resize:vertical;}
-  .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
-    outline:2px solid var(--honey-bright); border-color:transparent;
-  }
-  .form-field select option{background:var(--walnut); color:var(--bone);}
-  #orderMsg{
-    font-size:0.85rem; margin-top:1rem; padding:0.7rem 0.9rem;
-    border-radius:3px; display:none;
-  }
-  #orderMsg.show{display:block;}
-  #orderMsg.error{background:rgba(180,60,50,0.18); color:#f0a898; border:1px solid rgba(180,60,50,0.3);}
-  #orderMsg.success{background:rgba(107,125,79,0.22); color:#c8d6b0; border:1px solid rgba(107,125,79,0.4);}
-
-  .pay-warning{
-    margin-top:1.6rem;
-    background:rgba(180,60,50,0.16);
-    border:1px solid rgba(200,90,70,0.35);
-    color:#f0c4b8;
-    font-size:0.85rem;
-    line-height:1.55;
-    padding:0.9rem 1.1rem;
-    border-radius:4px;
-    text-align:left;
-  }
-  .pay-confirm{
-    display:flex; align-items:center; gap:0.6rem;
-    justify-content:center;
-    margin-top:1.1rem;
-    font-size:0.88rem;
-    color:#e0d3bd;
-    cursor:pointer;
-  }
-  .pay-confirm input{width:16px; height:16px; accent-color:var(--honey-bright); cursor:pointer;}
-  .pay-row{
-    display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap;
-    margin-top:1.6rem;
-    transition:opacity 0.3s ease;
-  }
-  .pay-row.locked .pay-btn{
-    pointer-events:none;
-    opacity:0.4;
-    filter:grayscale(0.6);
-  }
-  .pay-btn{
-    padding:0.7rem 1.4rem;
-    border-radius:3px;
-    font-size:0.88rem; font-weight:600;
-    text-decoration:none;
-    transition:transform 0.18s ease, box-shadow 0.18s ease, opacity 0.3s ease, filter 0.3s ease;
-  }
-  .pay-btn.cashapp{background:#00d64f; color:#0a2e16;}
-  .pay-btn.venmo{background:#3d95ce; color:#0a1f2e;}
-  .pay-btn:hover{transform:translateY(-2px) scale(1.03); box-shadow:0 10px 22px rgba(0,0,0,0.3);}
-
-  /* ===== FOOTER ===== */
-  footer{
-    background:
-      radial-gradient(circle 70px at 20% 30%, rgba(107,125,79,0.2), transparent 65%),
-      radial-gradient(circle 50px at 80% 60%, rgba(63,75,44,0.18), transparent 65%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.1) 7px, rgba(0,0,0,0.1) 9px,
-        transparent 9px, transparent 19px),
-      var(--bark);
-    color:#8f8171;
-    padding:3rem 6vw 2.2rem;
-    text-align:center;
-    font-size:0.85rem;
-  }
-  footer .wordmark{
-    font-family:'Fraunces', serif;
-    color:var(--bone);
-    font-size:1.1rem;
-    margin-bottom:0.6rem;
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <nav>
-  <div class="wordmark">Mr <span>Steeeck</span></div>
+  <div class="wordmark"><a href="index.html" style="color:inherit; text-decoration:none;">Mr <span>Steeeck</span></a></div>
   <ul class="nav-links">
-    <li><a href="#story">The Craft</a></li>
-    <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#custom">Custom Order</a></li>
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="craft.html">The Craft</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="sizing.html">Sizing</a></li>
+    <li><a href="pets.html">Pet-Friendly</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="custom.html">Custom Order</a></li>
     <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
     <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
   </ul>
 </nav>
-
 <header class="hero">
   <div class="leaves" id="leaves" aria-hidden="true"></div>
   <div class="hero-copy">
@@ -642,12 +30,11 @@
     <h1>Cut from the<br><em>forest floor.</em></h1>
     <p class="tagline">Hand-carved walking steeecks, staffs, and pokers — made from real hardwood and pine. Sized for adults, kids, pets, and even babies. Everyone deserves their own steeeck, built to hold up on the trail.</p>
     <div class="cta-row">
-      <a href="#custom" class="btn-primary">Request a Custom Steeeck</a>
-      <a href="#gallery" class="btn-secondary">See the Work</a>
+      <a href="custom.html" class="btn-primary">Request a Custom Steeeck</a>
+      <a href="gallery.html" class="btn-secondary">See the Work</a>
     </div>
   </div>
 </header>
-
 <div class="bark-bg" style="padding-top:1rem;">
   <div class="tree-showcase">
     <div class="glow" aria-hidden="true"></div>
@@ -658,6 +45,7 @@
       <circle class="ring" cx="100" cy="100" r="90"/>
     </svg>
     <div class="shop-carousel" id="shopCarousel" role="group" aria-label="Featured pieces for sale">
+      <div class="shop-carousel-circle">
       <div class="shop-slide active" data-swatch="linear-gradient(135deg,#6b4324,#8a5c34)">
         <div class="swatch" style="background:linear-gradient(135deg,#6b4324,#8a5c34)"></div>
         <div class="item-name">Hardwood Trail Staff</div>
@@ -689,261 +77,59 @@
         <div class="item-price">$12</div>
       </div>
       <div class="shop-dots" id="shopDots"></div>
+      </div>
+      <button type="button" class="carousel-arrow prev" id="carouselPrev" aria-label="Previous item">&#8249;</button>
+      <button type="button" class="carousel-arrow next" id="carouselNext" aria-label="Next item">&#8250;</button>
     </div>
   </div>
   <p class="rings-caption">Every steeeck carries the years it took to grow.</p>
   <p class="rings-subcaption" style="padding-bottom:3.5rem;">Sample pricing — swap in your real pieces anytime</p>
 </div>
-
-<section class="process">
-  <div class="process-grid">
-    <div class="process-step">
-      <div class="num">01</div>
-      <h3>Choose the wood</h3>
-      <p>Hardwood for a lifetime on the trail, pine for a piece built to be seen.</p>
-    </div>
-    <div class="process-step">
-      <div class="num">02</div>
-      <h3>Shape it by hand</h3>
-      <p>Every curve, taper, and grip is carved individually — no two are identical.</p>
-    </div>
-    <div class="process-step">
-      <div class="num">03</div>
-      <h3>Finish and deliver</h3>
-      <p>Sealed, sanded smooth, and sized to you — ready for the next trail.</p>
-    </div>
-  </div>
-</section>
-
-<section class="story" id="story">
-  <div class="section-head">
-    <span class="eyebrow">Know Your Wood</span>
-    <h2>Two woods, two jobs.</h2>
-    <p>Not every steeeck is built for the same trail — here's how we choose the wood for yours.</p>
-  </div>
-  <div class="wood-grid">
-    <div class="wood-card hard">
-      <span class="tag">Built to Last</span>
-      <h3>Hardwood</h3>
-      <p>Dense, heavy, and durable. This is what goes with you up the mountain — a hardwood staff will outlast years of real climbing and rough use.</p>
-    </div>
-    <div class="wood-card soft">
-      <span class="tag">Made to Show</span>
-      <h3>Softwood — Pine</h3>
-      <p>Our most-used wood. Lighter and easier to carve into detail, pine steeecks are the ones you display, gift, or carry for the look as much as the walk.</p>
-    </div>
-  </div>
-</section>
-
-<section class="gallery" id="gallery">
-  <div class="section-head">
-    <span class="eyebrow">The Work</span>
-    <h2>Gallery — coming soon</h2>
-    <p>Photos of finished steeecks, staffs, and pokers will go here as they're taken — for adults, kids, pets, and babies alike.</p>
-  </div>
-  <div class="gallery-grid">
-    <div class="gallery-card">
-      <div class="icon">🪵</div>
-      <div class="label">Photo coming soon</div>
-      <div class="sub">Hardwood staff</div>
-    </div>
-    <div class="gallery-card">
-      <div class="icon">🪵</div>
-      <div class="label">Photo coming soon</div>
-      <div class="sub">Pine walking steeeck</div>
-    </div>
-    <div class="gallery-card">
-      <div class="icon">🪵</div>
-      <div class="label">Photo coming soon</div>
-      <div class="sub">Children's size</div>
-    </div>
-    <div class="gallery-card">
-      <div class="icon">🪵</div>
-      <div class="label">Photo coming soon</div>
-      <div class="sub">Poker</div>
-    </div>
-    <div class="gallery-card">
-      <div class="icon">🐾</div>
-      <div class="label">Photo coming soon</div>
-      <div class="sub">Pet-size steeeck</div>
-    </div>
-    <div class="gallery-card">
-      <div class="icon">👶</div>
-      <div class="label">Photo coming soon</div>
-      <div class="sub">Baby's first steeeck</div>
-    </div>
-  </div>
-</section>
-
-<section class="sizing" id="sizing">
-  <div class="section-head">
-    <span class="eyebrow">Get It Right</span>
-    <h2>Sizing guide</h2>
-    <p>Not sure what to order? Use these as a starting point — every steeeck can still be custom-cut to an exact length.</p>
-  </div>
-  <div class="size-table-wrap">
-    <table class="size-table">
-      <thead><tr><th>Who it's for</th><th>Typical length</th></tr></thead>
-      <tbody>
-        <tr><td>Adult (5'4"–6'0")</td><td>48"–55"</td></tr>
-        <tr><td>Adult, taller (6'1"+)</td><td>55"–60"</td></tr>
-        <tr><td>Kids (ages 6–12)</td><td>30"–40"</td></tr>
-        <tr><td>Baby's first steeeck (display, not for walking on)</td><td>12"–18"</td></tr>
-        <tr><td>Pets (small–medium breeds)</td><td>14"–22"</td></tr>
-        <tr><td>Fire poker</td><td>28"–34"</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p style="text-align:center; margin-top:1.2rem; font-size:0.88rem; color:#6b5a40;">Rule of thumb for adults: a steeeck should reach about wrist height when your arm hangs relaxed at your side.</p>
-</section>
-
-<section class="care" id="care">
-  <div class="section-head">
-    <span class="eyebrow">Keep It Trail-Ready</span>
-    <h2>Caring for your steeeck</h2>
-    <p>A little upkeep keeps the wood strong and the finish looking sharp for years.</p>
-  </div>
-  <div class="wood-grid">
-    <div class="wood-card hard">
-      <span class="tag">Every Few Months</span>
-      <h3>Oil the wood</h3>
-      <p>A light coat of boiled linseed or mineral oil keeps the wood from drying out and cracking, especially after heavy use outdoors.</p>
-    </div>
-    <div class="wood-card soft">
-      <span class="tag">After Wet Trips</span>
-      <h3>Dry it fully</h3>
-      <p>If it gets rained on or dunked in a stream, let it air-dry fully before storing — trapped moisture is the main cause of splitting.</p>
-    </div>
-  </div>
-</section>
-
-<section class="faq" id="faq">
-  <div class="section-head">
-    <span class="eyebrow">Good to Know</span>
-    <h2>Frequently asked questions</h2>
-  </div>
-  <div class="faq-list">
-    <details class="faq-item">
-      <summary>How long does a custom order take?</summary>
-      <p>Most custom pieces are finished within 1–3 weeks depending on how many orders are ahead of yours. You'll hear back by email once yours is underway.</p>
-    </details>
-    <details class="faq-item">
-      <summary>How much is shipping?</summary>
-      <p>Shipping cost depends on the length of the piece and your location — long items like staffs cost more to ship than a poker or pet-size steeeck. We'll confirm the exact cost before you pay.</p>
-    </details>
-    <details class="faq-item">
-      <summary>What's the refund policy?</summary>
-      <p>Because every piece is made to order, payments are only accepted after your order details are confirmed by email. Payments sent before that confirmation are not eligible for a refund.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Can I pick the exact wood?</summary>
-      <p>Yes — let us know hardwood or pine preference in your order, and we'll pick a piece that matches the look and strength you're after.</p>
-    </details>
-  </div>
-</section>
-
-<section class="custom" id="custom">
-  <div class="section-head">
-    <span class="eyebrow">Made For You</span>
-    <h2>Order a custom piece</h2>
-    <p>Fill out the form below, or email us directly — either way, we'll follow up before anything ships.</p>
-  </div>
-  <div class="custom-box">
-    <form id="orderForm" class="order-form">
-      <div class="form-row">
-        <div class="form-field">
-          <label for="orderName">Name</label>
-          <input type="text" id="orderName" required>
-        </div>
-        <div class="form-field">
-          <label for="orderEmail">Email</label>
-          <input type="email" id="orderEmail" required>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <label for="orderSize">Size</label>
-          <select id="orderSize" required>
-            <option value="" disabled selected>Choose one</option>
-            <option>Adult</option>
-            <option>Kid</option>
-            <option>Pet</option>
-            <option>Baby (display)</option>
-            <option>Fire poker</option>
-            <option>Not sure — help me pick</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label for="orderWood">Wood preference</label>
-          <select id="orderWood" required>
-            <option value="" disabled selected>Choose one</option>
-            <option>Hardwood (built to last)</option>
-            <option>Pine (built to show)</option>
-            <option>No preference</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-field">
-        <label for="orderNotes">What's it for? Any other details</label>
-        <textarea id="orderNotes" rows="3" placeholder="e.g. hiking staff for my dad, exact length if you know it"></textarea>
-      </div>
-
-      <!-- Honeypot -->
-      <div style="position:absolute; left:-9999px; opacity:0;" aria-hidden="true">
-        <input type="text" id="orderWebsite" tabindex="-1" autocomplete="off">
-      </div>
-
-      <button type="submit" id="orderSubmitBtn" class="btn-primary" style="width:100%; border:none; margin-top:0.4rem;">Send Order Request</button>
-      <div class="msg" id="orderMsg"></div>
-    </form>
-
-    <p style="text-align:center; margin:1.4rem 0; color:#c2b39b; font-size:0.85rem;">— or —</p>
-    <p style="text-align:center;">
-      <a class="email" href="mailto:mainesteeecksupport@gmail.com">mainesteeecksupport@gmail.com</a>
-    </p>
-
-    <div class="pay-warning">
-      ⚠️ Confirm your order first (form or email). Orders can stack up, and payments sent before your order is confirmed are <strong>not eligible for a refund</strong>.
-    </div>
-
-    <label class="pay-confirm">
-      <input type="checkbox" id="emailedConfirm">
-      <span>I've already confirmed my order details</span>
-    </label>
-
-    <div class="pay-row locked" id="payRow">
-      <a class="pay-btn cashapp" href="https://cash.app/$HerDannyBoi" target="_blank" rel="noopener" id="cashAppBtn">Pay with Cash App</a>
-      <a class="pay-btn venmo" href="https://venmo.com/HerDannyBoi" target="_blank" rel="noopener" id="venmoBtn">Pay with Venmo</a>
-    </div>
-
-    <p class="custom-note">Sign up or log in to track your order — <a href="auth.html" style="color:var(--honey-bright);">create an account here</a>.</p>
-  </div>
-</section>
-
-<footer>
+<footer class="bark-bg">
   <div class="wordmark">Mr Steeeck</div>
   <p>Handmade steeecks, staffs &amp; pokers.</p>
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
-
-<script>
-  // Draw the growth rings in sequence once the hero is visible
-  window.addEventListener('DOMContentLoaded', () => {
-    // Payment buttons stay locked until customer confirms they've emailed their order
-    const emailedConfirm = document.getElementById('emailedConfirm');
-    const payRow = document.getElementById('payRow');
-    if (emailedConfirm && payRow){
-      emailedConfirm.addEventListener('change', () => {
-        payRow.classList.toggle('locked', !emailedConfirm.checked);
-      });
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    const adminSlot = document.getElementById('navAdminSlot');
+    const authSlot = document.getElementById('navAuthSlot');
+    if (session && ADMIN_EMAILS.includes(session.user.email)){
+      if (adminSlot) adminSlot.style.display = '';
+      if (authSlot){
+        authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+        document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
+          e.preventDefault();
+          await supabase.auth.signOut();
+          window.location.reload();
+        });
+      }
+    } else if (session){
+      if (authSlot) authSlot.innerHTML = '<a href="auth.html">Account</a>';
     }
-
+  });
+</script>
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  const supabase2 = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+  supabase2.from('site_visits').insert({ page: 'home' }).then(() => {});
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
     const rings = document.querySelectorAll('.ring');
     rings.forEach((ring, i) => {
       setTimeout(() => ring.classList.add('drawn'), 300 + i * 220);
     });
 
-    // Floating leaves in the hero
     const leafEmojis = ['🍂', '🍁', '🌿'];
     const leafWrap = document.getElementById('leaves');
     if (leafWrap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
@@ -960,156 +146,60 @@
       }
     }
 
-    // Scroll-reveal: fade+rise elements into view as the user scrolls
-    const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head');
-    revealEls.forEach(el => el.classList.add('reveal'));
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting){
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    revealEls.forEach(el => observer.observe(el));
-
-    // Gentle tilt-on-hover for cards (desktop only)
-    if (window.matchMedia('(hover: hover)').matches){
-      document.querySelectorAll('.wood-card, .gallery-card').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width - 0.5;
-          const y = (e.clientY - rect.top) / rect.height - 0.5;
-          card.style.transform = `translateY(-4px) scale(1.02) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
-        });
-        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-      });
-    }
-
-    // Live shop carousel: auto-rotates through sample items
+    // Live shop carousel: auto-rotates, arrows, and swipe support
     const carousel = document.getElementById('shopCarousel');
-    const slides = Array.from(carousel.querySelectorAll('.shop-slide'));
-    const dotsWrap = document.getElementById('shopDots');
-    slides.forEach((_, i) => {
-      const dot = document.createElement('span');
-      if (i === 0) dot.classList.add('active');
-      dot.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(dot);
-    });
-    const dots = Array.from(dotsWrap.children);
-    let current = 0;
-    let timer;
+    if (carousel){
+      const slides = Array.from(carousel.querySelectorAll('.shop-slide'));
+      const dotsWrap = document.getElementById('shopDots');
+      slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => { goTo(i); });
+        dotsWrap.appendChild(dot);
+      });
+      const dots = Array.from(dotsWrap.children);
+      let current = 0;
+      let timer;
 
-    function goTo(index){
-      slides[current].classList.remove('active');
-      dots[current].classList.remove('active');
-      current = index;
-      slides[current].classList.add('active');
-      dots[current].classList.add('active');
+      function goTo(index){
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = (index + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+      }
+      function next(){ goTo(current + 1); }
+      function prev(){ goTo(current - 1); }
+      function startAuto(){ timer = setInterval(next, 3200); }
+      function stopAuto(){ clearInterval(timer); }
+
+      startAuto();
+      carousel.addEventListener('mouseenter', stopAuto);
+      carousel.addEventListener('mouseleave', startAuto);
+
+      // Arrow buttons
+      const prevBtn = document.getElementById('carouselPrev');
+      const nextBtn = document.getElementById('carouselNext');
+      if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); stopAuto(); prev(); startAuto(); });
+      if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); stopAuto(); next(); startAuto(); });
+
+      // Swipe support
+      let touchStartX = 0;
+      carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        stopAuto();
+      }, {passive:true});
+      carousel.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchEndX - touchStartX;
+        if (Math.abs(diff) > 35){
+          if (diff < 0) next(); else prev();
+        }
+        startAuto();
+      }, {passive:true});
     }
-    function next(){ goTo((current + 1) % slides.length); }
-    function startAuto(){ timer = setInterval(next, 3200); }
-    function stopAuto(){ clearInterval(timer); }
 
-    startAuto();
-    carousel.addEventListener('mouseenter', stopAuto);
-    carousel.addEventListener('mouseleave', startAuto);
-    carousel.addEventListener('touchstart', stopAuto, {passive:true});
   });
 </script>
-
-<script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
-
-  // Log this visit (fire and forget)
-  supabase.from('site_visits').insert({ page: 'home' }).then(() => {});
-
-  // Reveal the hidden Admin tab only when Danny is logged in — invisible to everyone else
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    const adminSlot = document.getElementById('navAdminSlot');
-    const authSlot = document.getElementById('navAuthSlot');
-
-    if (session && ADMIN_EMAILS.includes(session.user.email)){
-      if (adminSlot) adminSlot.style.display = '';
-      if (authSlot){
-        authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
-        document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
-          e.preventDefault();
-          await supabase.auth.signOut();
-          window.location.reload();
-        });
-      }
-    } else if (session){
-      if (authSlot) authSlot.innerHTML = '<a href="auth.html">Account</a>';
-    }
-  });
-
-  // Custom order form
-  const orderForm = document.getElementById('orderForm');
-  const orderMsg = document.getElementById('orderMsg');
-  const orderSubmitBtn = document.getElementById('orderSubmitBtn');
-  const orderFormLoadTime = Date.now();
-
-  function showOrderMsg(text, type){
-    orderMsg.textContent = text;
-    orderMsg.className = 'show ' + type;
-  }
-
-  if (orderForm){
-    orderForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      // Bot checks: honeypot + minimum time on page
-      const honeypot = document.getElementById('orderWebsite').value;
-      if (honeypot){
-        showOrderMsg('Something went wrong. Please try again.', 'error');
-        return;
-      }
-      if (Date.now() - orderFormLoadTime < 2000){
-        showOrderMsg('Please take a moment to fill out the form.', 'error');
-        return;
-      }
-
-      orderSubmitBtn.disabled = true;
-      orderSubmitBtn.textContent = 'Sending…';
-
-      const payload = {
-        name: document.getElementById('orderName').value.trim(),
-        email: document.getElementById('orderEmail').value.trim(),
-        size: document.getElementById('orderSize').value,
-        wood: document.getElementById('orderWood').value,
-        notes: document.getElementById('orderNotes').value.trim()
-      };
-
-      const { error } = await supabase.from('custom_orders').insert(payload);
-
-      if (error){
-        showOrderMsg('Something went wrong sending your request — please try emailing instead.', 'error');
-        orderSubmitBtn.disabled = false;
-        orderSubmitBtn.textContent = 'Send Order Request';
-        return;
-      }
-
-      showOrderMsg('Order request sent! We\'ll follow up by email soon.', 'success');
-      orderForm.reset();
-      orderSubmitBtn.textContent = 'Sent ✓';
-
-      // Confirmed order on file — unlock payment buttons automatically
-      const emailedConfirm = document.getElementById('emailedConfirm');
-      const payRow = document.getElementById('payRow');
-      if (emailedConfirm && payRow){
-        emailedConfirm.checked = true;
-        payRow.classList.remove('locked');
-      }
-    });
-  }
-</script>
-
 </body>
 </html>
