@@ -55,6 +55,10 @@
     <button class="filter-btn" data-filter="pet">Pet-Friendly</button>
   </div>
 
+  <div class="gallery-admin-bar" id="galleryAdminBar" hidden>
+    <button class="btn-primary" id="addItemBtn" type="button">+ Add New Item</button>
+  </div>
+
   <div class="gallery-grid" id="galleryGrid">
     <div class="gallery-card" data-category="pet">
       <div class="icon">🐾</div>
@@ -71,38 +75,83 @@
 
 <!-- Photo detail modal -->
 <div class="modal-overlay" id="modalOverlay" hidden>
-  <div class="modal-box">
-    <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
-    <div class="rainbow-frame">
-      <img id="modalImg" src="" alt="">
-    </div>
-    <div class="modal-info">
-      <h3 id="modalName">—</h3>
-      <p class="modal-category" id="modalCategory"></p>
-      <p class="modal-desc" id="modalDesc"></p>
-      <div class="modal-status" id="modalStatus"></div>
+  <div class="modal-frame">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <div class="modal-photo">
+        <img id="modalImg" src="" alt="">
+      </div>
+      <div class="modal-info">
+        <h3 id="modalName">—</h3>
+        <p class="modal-category" id="modalCategory"></p>
+        <p class="modal-desc" id="modalDesc"></p>
+        <div class="modal-status" id="modalStatus"></div>
 
-      <div id="modalAdminControls" class="modal-admin" hidden>
-        <div class="admin-divider">Admin — visible only to you</div>
+        <div id="modalAdminControls" class="modal-admin" hidden>
+          <div class="admin-divider">Admin — visible only to you</div>
+          <label>Name
+            <input id="editName" type="text">
+          </label>
+          <label>Description
+            <textarea id="editDesc" rows="3"></textarea>
+          </label>
+          <label>Status
+            <select id="editStatus">
+              <option value="ask">Ask about availability</option>
+              <option value="available">Available</option>
+              <option value="priced">Priced</option>
+              <option value="sold">Sold</option>
+            </select>
+          </label>
+          <label id="editPriceWrap" hidden>Price
+            <input id="editPrice" type="text" placeholder="$45">
+          </label>
+          <button id="saveItemBtn" class="btn-primary" type="button">Save Changes</button>
+          <div class="msg" id="saveMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add new item modal (admin only) -->
+<div class="modal-overlay" id="addModalOverlay" hidden>
+  <div class="modal-frame">
+    <div class="modal-box">
+      <button class="modal-close" id="addModalClose" aria-label="Close">&times;</button>
+      <h3 style="font-family:'Fraunces', serif; color:var(--walnut); margin-bottom:1rem;">Add New Gallery Item</h3>
+      <div class="add-item-form">
+        <label>Photo
+          <input id="newItemFile" type="file" accept="image/*">
+        </label>
         <label>Name
-          <input id="editName" type="text">
+          <input id="newItemName" type="text" placeholder="e.g. The Northwind">
+        </label>
+        <label>Category
+          <select id="newItemCategory">
+            <option value="walking-stick">Walking Stick</option>
+            <option value="staff">Staff</option>
+            <option value="poker">Fire Poker</option>
+            <option value="kids-baby">Kids &amp; Baby</option>
+            <option value="pet">Pet-Friendly</option>
+          </select>
         </label>
         <label>Description
-          <textarea id="editDesc" rows="3"></textarea>
+          <textarea id="newItemDesc" rows="3" placeholder="A short description of this piece"></textarea>
         </label>
         <label>Status
-          <select id="editStatus">
+          <select id="newItemStatus">
             <option value="ask">Ask about availability</option>
             <option value="available">Available</option>
             <option value="priced">Priced</option>
             <option value="sold">Sold</option>
           </select>
         </label>
-        <label id="editPriceWrap" hidden>Price
-          <input id="editPrice" type="text" placeholder="$45">
+        <label id="newItemPriceWrap" hidden>Price
+          <input id="newItemPrice" type="text" placeholder="$45">
         </label>
-        <button id="saveItemBtn" class="btn-primary" type="button">Save Changes</button>
-        <div class="msg" id="saveMsg"></div>
+        <button id="createItemBtn" class="btn-primary" type="button">Add to Gallery</button>
+        <div class="msg" id="createMsg"></div>
       </div>
     </div>
   </div>
@@ -136,6 +185,7 @@
     if (session && ADMIN_EMAILS.includes(session.user.email)){
       isAdmin = true;
       if (adminSlot) adminSlot.style.display = '';
+      document.getElementById('galleryAdminBar').hidden = false;
       if (authSlot){
         authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
         document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
@@ -292,6 +342,111 @@
     modalDesc.textContent = activeItem.description || 'No description yet.';
     modalStatus.textContent = statusLabel(activeItem);
     renderGallery();
+  });
+
+  // --- Add New Item (admin only) ---
+  const addOverlay = document.getElementById('addModalOverlay');
+  const addItemBtn = document.getElementById('addItemBtn');
+  const addModalClose = document.getElementById('addModalClose');
+  const newItemFile = document.getElementById('newItemFile');
+  const newItemName = document.getElementById('newItemName');
+  const newItemCategory = document.getElementById('newItemCategory');
+  const newItemDesc = document.getElementById('newItemDesc');
+  const newItemStatus = document.getElementById('newItemStatus');
+  const newItemPrice = document.getElementById('newItemPrice');
+  const newItemPriceWrap = document.getElementById('newItemPriceWrap');
+  const createItemBtn = document.getElementById('createItemBtn');
+  const createMsg = document.getElementById('createMsg');
+
+  function openAddModal(){
+    newItemFile.value = '';
+    newItemName.value = '';
+    newItemCategory.value = 'walking-stick';
+    newItemDesc.value = '';
+    newItemStatus.value = 'ask';
+    newItemPrice.value = '';
+    newItemPriceWrap.hidden = true;
+    createMsg.textContent = '';
+    addOverlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAddModal(){
+    addOverlay.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  addItemBtn?.addEventListener('click', openAddModal);
+  addModalClose.addEventListener('click', closeAddModal);
+  addOverlay.addEventListener('click', (e) => { if (e.target === addOverlay) closeAddModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !addOverlay.hidden) closeAddModal(); });
+
+  newItemStatus.addEventListener('change', () => {
+    newItemPriceWrap.hidden = newItemStatus.value !== 'priced';
+  });
+
+  createItemBtn.addEventListener('click', async () => {
+    const file = newItemFile.files[0];
+    const name = newItemName.value.trim();
+    if (!file){
+      createMsg.textContent = 'Please choose a photo.';
+      return;
+    }
+    if (!name){
+      createMsg.textContent = 'Please give it a name.';
+      return;
+    }
+
+    createMsg.textContent = 'Uploading photo...';
+    createItemBtn.disabled = true;
+
+    const ext = file.name.split('.').pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('gallery-photos')
+      .upload(path, file, { cacheControl: '3600', upsert: false });
+
+    if (uploadError){
+      createMsg.textContent = 'Upload failed — try again.';
+      console.error(uploadError);
+      createItemBtn.disabled = false;
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from('gallery-photos').getPublicUrl(path);
+    const imageUrl = urlData.publicUrl;
+
+    createMsg.textContent = 'Saving item...';
+
+    const maxSort = galleryItems.reduce((max, it) => Math.max(max, it.sort_order || 0), 0);
+
+    const { data: inserted, error: insertError } = await supabase
+      .from('gallery_items')
+      .insert({
+        name,
+        category: newItemCategory.value,
+        image_path: imageUrl,
+        description: newItemDesc.value.trim(),
+        status: newItemStatus.value,
+        price: newItemStatus.value === 'priced' ? newItemPrice.value.trim() : null,
+        sort_order: maxSort + 1
+      })
+      .select()
+      .single();
+
+    createItemBtn.disabled = false;
+
+    if (insertError){
+      createMsg.textContent = 'Could not save item — try again.';
+      console.error(insertError);
+      return;
+    }
+
+    galleryItems.push(inserted);
+    renderGallery();
+    createMsg.textContent = 'Added!';
+    setTimeout(closeAddModal, 700);
   });
 
   // --- Reveal + tilt (re-run after each render since cards are recreated) ---
