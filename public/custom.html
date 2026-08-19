@@ -177,6 +177,11 @@
         <span>I'm active duty military or a veteran (20% discount — I'll email a photo of my ID as proof)</span>
       </label>
 
+      <label class="pay-confirm" style="justify-content:flex-start; margin-bottom:1.2rem;">
+        <input type="checkbox" id="orderLiability" required>
+        <span>I've read and accept the <a href="privacy.html" target="_blank" style="color:var(--honey-bright);">assumption of risk &amp; liability terms</a> — handmade wood products carry inherent risk, and Mr Steeeck cannot guarantee against injury, death, or damage from use.</span>
+      </label>
+
       <!-- Honeypot -->
       <div style="position:absolute; left:-9999px; opacity:0;" aria-hidden="true">
         <input type="text" id="orderWebsite" tabindex="-1" autocomplete="off">
@@ -328,7 +333,8 @@
         wood_burning: document.getElementById('dBurning').value.trim() || null,
         finish_choice: document.getElementById('dFinish').value || null,
         grip_wrap: document.getElementById('dGrip').value || null,
-        metal_tip: document.getElementById('dMetalTip').checked
+        metal_tip: document.getElementById('dMetalTip').checked,
+        liability_accepted: document.getElementById('orderLiability').checked
       };
 
       const { error } = await supabase.from('custom_orders').insert(payload);
