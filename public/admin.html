@@ -54,6 +54,42 @@
   }
   .gate p{color:#6b5a40; max-width:32ch;}
   .hidden{display:none;}
+
+  .admin-section-h{font-family:'Fraunces', serif; font-size:1.3rem; margin:2.4rem 0 1rem; color:var(--walnut);}
+  .admin-section-h:first-of-type{margin-top:0;}
+
+  .chat-admin-wrap{
+    display:grid; grid-template-columns:220px 1fr; gap:0;
+    border:1px solid #e3d5ba; border-radius:5px; overflow:hidden;
+    margin-bottom:2.6rem; min-height:360px;
+  }
+  @media (max-width:640px){.chat-admin-wrap{grid-template-columns:1fr;}}
+  .chat-session-list{background:var(--bone); border-right:1px solid #e3d5ba; overflow-y:auto; max-height:480px;}
+  .chat-session-item{
+    padding:0.8rem 1rem; border-bottom:1px solid #e3d5ba; cursor:pointer; font-size:0.85rem;
+  }
+  .chat-session-item:hover, .chat-session-item.active{background:rgba(201,138,62,0.12);}
+  .chat-session-item .name{font-weight:600; color:var(--walnut);}
+  .chat-session-item .preview{color:#8a7960; font-size:0.78rem; margin-top:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chat-thread{display:flex; flex-direction:column; background:#fff;}
+  .chat-thread-messages{flex:1; padding:1rem; overflow-y:auto; max-height:380px; display:flex; flex-direction:column; gap:0.6rem;}
+  .chat-thread-msg{max-width:75%; padding:0.5rem 0.8rem; border-radius:8px; font-size:0.85rem; line-height:1.4;}
+  .chat-thread-msg.customer{align-self:flex-start; background:var(--parchment); border:1px solid #e3d5ba;}
+  .chat-thread-msg.admin{align-self:flex-end; background:var(--honey-bright); color:#241a13;}
+  .chat-thread-form{display:flex; gap:0.5rem; padding:0.8rem; border-top:1px solid #e3d5ba;}
+  .chat-thread-form input{flex:1; padding:0.55rem 0.7rem; border:1px solid #e3d5ba; border-radius:5px; font-size:0.86rem;}
+  .chat-thread-form button{background:var(--walnut); color:var(--bone); border:none; border-radius:5px; padding:0.55rem 1rem; cursor:pointer; font-size:0.86rem;}
+
+  .notify-add-form{display:flex; gap:0.6rem; margin-bottom:1.2rem; flex-wrap:wrap;}
+  .notify-add-form input{
+    padding:0.6rem 0.8rem; border:1px solid #e3d5ba; border-radius:4px; font-size:0.88rem;
+    flex:1; min-width:160px;
+  }
+  .notify-add-form button{padding:0.6rem 1.1rem; font-size:0.88rem;}
+  .remove-number-btn{
+    background:none; border:1px solid #c88; color:#a44; border-radius:4px;
+    padding:0.3rem 0.7rem; font-size:0.78rem; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -85,6 +121,30 @@
         <div class="label">Custom order requests</div>
       </div>
     </div>
+
+    <h2 class="admin-section-h">Live Chat</h2>
+    <div class="chat-admin-wrap">
+      <div class="chat-session-list" id="chatSessionList">
+        <p style="padding:1rem; color:#8a7960; font-size:0.85rem;">Loading conversations…</p>
+      </div>
+      <div class="chat-thread" id="chatThread">
+        <p style="padding:1rem; color:#8a7960; font-size:0.85rem;">Select a conversation to view it.</p>
+      </div>
+    </div>
+
+    <h2 class="admin-section-h">Numbers That Get Texted</h2>
+    <p class="sub" style="margin-bottom:1rem;">Every active number below gets a text the moment a customer sends a new chat message.</p>
+    <form id="addNumberForm" class="notify-add-form">
+      <input type="text" id="newNumberLabel" placeholder="Label (e.g. Danny's phone)">
+      <input type="tel" id="newNumberPhone" placeholder="+15551234567" required>
+      <button type="submit" class="btn-primary" style="border:none;">Add Number</button>
+    </form>
+    <table style="margin-bottom:2.6rem;">
+      <thead><tr><th>Label</th><th>Phone Number</th><th>Active</th><th></th></tr></thead>
+      <tbody id="numbersTableBody">
+        <tr><td colspan="4">Loading…</td></tr>
+      </tbody>
+    </table>
 
     <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Custom order requests</h2>
     <table style="margin-bottom:2.6rem;">
@@ -128,6 +188,8 @@
     gate.classList.add('hidden');
     dashboard.classList.remove('hidden');
     loadStats();
+    loadChatSessions();
+    loadNotifyNumbers();
   }
 
   async function loadStats(){
@@ -178,6 +240,144 @@
       </tr>
     `).join('');
   }
+
+  // ===== LIVE CHAT =====
+  let activeSessionId = null;
+  let chatChannel = null;
+
+  async function loadChatSessions(){
+    const { data } = await supabase
+      .from('chat_messages')
+      .select('session_id, name, message, sender, created_at')
+      .order('created_at', { ascending: false });
+
+    const listEl = document.getElementById('chatSessionList');
+    if (!data || data.length === 0){
+      listEl.innerHTML = '<p style="padding:1rem; color:#8a7960; font-size:0.85rem;">No chats yet.</p>';
+      return;
+    }
+
+    const sessions = {};
+    data.forEach(m => {
+      if (!sessions[m.session_id]) sessions[m.session_id] = m;
+    });
+
+    listEl.innerHTML = Object.entries(sessions).map(([sid, m]) => `
+      <div class="chat-session-item" data-session="${sid}">
+        <div class="name">${m.name || 'Customer'}</div>
+        <div class="preview">${m.message}</div>
+      </div>
+    `).join('');
+
+    listEl.querySelectorAll('.chat-session-item').forEach(el => {
+      el.addEventListener('click', () => openChatThread(el.dataset.session, listEl));
+    });
+  }
+
+  async function openChatThread(sessionId, listEl){
+    activeSessionId = sessionId;
+    listEl.querySelectorAll('.chat-session-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.session === sessionId);
+    });
+
+    const threadEl = document.getElementById('chatThread');
+    threadEl.innerHTML = `
+      <div class="chat-thread-messages" id="chatThreadMessages"></div>
+      <div class="chat-thread-form">
+        <input type="text" id="chatReplyInput" placeholder="Type a reply…">
+        <button id="chatReplySend">Send</button>
+      </div>
+    `;
+
+    await loadThreadMessages(sessionId);
+
+    document.getElementById('chatReplySend').addEventListener('click', () => sendReply(sessionId));
+    document.getElementById('chatReplyInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendReply(sessionId);
+    });
+
+    if (chatChannel) supabase.removeChannel(chatChannel);
+    chatChannel = supabase
+      .channel('admin_chat_' + sessionId)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, (payload) => {
+        appendThreadMessage(payload.new);
+      })
+      .subscribe();
+  }
+
+  async function loadThreadMessages(sessionId){
+    const { data } = await supabase
+      .from('chat_messages')
+      .select('sender, message, created_at')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: true });
+    const msgsEl = document.getElementById('chatThreadMessages');
+    msgsEl.innerHTML = '';
+    (data || []).forEach(appendThreadMessage);
+  }
+
+  function appendThreadMessage(m){
+    const msgsEl = document.getElementById('chatThreadMessages');
+    if (!msgsEl) return;
+    const div = document.createElement('div');
+    div.className = 'chat-thread-msg ' + (m.sender === 'admin' ? 'admin' : 'customer');
+    div.textContent = m.message;
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  async function sendReply(sessionId){
+    const input = document.getElementById('chatReplyInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    await supabase.from('chat_messages').insert({
+      session_id: sessionId,
+      sender: 'admin',
+      name: 'Mr Steeeck',
+      message: text
+    });
+  }
+
+  // ===== NOTIFY NUMBERS =====
+  async function loadNotifyNumbers(){
+    const { data } = await supabase
+      .from('notify_numbers')
+      .select('id, label, phone_number, active')
+      .order('created_at', { ascending: true });
+
+    const body = document.getElementById('numbersTableBody');
+    if (!data || data.length === 0){
+      body.innerHTML = '<tr><td colspan="4">No numbers added yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = data.map(n => `
+      <tr>
+        <td>${n.label || '—'}</td>
+        <td>${n.phone_number}</td>
+        <td>${n.active ? 'Yes' : 'No'}</td>
+        <td><button class="remove-number-btn" data-id="${n.id}">Remove</button></td>
+      </tr>
+    `).join('');
+
+    body.querySelectorAll('.remove-number-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await supabase.from('notify_numbers').delete().eq('id', btn.dataset.id);
+        loadNotifyNumbers();
+      });
+    });
+  }
+
+  document.getElementById('addNumberForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const label = document.getElementById('newNumberLabel').value.trim();
+    const phone = document.getElementById('newNumberPhone').value.trim();
+    if (!phone) return;
+    await supabase.from('notify_numbers').insert({ label, phone_number: phone });
+    document.getElementById('newNumberLabel').value = '';
+    document.getElementById('newNumberPhone').value = '';
+    loadNotifyNumbers();
+  });
 
   document.getElementById('logoutBtn')?.addEventListener('click', async () => {
     await supabase.auth.signOut();
