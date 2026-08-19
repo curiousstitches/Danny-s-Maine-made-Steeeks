@@ -147,20 +147,56 @@
   nav ul a.active{opacity:1; color:var(--honey-bright);}
   nav ul a.active::after{width:100%;}
   nav .nav-links{display:flex;}
+
+  .nav-toggle{
+    display:none;
+    background:none; border:1px solid rgba(224,168,84,0.5); border-radius:4px;
+    color:var(--honey-bright); font-size:1.3rem; line-height:1;
+    padding:0.4rem 0.7rem; cursor:pointer;
+  }
+
   @media (max-width:760px){
-    nav{padding:1rem 5vw; gap:1rem;}
-    nav ul{
-      gap:1.3rem; font-size:0.82rem;
-      overflow-x:auto; -webkit-overflow-scrolling:touch;
-      max-width:60vw; scrollbar-width:none;
+    nav{padding:1rem 5vw; position:relative; flex-wrap:nowrap;}
+    .nav-toggle{display:block;}
+    nav ul.nav-links{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; gap:0;
+      background:var(--bark);
+      border-top:1px solid rgba(224,168,84,0.25);
+      box-shadow:0 12px 24px rgba(0,0,0,0.4);
+      max-width:none; overflow-x:visible; max-height:75vh; overflow-y:auto;
     }
-    nav ul::-webkit-scrollbar{display:none;}
+    nav ul.nav-links.open{display:flex;}
+    nav ul.nav-links li{width:100%; border-bottom:1px solid rgba(250,246,239,0.08);}
+    nav ul.nav-links a{
+      display:block; padding:0.95rem 6vw; font-size:0.95rem;
+      white-space:normal;
+    }
+    nav ul.nav-links a::after{display:none;}
+    nav ul.nav-links a.active{background:rgba(224,168,84,0.1);}
   }
   @media (max-width:420px){
     nav{padding:0.9rem 4vw;}
-    nav ul{gap:1rem; font-size:0.76rem; max-width:56vw;}
     nav .wordmark{font-size:1.05rem;}
   }
+
+  /* ===== EXPLORE GRID (homepage section links) ===== */
+  .explore{background:rgba(239,230,208,0.3);}
+  .explore-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:1rem; max-width:960px; margin:0 auto;
+  }
+  .explore-card{
+    display:block; text-decoration:none;
+    background:var(--bone); border:1px solid #e3d5ba; border-radius:6px;
+    padding:1.4rem 1.1rem; text-align:center;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .explore-card:hover{transform:translateY(-4px); box-shadow:0 14px 26px rgba(74,46,30,0.18);}
+  .explore-card .icon{font-size:1.7rem; margin-bottom:0.6rem;}
+  .explore-card .label{font-family:'Fraunces', serif; font-weight:600; color:var(--walnut); font-size:1rem;}
+  .explore-card .sub{font-size:0.78rem; color:#8a7960; margin-top:0.3rem;}
 
   /* ===== PAGE HEADER (subpage back button + title) ===== */
   .page-header{

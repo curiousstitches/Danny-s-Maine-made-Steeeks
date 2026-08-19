@@ -11,6 +11,7 @@
 <body>
 <nav>
   <div class="wordmark"><a href="index.html" style="color:inherit; text-decoration:none;">Mr <span>Steeeck</span></a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu">&#9776;</button>
   <ul class="nav-links">
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="craft.html">The Craft</a></li>
@@ -25,6 +26,14 @@
     <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
   </ul>
 </nav>
+<script>
+  document.getElementById('navToggle')?.addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.querySelector('.nav-links').classList.remove('open'));
+  });
+</script>
 <header class="hero">
   <div class="leaves" id="leaves" aria-hidden="true"></div>
   <div class="hero-copy">
@@ -87,6 +96,57 @@
   <p class="rings-caption">Every steeeck carries the years it took to grow.</p>
   <p class="rings-subcaption" style="padding-bottom:3.5rem;">Sample pricing — swap in your real pieces anytime</p>
 </div>
+
+<section class="explore" id="explore">
+  <div class="section-head">
+    <span class="eyebrow">Find Your Way Around</span>
+    <h2>Explore the site</h2>
+    <p>Everything Mr Steeeck offers, one tap away.</p>
+  </div>
+  <div class="explore-grid">
+    <a href="craft.html" class="explore-card">
+      <div class="icon">🪓</div>
+      <div class="label">The Craft</div>
+      <div class="sub">How every piece is made</div>
+    </a>
+    <a href="gallery.html" class="explore-card">
+      <div class="icon">🖼️</div>
+      <div class="label">Gallery</div>
+      <div class="sub">See finished work</div>
+    </a>
+    <a href="sizing.html" class="explore-card">
+      <div class="icon">📏</div>
+      <div class="label">Sizing Guide</div>
+      <div class="sub">Find the right fit</div>
+    </a>
+    <a href="pets.html" class="explore-card">
+      <div class="icon">🐾</div>
+      <div class="label">Pet-Friendly</div>
+      <div class="sub">Safe woods &amp; finishes</div>
+    </a>
+    <a href="customize.html" class="explore-card">
+      <div class="icon">✏️</div>
+      <div class="label">Customize</div>
+      <div class="sub">Design your own</div>
+    </a>
+    <a href="custom.html" class="explore-card">
+      <div class="icon">📦</div>
+      <div class="label">Custom Order</div>
+      <div class="sub">Order &amp; pay</div>
+    </a>
+    <a href="reviews.html" class="explore-card">
+      <div class="icon">⭐</div>
+      <div class="label">Reviews</div>
+      <div class="sub">See what people say</div>
+    </a>
+    <a href="faq.html" class="explore-card">
+      <div class="icon">❓</div>
+      <div class="label">FAQ</div>
+      <div class="sub">Common questions</div>
+    </a>
+  </div>
+</section>
+
 <footer class="bark-bg">
   <div class="wordmark">Mr Steeeck</div>
   <p>Handmade steeecks, staffs &amp; pokers.</p>
