@@ -1,10 +1,5 @@
 // Mr Steeeck — floating live chat widget
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const supabase = createClient(
-  'https://tckzvajdoyxpycbzonsf.supabase.co',
-  'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-);
+import { supabase } from './supabase-client.js';
 
 function getSessionId(){
   let id = localStorage.getItem('steeeck_chat_session');

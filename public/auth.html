@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign In — Mr Steeeck</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
   :root{
@@ -96,12 +97,8 @@
 </div>
 
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  import { supabase } from './supabase-client.js';
 
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
 
   const pageLoadTime = Date.now();
   let mode = 'login'; // or 'signup'

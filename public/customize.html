@@ -6,6 +6,7 @@
 <title>Customize Your Steeeck — Mr Steeeck</title>
 <meta name="description" content="Design your own custom walking stick, staff, or cane — choose the wood, bark, bend, burning, and finish.">
 <meta name="theme-color" content="#241a13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -38,6 +39,7 @@
   <a href="index.html" class="back-btn">&larr; Back to Home</a>
   <h1>Customize Your Steeeck</h1>
   <p>Build your piece step by step — wood, bark, bend, burning, and every detail in between.</p>
+  <p style="margin-top:0.8rem; font-size:0.85rem;">Just want something quick and simple? <a href="custom.html" style="color:var(--honey-bright);">Use the shorter Custom Order form instead &rarr;</a></p>
 </div>
 <section class="custom" id="customizeSection">
   <div class="custom-box" style="max-width:720px;">
@@ -180,12 +182,7 @@
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase, ADMIN_EMAILS } from './supabase-client.js';
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
@@ -205,11 +202,7 @@
   });
 </script>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase } from './supabase-client.js';
 
   window.addEventListener('DOMContentLoaded', () => {
     // Scroll-reveal: fade+rise elements into view as the user scrolls

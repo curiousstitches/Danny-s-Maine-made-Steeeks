@@ -6,6 +6,7 @@
 <title>Custom Order — Mr Steeeck</title>
 <meta name="description" content="Order a custom handmade walking stick, staff, or poker.">
 <meta name="theme-color" content="#241a13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -38,6 +39,7 @@
   <a href="index.html" class="back-btn">&larr; Back to Home</a>
   <h1>Custom Order</h1>
   <p>Fill out the form below, or email us directly — either way, we'll follow up before anything ships.</p>
+  <p style="margin-top:0.8rem; font-size:0.85rem;">Want to design every detail — bark, bend, wood burning, and more? <a href="customize.html" style="color:var(--honey-bright);">Try the full Customize builder instead &rarr;</a></p>
 </div>
 <section class="custom" id="custom">
   <div class="custom-box">
@@ -127,12 +129,7 @@
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase, ADMIN_EMAILS } from './supabase-client.js';
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
@@ -152,11 +149,7 @@
   });
 </script>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase } from './supabase-client.js';
 
   window.addEventListener('DOMContentLoaded', () => {
     const emailedConfirm = document.getElementById('emailedConfirm');

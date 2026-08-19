@@ -6,6 +6,7 @@
 <title>FAQ — Mr Steeeck</title>
 <meta name="description" content="Answers about turnaround time, shipping, refunds, and wood choice.">
 <meta name="theme-color" content="#241a13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -60,6 +61,22 @@
       <summary>Can I pick the exact wood?</summary>
       <p>Yes — let us know hardwood or pine preference in your order, and we'll pick a piece that matches the look and strength you're after.</p>
     </details>
+    <details class="faq-item">
+      <summary>Should I use Custom Order or Customize?</summary>
+      <p><strong>Custom Order</strong> is the quick path — pick a size and wood, add notes, done. <strong>Customize</strong> is for anyone who wants to design every detail: bark placement, natural bends, wood burning, grip wraps, and more. Either way, we follow up by email before anything is built or charged.</p>
+    </details>
+    <details class="faq-item">
+      <summary>How will I know when my order ships?</summary>
+      <p>We'll email you tracking information as soon as it ships, so you always know exactly where it is.</p>
+    </details>
+    <details class="faq-item">
+      <summary>What if my piece arrives damaged?</summary>
+      <p>Contact us right away with a photo of the damage and we'll make it right — that's on us, not you.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Do you ship outside the US?</summary>
+      <p>Reach out with your location before ordering and we'll confirm whether we can ship there and what it would cost.</p>
+    </details>
   </div>
 </section>
 <footer class="bark-bg">
@@ -68,12 +85,7 @@
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase, ADMIN_EMAILS } from './supabase-client.js';
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');

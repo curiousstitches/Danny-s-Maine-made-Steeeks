@@ -6,6 +6,7 @@
 <title>Pet-Friendly Steeecks — Mr Steeeck</title>
 <meta name="description" content="Chewable and display-only wood steeecks for pets — safe woods, safe finishes, explained.">
 <meta name="theme-color" content="#241a13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -146,7 +147,7 @@
   <div class="section-head">
     <span class="eyebrow">For Cats</span>
     <h2>Catnip-infused steeecks</h2>
-    <p>Cats don't chew wood the way dogs do, but a small wood chew stick rubbed or infused with catnip (or silver vine, a similar herb some cats respond to even more strongly) is a real, well-established product — it's the same idea behind store-bought "matatabi" sticks.</p>
+    <p>Cats don't chew wood the way dogs do, but a small wood chew steeeck rubbed or infused with catnip (or silver vine, a similar herb some cats respond to even more strongly) is a real, well-established product — it's the same idea behind store-bought "matatabi" sticks.</p>
   </div>
   <div class="wood-grid">
     <div class="wood-card hard">
@@ -167,7 +168,7 @@
   <div class="section-head">
     <span class="eyebrow">Beyond Dogs &amp; Cats</span>
     <h2>Rabbits, reptiles, birds &amp; more</h2>
-    <p>"Pet" doesn't just mean dog to us. Tell us about your animal and what they like to do with a stick, and we'll figure out the right piece.</p>
+    <p>"Pet" doesn't just mean dog to us. Tell us about your animal and what they like to do with a steeeck, and we'll figure out the right piece.</p>
   </div>
   <div class="wood-grid">
     <div class="wood-card hard">
@@ -221,12 +222,7 @@
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase, ADMIN_EMAILS } from './supabase-client.js';
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');

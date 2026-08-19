@@ -6,6 +6,7 @@
 <title>Mr Steeeck — Handmade Sticks, Staffs & Pokers</title>
 <meta name="description" content="Handcrafted walking sticks, staffs, and pokers for adults, kids, pets, and babies. Custom orders welcome.">
 <meta name="theme-color" content="#241a13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -155,12 +156,11 @@
   <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
 </footer>
 <script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
-  const supabase = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
+  import { supabase, ADMIN_EMAILS } from './supabase-client.js';
+
+  // Log this visit (fire and forget)
+  supabase.from('site_visits').insert({ page: 'home' }).then(() => {});
+
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
@@ -178,14 +178,6 @@
       if (authSlot) authSlot.innerHTML = '<a href="profile.html">My Profile</a>';
     }
   });
-</script>
-<script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  const supabase2 = createClient(
-    'https://tckzvajdoyxpycbzonsf.supabase.co',
-    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
-  );
-  supabase2.from('site_visits').insert({ page: 'home' }).then(() => {});
 </script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
