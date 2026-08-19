@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Custom Order — Mr Steeeck</title>
-<meta name="description" content="Order a custom handmade walking stick, staff, or poker.">
+<title>Order — Mr Steeeck</title>
+<meta name="description" content="Order a custom handmade walking stick, staff, cane, or poker — simple or fully customized.">
 <meta name="theme-color" content="#241a13">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
@@ -20,8 +20,7 @@
     <li><a href="sizing.html">Sizing</a></li>
     <li><a href="pets.html">Pet-Friendly</a></li>
     <li><a href="faq.html">FAQ</a></li>
-    <li><a href="custom.html" class="active">Custom Order</a></li>
-    <li><a href="customize.html">Customize</a></li>
+    <li><a href="custom.html" class="active">Order</a></li>
     <li><a href="reviews.html">Reviews</a></li>
     <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
     <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
@@ -37,9 +36,8 @@
 </script>
 <div class="page-header bark-bg">
   <a href="index.html" class="back-btn">&larr; Back to Home</a>
-  <h1>Custom Order</h1>
+  <h1>Order Your Steeeck</h1>
   <p>Fill out the form below, or email us directly — either way, we'll follow up before anything ships.</p>
-  <p style="margin-top:0.8rem; font-size:0.85rem;">Want to design every detail — bark, bend, wood burning, and more? <a href="customize.html" style="color:var(--honey-bright);">Try the full Customize builder instead &rarr;</a></p>
 </div>
 <section class="custom" id="custom">
   <div class="custom-box">
@@ -84,6 +82,94 @@
       <div class="form-field">
         <label for="orderNotes">What's it for? Any other details</label>
         <textarea id="orderNotes" rows="3" placeholder="e.g. hiking staff for my dad, exact length if you know it"></textarea>
+      </div>
+
+      <button type="button" id="detailsToggle" class="details-toggle">+ Want to customize every detail? (bark, bend, wood burning, and more)</button>
+
+      <div id="detailsPanel" class="details-panel">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="dRecipient">Who is it for?</label>
+            <input type="text" id="dRecipient" placeholder="Myself, my dad, my dog Rex...">
+          </div>
+          <div class="form-field">
+            <label for="dHeight">Their height (or pet size)</label>
+            <input type="text" id="dHeight" placeholder="e.g. 5'10&quot;, or 'medium dog'">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="dPurpose">What's it for?</label>
+          <select id="dPurpose">
+            <option value="">Not specified</option>
+            <option>Hiking / trail use</option>
+            <option>Everyday walking cane / mobility</option>
+            <option>Display piece</option>
+            <option>Pet chew or display</option>
+            <option>Gift</option>
+            <option>Other (explain in notes)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="dBark">Bark left on?</label>
+            <select id="dBark">
+              <option value="">Not specified</option>
+              <option>Fully debarked (smooth)</option>
+              <option>Bark left on the handle only</option>
+              <option>Bark left on the bottom/end only</option>
+              <option>Bark left on in patches (natural look)</option>
+              <option>Bark fully left on</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="dBend">Natural bend or curve?</label>
+            <select id="dBend">
+              <option value="">Not specified</option>
+              <option>Straight</option>
+              <option>Slight natural bend</option>
+              <option>Noticeable curve (like a shepherd's crook)</option>
+              <option>Surprise me — use the wood's natural shape</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="dKnots">Knots &amp; small limbs</label>
+            <select id="dKnots">
+              <option value="">Not specified</option>
+              <option>Remove all — smooth shaft</option>
+              <option>Leave a few small knots for character</option>
+              <option>Leave small limb stubs on (rustic look)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="dFinish">Finish / stain</label>
+            <select id="dFinish">
+              <option value="">Not specified</option>
+              <option>Natural oil (shows raw wood tone)</option>
+              <option>Light stain</option>
+              <option>Dark stain</option>
+              <option>Not sure — recommend one</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="dBurning">Wood burning / engraving</label>
+          <textarea id="dBurning" rows="2" placeholder="Custom text, initials, a design, or leave blank"></textarea>
+        </div>
+        <div class="form-field">
+          <label for="dGrip">Grip wrap</label>
+          <select id="dGrip">
+            <option value="">Not specified</option>
+            <option>None — bare wood handle</option>
+            <option>Leather wrap</option>
+            <option>Paracord wrap</option>
+          </select>
+        </div>
+        <label class="pay-confirm" style="justify-content:flex-start; margin-bottom:0.4rem;">
+          <input type="checkbox" id="dMetalTip">
+          <span>Add a metal tip/cap on the bottom</span>
+        </label>
       </div>
 
       <label class="pay-confirm" style="justify-content:flex-start; margin-top:0.2rem; margin-bottom:1.2rem;">
@@ -160,6 +246,17 @@
       });
     }
 
+    const detailsToggle = document.getElementById('detailsToggle');
+    const detailsPanel = document.getElementById('detailsPanel');
+    if (detailsToggle && detailsPanel){
+      detailsToggle.addEventListener('click', () => {
+        const isOpen = detailsPanel.classList.toggle('open');
+        detailsToggle.textContent = isOpen
+          ? '− Hide customization details'
+          : '+ Want to customize every detail? (bark, bend, wood burning, and more)';
+      });
+    }
+
     // Scroll-reveal: fade+rise elements into view as the user scrolls
     const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head, .faq-item, .size-table-wrap');
     revealEls.forEach(el => el.classList.add('reveal'));
@@ -221,7 +318,17 @@
         size: document.getElementById('orderSize').value,
         wood: document.getElementById('orderWood').value,
         notes: document.getElementById('orderNotes').value.trim(),
-        veteran_discount: document.getElementById('orderVeteran').checked
+        veteran_discount: document.getElementById('orderVeteran').checked,
+        recipient: document.getElementById('dRecipient').value.trim() || null,
+        height: document.getElementById('dHeight').value.trim() || null,
+        purpose: document.getElementById('dPurpose').value || null,
+        bark_preference: document.getElementById('dBark').value || null,
+        bend_request: document.getElementById('dBend').value || null,
+        knots_limbs: document.getElementById('dKnots').value || null,
+        wood_burning: document.getElementById('dBurning').value.trim() || null,
+        finish_choice: document.getElementById('dFinish').value || null,
+        grip_wrap: document.getElementById('dGrip').value || null,
+        metal_tip: document.getElementById('dMetalTip').checked
       };
 
       const { error } = await supabase.from('custom_orders').insert(payload);

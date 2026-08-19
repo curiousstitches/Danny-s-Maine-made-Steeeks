@@ -689,6 +689,21 @@
     margin:1.8rem 0 1rem; padding-top:1.2rem; border-top:1px solid rgba(250,246,239,0.12);
   }
   .builder-step:first-of-type{margin-top:0; padding-top:0; border-top:none;}
+  .details-toggle{
+    width:100%; text-align:left;
+    background:rgba(224,168,84,0.1); border:1px solid rgba(224,168,84,0.3);
+    color:var(--honey-bright); font-size:0.9rem; font-weight:600;
+    padding:0.75rem 1rem; border-radius:4px; cursor:pointer;
+    margin-bottom:1.2rem; transition:background 0.2s ease;
+  }
+  .details-toggle:hover{background:rgba(224,168,84,0.18);}
+  .details-panel{
+    display:none;
+    padding:1.2rem; margin-bottom:1.2rem;
+    background:rgba(0,0,0,0.15); border-radius:6px;
+    border:1px solid rgba(250,246,239,0.1);
+  }
+  .details-panel.open{display:block;}
 
   /* ===== REVIEWS PAGE ===== */
   .reviews-summary{background:var(--bark); text-align:center; padding:3rem 6vw 1rem;}

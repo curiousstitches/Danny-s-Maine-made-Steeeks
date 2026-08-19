@@ -119,7 +119,7 @@
       </div>
       <div class="stat-card">
         <div class="num" id="orderCount">–</div>
-        <div class="label">Custom order requests</div>
+        <div class="label">Order requests</div>
       </div>
     </div>
 
@@ -147,11 +147,11 @@
       </tbody>
     </table>
 
-    <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Custom order requests</h2>
+    <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Order requests</h2>
     <table style="margin-bottom:2.6rem;">
-      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Veteran?</th><th>Date</th></tr></thead>
+      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Veteran?</th><th>Date</th><th></th></tr></thead>
       <tbody id="orderTableBody">
-        <tr><td colspan="7">Loading…</td></tr>
+        <tr><td colspan="8">Loading…</td></tr>
       </tbody>
     </table>
 
@@ -200,7 +200,7 @@
 
     const { data: orders, count: orderCount } = await supabase
       .from('custom_orders')
-      .select('name, email, size, wood, notes, veteran_discount, created_at', { count: 'exact' })
+      .select('id, name, email, size, wood, notes, veteran_discount, created_at, recipient, height, purpose, bark_preference, bend_request, knots_limbs, wood_burning, finish_choice, grip_wrap, metal_tip', { count: 'exact' })
       .order('created_at', { ascending: false });
 
     document.getElementById('visitCount').textContent = visitCount ?? '0';
@@ -209,9 +209,21 @@
 
     const orderBody = document.getElementById('orderTableBody');
     if (!orders || orders.length === 0){
-      orderBody.innerHTML = '<tr><td colspan="7">No custom order requests yet.</td></tr>';
+      orderBody.innerHTML = '<tr><td colspan="8">No order requests yet.</td></tr>';
     } else {
-      orderBody.innerHTML = orders.map(o => `
+      const detailFields = [
+        ['recipient', 'Who for'], ['height', 'Height/Size'], ['purpose', 'Purpose'],
+        ['bark_preference', 'Bark'], ['bend_request', 'Bend'], ['knots_limbs', 'Knots/limbs'],
+        ['wood_burning', 'Wood burning'], ['finish_choice', 'Finish'], ['grip_wrap', 'Grip wrap']
+      ];
+      orderBody.innerHTML = orders.map(o => {
+        const hasDetails = detailFields.some(([key]) => o[key]) || o.metal_tip;
+        const detailRows = detailFields
+          .filter(([key]) => o[key])
+          .map(([key, label]) => `<div><strong>${label}:</strong> ${o[key]}</div>`)
+          .join('');
+        const metalTipRow = o.metal_tip ? '<div><strong>Metal tip:</strong> Yes</div>' : '';
+        return `
         <tr>
           <td>${o.name}</td>
           <td>${o.email}</td>
@@ -220,8 +232,11 @@
           <td>${o.notes || '—'}</td>
           <td>${o.veteran_discount ? '🇺🇸 Yes' : '—'}</td>
           <td>${new Date(o.created_at).toLocaleDateString()}</td>
+          <td>${hasDetails ? `<button class="remove-number-btn" style="color:#4a7; border-color:#4a7;" onclick="document.getElementById('detail-${o.id}').classList.toggle('hidden')">Details</button>` : '—'}</td>
         </tr>
-      `).join('');
+        ${hasDetails ? `<tr id="detail-${o.id}" class="hidden"><td colspan="8" style="background:var(--parchment); font-size:0.85rem;">${detailRows}${metalTipRow}</td></tr>` : ''}
+      `;
+      }).join('');
     }
 
     const tbody = document.getElementById('userTableBody');
