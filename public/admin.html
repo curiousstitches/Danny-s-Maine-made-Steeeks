@@ -132,15 +132,15 @@
       </div>
     </div>
 
-    <h2 class="admin-section-h">Numbers That Get Texted</h2>
-    <p class="sub" style="margin-bottom:1rem;">Every active number below gets a text the moment a customer sends a new chat message.</p>
+    <h2 class="admin-section-h">Emails That Get Notified</h2>
+    <p class="sub" style="margin-bottom:1rem;">Every active email below gets a notification the moment a customer sends a new chat message.</p>
     <form id="addNumberForm" class="notify-add-form">
-      <input type="text" id="newNumberLabel" placeholder="Label (e.g. Danny's phone)">
-      <input type="tel" id="newNumberPhone" placeholder="+15551234567" required>
-      <button type="submit" class="btn-primary" style="border:none;">Add Number</button>
+      <input type="text" id="newNumberLabel" placeholder="Label (e.g. Danny's email)">
+      <input type="email" id="newNumberPhone" placeholder="you@example.com" required>
+      <button type="submit" class="btn-primary" style="border:none;">Add Email</button>
     </form>
     <table style="margin-bottom:2.6rem;">
-      <thead><tr><th>Label</th><th>Phone Number</th><th>Active</th><th></th></tr></thead>
+      <thead><tr><th>Label</th><th>Email</th><th>Active</th><th></th></tr></thead>
       <tbody id="numbersTableBody">
         <tr><td colspan="4">Loading…</td></tr>
       </tbody>
@@ -342,19 +342,19 @@
   // ===== NOTIFY NUMBERS =====
   async function loadNotifyNumbers(){
     const { data } = await supabase
-      .from('notify_numbers')
-      .select('id, label, phone_number, active')
+      .from('notify_emails')
+      .select('id, label, email, active')
       .order('created_at', { ascending: true });
 
     const body = document.getElementById('numbersTableBody');
     if (!data || data.length === 0){
-      body.innerHTML = '<tr><td colspan="4">No numbers added yet.</td></tr>';
+      body.innerHTML = '<tr><td colspan="4">No emails added yet.</td></tr>';
       return;
     }
     body.innerHTML = data.map(n => `
       <tr>
         <td>${n.label || '—'}</td>
-        <td>${n.phone_number}</td>
+        <td>${n.email}</td>
         <td>${n.active ? 'Yes' : 'No'}</td>
         <td><button class="remove-number-btn" data-id="${n.id}">Remove</button></td>
       </tr>
@@ -362,7 +362,7 @@
 
     body.querySelectorAll('.remove-number-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
-        await supabase.from('notify_numbers').delete().eq('id', btn.dataset.id);
+        await supabase.from('notify_emails').delete().eq('id', btn.dataset.id);
         loadNotifyNumbers();
       });
     });
@@ -371,9 +371,9 @@
   document.getElementById('addNumberForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const label = document.getElementById('newNumberLabel').value.trim();
-    const phone = document.getElementById('newNumberPhone').value.trim();
-    if (!phone) return;
-    await supabase.from('notify_numbers').insert({ label, phone_number: phone });
+    const email = document.getElementById('newNumberPhone').value.trim();
+    if (!email) return;
+    await supabase.from('notify_emails').insert({ label, email });
     document.getElementById('newNumberLabel').value = '';
     document.getElementById('newNumberPhone').value = '';
     loadNotifyNumbers();
