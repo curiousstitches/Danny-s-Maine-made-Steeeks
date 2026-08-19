@@ -31,6 +31,18 @@
   .public-view-card h1{font-family:'Fraunces', serif; color:var(--walnut); font-size:1.6rem;}
   .public-view-card .location{color:#8a7960; font-size:0.9rem; margin-top:0.3rem;}
   .public-view-card .bio{color:#4a3c2e; margin-top:1.2rem; font-size:0.95rem;}
+  .public-view-card .motto{
+    color:var(--honey); font-style:italic; font-family:'Fraunces', serif;
+    font-size:1.05rem; margin-top:1rem;
+  }
+  .fun-facts{
+    display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center;
+    margin-top:1.2rem;
+  }
+  .fun-fact{
+    background:rgba(107,125,79,0.14); border:1px solid rgba(107,125,79,0.3);
+    color:#4a3c2e; font-size:0.8rem; padding:0.35rem 0.8rem; border-radius:20px;
+  }
   .veteran-badge{
     display:inline-block; margin-top:0.8rem; background:rgba(107,125,79,0.18);
     color:#5c6b47; border:1px solid rgba(107,125,79,0.35);
@@ -118,7 +130,7 @@
     document.getElementById('pageTitle').textContent = 'Customer Profile';
     const { data, error } = await supabase
       .from('public_profiles')
-      .select('display_name, avatar_url, city, state, bio, veteran_status, created_at')
+      .select('display_name, avatar_url, city, state, bio, veteran_status, favorite_wood, pet_name, motto, favorite_trail, created_at')
       .eq('id', id)
       .single();
 
@@ -127,14 +139,21 @@
       return;
     }
     const location = [data.city, data.state].filter(Boolean).join(', ');
+    const funFacts = [];
+    if (data.favorite_wood) funFacts.push(`<span class="fun-fact">🪵 Favorite wood: ${data.favorite_wood}</span>`);
+    if (data.pet_name) funFacts.push(`<span class="fun-fact">🐾 Pet: ${data.pet_name}</span>`);
+    if (data.favorite_trail) funFacts.push(`<span class="fun-fact">🥾 Loves walking: ${data.favorite_trail}</span>`);
+
     wrap.innerHTML = `
       <div class="public-view-card">
         ${avatarHtml(data.avatar_url, data.display_name)}
         <h1>${data.display_name || 'Mr Steeeck Customer'}</h1>
         ${location ? `<div class="location">${location}</div>` : ''}
         ${data.veteran_status ? '<div><span class="veteran-badge">🇺🇸 Veteran / Active Duty</span></div>' : ''}
+        ${data.motto ? `<p class="motto">“${data.motto}”</p>` : ''}
         ${data.bio ? `<p class="bio">${data.bio}</p>` : ''}
-        <p style="color:#8a7960; font-size:0.78rem; margin-top:1rem;">Member since ${new Date(data.created_at).toLocaleDateString()}</p>
+        ${funFacts.length ? `<div class="fun-facts">${funFacts.join('')}</div>` : ''}
+        <p style="color:#8a7960; font-size:0.78rem; margin-top:1.2rem;">Member since ${new Date(data.created_at).toLocaleDateString()}</p>
       </div>
     `;
   }
@@ -177,6 +196,32 @@
         <div class="form-field">
           <label for="pBio">Short bio (shown publicly)</label>
           <textarea id="pBio" rows="2">${p.bio || ''}</textarea>
+        </div>
+
+        <h3 style="font-family:'Fraunces', serif; color:var(--honey-bright); margin:1.6rem 0 1rem; font-size:1.05rem;">A few fun things (shown publicly)</h3>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="pFavoriteWood">Favorite wood</label>
+            <select id="pFavoriteWood">
+              <option value="" ${!p.favorite_wood ? 'selected' : ''}>No preference</option>
+              <option ${p.favorite_wood === 'Hardwood' ? 'selected' : ''}>Hardwood</option>
+              <option ${p.favorite_wood === 'Pine' ? 'selected' : ''}>Pine</option>
+              <option ${p.favorite_wood === 'Coffee wood' ? 'selected' : ''}>Coffee wood</option>
+              <option ${p.favorite_wood === 'Manzanita' ? 'selected' : ''}>Manzanita</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="pPetName">Your pet's name</label>
+            <input type="text" id="pPetName" value="${p.pet_name || ''}" placeholder="e.g. Rex">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="pFavoriteTrail">Favorite trail or place to walk</label>
+          <input type="text" id="pFavoriteTrail" value="${p.favorite_trail || ''}" placeholder="e.g. Acadia National Park">
+        </div>
+        <div class="form-field">
+          <label for="pMotto">Your trail motto</label>
+          <input type="text" id="pMotto" value="${p.motto || ''}" placeholder="A short personal motto or quote" maxlength="100">
         </div>
 
         <div class="private-note">🔒 Everything below is private — only you and Mr Steeeck can see it. It's never shown on your public profile.</div>
@@ -253,6 +298,10 @@
         city: document.getElementById('pCity').value.trim(),
         state: document.getElementById('pState').value.trim(),
         bio: document.getElementById('pBio').value.trim(),
+        favorite_wood: document.getElementById('pFavoriteWood').value || null,
+        pet_name: document.getElementById('pPetName').value.trim(),
+        favorite_trail: document.getElementById('pFavoriteTrail').value.trim(),
+        motto: document.getElementById('pMotto').value.trim(),
         address_line: document.getElementById('pAddress').value.trim(),
         address_zip: document.getElementById('pZip').value.trim(),
         preferred_payment: document.getElementById('pPayment').value,
