@@ -94,6 +94,7 @@
     </div>
   </div>
   <p class="rings-caption">Every steeeck carries the years it took to grow.</p>
+  <p class="rings-subcaption" style="padding-bottom:0.6rem; color:var(--honey-bright);">Tap the piece to start your order &rarr;</p>
   <p class="rings-subcaption" style="padding-bottom:0.6rem;">Sample pricing — swap in your real pieces anytime</p>
   <p class="rings-subcaption" style="padding-bottom:3.5rem; opacity:0.85;">Prices shown are estimates. Final pricing depends on wood type, current availability, and shipping — always confirmed by email before payment.</p>
 </div>
@@ -214,6 +215,22 @@
     if (carousel){
       const slides = Array.from(carousel.querySelectorAll('.shop-slide'));
       const dotsWrap = document.getElementById('shopDots');
+      const circle = carousel.querySelector('.shop-carousel-circle');
+
+      // The circle itself is a real link to the order page — genuinely clickable
+      if (circle){
+        circle.setAttribute('role', 'link');
+        circle.setAttribute('tabindex', '0');
+        circle.setAttribute('aria-label', 'Shop custom pieces');
+        let dragged = false;
+        circle.addEventListener('touchmove', () => { dragged = true; }, {passive:true});
+        circle.addEventListener('touchstart', () => { dragged = false; }, {passive:true});
+        circle.addEventListener('click', () => { if (!dragged) window.location.href = 'custom.html'; });
+        circle.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') window.location.href = 'custom.html';
+        });
+      }
+
       slides.forEach((_, i) => {
         const dot = document.createElement('span');
         if (i === 0) dot.classList.add('active');

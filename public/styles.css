@@ -297,6 +297,16 @@
     text-transform:uppercase;
     color:var(--honey-bright);
     margin-bottom:1.4rem;
+    cursor:default;
+    user-select:none;
+    animation:eyebrowReveal 1.4s ease-out both;
+  }
+  @keyframes eyebrowReveal{
+    0%{opacity:0; letter-spacing:0.5em; transform:translateY(-4px);}
+    100%{opacity:1; letter-spacing:0.22em; transform:translateY(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero .eyebrow{animation:none;}
   }
   .hero h1{
     font-size:clamp(2.6rem, 6vw, 5rem);
@@ -342,7 +352,6 @@
   .shop-carousel{
     position:relative;
     width:340px; height:340px;
-    cursor:pointer;
   }
   @media (max-width:880px){.shop-carousel{width:270px; height:270px;}}
   @media (max-width:400px){.shop-carousel{width:220px; height:220px;}}
@@ -353,7 +362,10 @@
     overflow:hidden;
     border:3px solid rgba(224,168,84,0.5);
     box-shadow:0 25px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.35);
+    cursor:pointer;
+    transition:transform 0.22s ease, box-shadow 0.22s ease;
   }
+  .shop-carousel-circle:hover{transform:scale(1.04); box-shadow:0 30px 55px rgba(0,0,0,0.55), inset 0 0 40px rgba(0,0,0,0.35);}
   .shop-slide{
     position:absolute; inset:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -390,14 +402,13 @@
   .shop-dots span.active{background:var(--honey-bright); transform:scale(1.3);}
 
   /* Hover-pop on clickable things, site-wide */
-  nav ul a, .wood-card, .gallery-card, .process-step, .btn-primary, .btn-secondary, .shop-carousel{
+  nav ul a, .wood-card, .gallery-card, .process-step, .btn-primary, .btn-secondary{
     transition:transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, opacity 0.22s ease;
   }
   nav ul a:hover{transform:translateY(-1px) scale(1.06);}
   .wood-card:hover{transform:translateY(-3px) scale(1.015); box-shadow:0 16px 32px rgba(74,46,30,0.18);}
   .process-step{border-radius:6px; padding:0.4rem;}
   .process-step:hover{transform:translateY(-4px) scale(1.03);}
-  .shop-carousel:hover{transform:scale(1.04);}
   .btn-primary{
     background:var(--honey-bright);
     color:var(--bark);
