@@ -525,6 +525,25 @@
   .gallery-card{transition:transform 0.2s ease, box-shadow 0.2s ease;}
   .gallery-card:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(74,46,30,0.15);}
 
+  .gallery-card.has-photo{
+    background:var(--bone); border:1px solid #e3d5ba;
+    padding:0; overflow:hidden; justify-content:flex-start;
+  }
+  .gallery-card.has-photo img{
+    width:100%; height:70%; object-fit:cover; display:block;
+  }
+  .gallery-card.has-photo .info{
+    padding:0.8rem 1rem; width:100%; text-align:left;
+  }
+  .gallery-card.has-photo .label{color:var(--walnut); font-size:0.95rem;}
+  .gallery-card.has-photo .sub{color:#7d6c50; margin-top:0.2rem;}
+  .gallery-card.has-photo .status{
+    margin-top:0.5rem; font-size:0.75rem; font-weight:600;
+    color:var(--moss); text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .gallery-card.has-photo .status.sold{color:#a44;}
+  .gallery-card.has-photo .status.priced{color:var(--honey);}
+
   /* ===== PROCESS STRIP ===== */
   .process{
     background:
