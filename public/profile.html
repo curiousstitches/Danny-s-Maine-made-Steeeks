@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Mr Steeeck</title>
+<meta name="description" content="Customer profile on Mr Steeeck.">
+<meta name="theme-color" content="#241a13">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .profile-wrap{max-width:560px; margin:0 auto; padding:3rem 6vw 5rem;}
+  .avatar-upload{
+    display:flex; flex-direction:column; align-items:center; gap:0.8rem;
+    margin-bottom:1.8rem;
+  }
+  .avatar-preview{
+    width:110px; height:110px; border-radius:50%;
+    background:var(--walnut); border:3px solid rgba(224,168,84,0.5);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--bone); font-family:'Fraunces', serif; font-size:2rem;
+    overflow:hidden; background-size:cover; background-position:center;
+  }
+  .avatar-upload label.upload-btn{
+    font-size:0.82rem; color:var(--honey-bright); cursor:pointer; text-decoration:underline;
+  }
+  .public-view-card{
+    background:var(--bone); border:1px solid #e3d5ba; border-radius:6px;
+    padding:2rem; text-align:center;
+  }
+  .public-view-card .avatar-preview{margin:0 auto 1rem;}
+  .public-view-card h1{font-family:'Fraunces', serif; color:var(--walnut); font-size:1.6rem;}
+  .public-view-card .location{color:#8a7960; font-size:0.9rem; margin-top:0.3rem;}
+  .public-view-card .bio{color:#4a3c2e; margin-top:1.2rem; font-size:0.95rem;}
+  .veteran-badge{
+    display:inline-block; margin-top:0.8rem; background:rgba(107,125,79,0.18);
+    color:#5c6b47; border:1px solid rgba(107,125,79,0.35);
+    padding:0.3rem 0.8rem; border-radius:20px; font-size:0.8rem; font-weight:600;
+  }
+  .private-note{
+    background:rgba(180,60,50,0.1); border:1px solid rgba(200,90,70,0.25);
+    color:#8a4a3c; font-size:0.82rem; padding:0.8rem 1rem; border-radius:4px;
+    margin-bottom:1.6rem;
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wordmark"><a href="index.html" style="color:inherit; text-decoration:none;">Mr <span>Steeeck</span></a></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
+    <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
+  </ul>
+</nav>
+
+<div class="page-header bark-bg">
+  <a href="index.html" class="back-btn">&larr; Back to Home</a>
+  <h1 id="pageTitle">Profile</h1>
+</div>
+
+<div class="profile-wrap" id="profileWrap">
+  <p style="text-align:center; color:#6b5a40;">Loading…</p>
+</div>
+
+<footer class="bark-bg">
+  <div class="wordmark">Mr Steeeck</div>
+  <p>Handmade steeecks, staffs &amp; pokers.</p>
+  <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
+</footer>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+
+  const wrap = document.getElementById('profileWrap');
+  const params = new URLSearchParams(window.location.search);
+  const viewId = params.get('id');
+
+  supabase.auth.getSession().then(async ({ data: { session } }) => {
+    const adminSlot = document.getElementById('navAdminSlot');
+    const authSlot = document.getElementById('navAuthSlot');
+    if (session && ADMIN_EMAILS.includes(session.user.email)){
+      if (adminSlot) adminSlot.style.display = '';
+      authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+    } else if (session){
+      authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+    }
+    document.getElementById('navLogoutLink')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    if (viewId && (!session || viewId !== session.user.id)){
+      renderPublicView(viewId);
+    } else if (session){
+      renderOwnProfile(session.user);
+    } else {
+      wrap.innerHTML = `<p style="text-align:center; color:#6b5a40;">
+        <a href="auth.html" style="color:var(--honey); font-weight:600;">Log in or sign up</a> to view or create your profile.
+      </p>`;
+    }
+  });
+
+  function avatarHtml(url, name){
+    if (url){
+      return `<div class="avatar-preview" style="background-image:url('${url}')"></div>`;
+    }
+    const initial = (name || '?').charAt(0).toUpperCase();
+    return `<div class="avatar-preview">${initial}</div>`;
+  }
+
+  async function renderPublicView(id){
+    document.getElementById('pageTitle').textContent = 'Customer Profile';
+    const { data, error } = await supabase
+      .from('public_profiles')
+      .select('display_name, avatar_url, city, state, bio, veteran_status, created_at')
+      .eq('id', id)
+      .single();
+
+    if (error || !data){
+      wrap.innerHTML = '<p style="text-align:center; color:#6b5a40;">Profile not found.</p>';
+      return;
+    }
+    const location = [data.city, data.state].filter(Boolean).join(', ');
+    wrap.innerHTML = `
+      <div class="public-view-card">
+        ${avatarHtml(data.avatar_url, data.display_name)}
+        <h1>${data.display_name || 'Mr Steeeck Customer'}</h1>
+        ${location ? `<div class="location">${location}</div>` : ''}
+        ${data.veteran_status ? '<div><span class="veteran-badge">🇺🇸 Veteran / Active Duty</span></div>' : ''}
+        ${data.bio ? `<p class="bio">${data.bio}</p>` : ''}
+        <p style="color:#8a7960; font-size:0.78rem; margin-top:1rem;">Member since ${new Date(data.created_at).toLocaleDateString()}</p>
+      </div>
+    `;
+  }
+
+  async function renderOwnProfile(user){
+    document.getElementById('pageTitle').textContent = 'My Profile';
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    const p = profile || {};
+    wrap.innerHTML = `
+      <div class="avatar-upload">
+        ${avatarHtml(p.avatar_url, p.display_name || user.email)}
+        <label class="upload-btn" for="avatarFile">Change photo</label>
+        <input type="file" id="avatarFile" accept="image/*" style="display:none;">
+      </div>
+
+      <p style="text-align:center; margin-bottom:1.6rem;">
+        <a href="profile.html?id=${user.id}" style="color:var(--honey); font-size:0.85rem;">View my public profile &rarr;</a>
+      </p>
+
+      <form id="profileForm" class="order-form">
+        <div class="form-field">
+          <label for="pDisplayName">Display name (shown publicly)</label>
+          <input type="text" id="pDisplayName" value="${p.display_name || ''}">
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="pCity">City (shown publicly)</label>
+            <input type="text" id="pCity" value="${p.city || ''}">
+          </div>
+          <div class="form-field">
+            <label for="pState">State (shown publicly)</label>
+            <input type="text" id="pState" value="${p.state || ''}">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="pBio">Short bio (shown publicly)</label>
+          <textarea id="pBio" rows="2">${p.bio || ''}</textarea>
+        </div>
+
+        <div class="private-note">🔒 Everything below is private — only you and Mr Steeeck can see it. It's never shown on your public profile.</div>
+
+        <div class="form-field">
+          <label for="pAddress">Shipping address</label>
+          <input type="text" id="pAddress" value="${p.address_line || ''}" placeholder="Street address, city, state">
+        </div>
+        <div class="form-field">
+          <label for="pZip">ZIP code</label>
+          <input type="text" id="pZip" value="${p.address_zip || ''}">
+        </div>
+        <div class="form-field">
+          <label for="pPayment">Preferred payment method</label>
+          <select id="pPayment">
+            <option value="" ${!p.preferred_payment ? 'selected' : ''} disabled>Choose one</option>
+            <option ${p.preferred_payment === 'Cash App' ? 'selected' : ''}>Cash App</option>
+            <option ${p.preferred_payment === 'Venmo' ? 'selected' : ''}>Venmo</option>
+          </select>
+        </div>
+
+        <label class="pay-confirm" style="justify-content:flex-start; margin:0.6rem 0 1rem;">
+          <input type="checkbox" id="pVeteran" ${p.veteran_status ? 'checked' : ''}>
+          <span>I'm active duty military or a veteran</span>
+        </label>
+        <div class="form-field" id="idProofField" style="${p.veteran_status ? '' : 'display:none;'}">
+          <label for="idProofFile">Upload ID proof (private, admin-only)</label>
+          <input type="file" id="idProofFile" accept="image/*">
+          <p style="font-size:0.78rem; color:#8a7960; margin-top:0.4rem;">${p.id_proof_url ? 'ID on file ✓ — upload a new file to replace it.' : 'No ID on file yet.'}</p>
+        </div>
+
+        <button type="submit" id="profileSaveBtn" class="btn-primary" style="width:100%; border:none; margin-top:0.6rem;">Save Profile</button>
+        <div class="msg" id="profileMsg"></div>
+      </form>
+    `;
+
+    document.getElementById('pVeteran').addEventListener('change', (e) => {
+      document.getElementById('idProofField').style.display = e.target.checked ? '' : 'none';
+    });
+
+    document.getElementById('avatarFile').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const ext = file.name.split('.').pop();
+      const path = `${user.id}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (upErr){ alert('Photo upload failed: ' + upErr.message); return; }
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+      await supabase.from('profiles').update({ avatar_url: urlData.publicUrl }).eq('id', user.id);
+      renderOwnProfile(user);
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('profileSaveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      const veteranChecked = document.getElementById('pVeteran').checked;
+      let idProofUrl = p.id_proof_url || null;
+
+      const idFile = document.getElementById('idProofFile')?.files[0];
+      if (idFile){
+        const ext = idFile.name.split('.').pop();
+        const path = `${user.id}.${ext}`;
+        const { error: idErr } = await supabase.storage.from('id-proofs').upload(path, idFile, { upsert: true });
+        if (!idErr){
+          idProofUrl = path;
+        }
+      }
+
+      const updates = {
+        display_name: document.getElementById('pDisplayName').value.trim(),
+        city: document.getElementById('pCity').value.trim(),
+        state: document.getElementById('pState').value.trim(),
+        bio: document.getElementById('pBio').value.trim(),
+        address_line: document.getElementById('pAddress').value.trim(),
+        address_zip: document.getElementById('pZip').value.trim(),
+        preferred_payment: document.getElementById('pPayment').value,
+        veteran_status: veteranChecked,
+        id_proof_url: idProofUrl
+      };
+
+      const { error } = await supabase.from('profiles').update(updates).eq('id', user.id);
+      const msg = document.getElementById('profileMsg');
+      if (error){
+        msg.textContent = 'Something went wrong saving your profile.';
+        msg.className = 'show error';
+      } else {
+        msg.textContent = 'Profile saved!';
+        msg.className = 'show success';
+      }
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Profile';
+    });
+  }
+</script>
+</body>
+</html>

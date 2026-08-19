@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customize Your Steeeck — Mr Steeeck</title>
+<meta name="description" content="Design your own custom walking stick, staff, or cane — choose the wood, bark, bend, burning, and finish.">
+<meta name="theme-color" content="#241a13">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav>
+  <div class="wordmark"><a href="index.html" style="color:inherit; text-decoration:none;">Mr <span>Steeeck</span></a></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="craft.html">The Craft</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="sizing.html">Sizing</a></li>
+    <li><a href="pets.html">Pet-Friendly</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="custom.html">Custom Order</a></li>
+    <li><a href="customize.html" class="active">Customize</a></li>
+    <li><a href="reviews.html">Reviews</a></li>
+    <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
+    <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
+  </ul>
+</nav>
+<div class="page-header bark-bg">
+  <a href="index.html" class="back-btn">&larr; Back to Home</a>
+  <h1>Customize Your Steeeck</h1>
+  <p>Build your piece step by step — wood, bark, bend, burning, and every detail in between.</p>
+</div>
+<section class="custom" id="customizeSection">
+  <div class="custom-box" style="max-width:720px;">
+    <form id="buildForm" class="order-form">
+
+      <h3 class="builder-step">1. The Basics</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="bRecipient">Who is it for?</label>
+          <input type="text" id="bRecipient" placeholder="Myself, my dad, my dog Rex...">
+        </div>
+        <div class="form-field">
+          <label for="bHeight">Their height (or pet size)</label>
+          <input type="text" id="bHeight" placeholder="e.g. 5'10&quot;, or 'medium dog'">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="bPurpose">What's it for?</label>
+        <select id="bPurpose">
+          <option value="" disabled selected>Choose one</option>
+          <option>Hiking / trail use</option>
+          <option>Everyday walking cane / mobility</option>
+          <option>Display piece</option>
+          <option>Pet chew or display</option>
+          <option>Gift</option>
+          <option>Other (explain in notes)</option>
+        </select>
+      </div>
+
+      <h3 class="builder-step">2. Wood &amp; Structure</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="bWood">Wood type</label>
+          <select id="bWood">
+            <option value="" disabled selected>Choose one</option>
+            <option>Hardwood (built to last)</option>
+            <option>Pine (built to show)</option>
+            <option>No preference — you choose</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="bBark">Bark left on?</label>
+          <select id="bBark">
+            <option value="" disabled selected>Choose one</option>
+            <option>Fully debarked (smooth)</option>
+            <option>Bark left on the handle only</option>
+            <option>Bark left on the bottom/end only</option>
+            <option>Bark left on in patches (natural look)</option>
+            <option>Bark fully left on</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="bBend">Natural bend or curve?</label>
+          <select id="bBend">
+            <option value="" disabled selected>Choose one</option>
+            <option>Straight</option>
+            <option>Slight natural bend</option>
+            <option>Noticeable curve (like a shepherd's crook)</option>
+            <option>Surprise me — use the wood's natural shape</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="bKnots">Knots &amp; small limbs</label>
+          <select id="bKnots">
+            <option value="" disabled selected>Choose one</option>
+            <option>Remove all — smooth shaft</option>
+            <option>Leave a few small knots for character</option>
+            <option>Leave small limb stubs on (rustic look)</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 class="builder-step">3. Finish &amp; Details</h3>
+      <div class="form-field">
+        <label for="bBurning">Wood burning / engraving</label>
+        <textarea id="bBurning" rows="2" placeholder="Custom text, initials, a design, or 'none'"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="bFinish">Finish / stain</label>
+          <select id="bFinish">
+            <option value="" disabled selected>Choose one</option>
+            <option>Natural oil (shows raw wood tone)</option>
+            <option>Light stain</option>
+            <option>Dark stain</option>
+            <option>Not sure — recommend one</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="bGrip">Grip wrap</label>
+          <select id="bGrip">
+            <option value="" disabled selected>Choose one</option>
+            <option>None — bare wood handle</option>
+            <option>Leather wrap</option>
+            <option>Paracord wrap</option>
+          </select>
+        </div>
+      </div>
+      <label class="pay-confirm" style="justify-content:flex-start; margin-bottom:1.2rem;">
+        <input type="checkbox" id="bMetalTip">
+        <span>Add a metal tip/cap on the bottom</span>
+      </label>
+
+      <h3 class="builder-step">4. You</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="bName">Your name</label>
+          <input type="text" id="bName" required>
+        </div>
+        <div class="form-field">
+          <label for="bEmail">Your email</label>
+          <input type="email" id="bEmail" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="bNotes">Anything else?</label>
+        <textarea id="bNotes" rows="3" placeholder="Any other details we should know"></textarea>
+      </div>
+      <label class="pay-confirm" style="justify-content:flex-start; margin-bottom:1.2rem;">
+        <input type="checkbox" id="bVeteran">
+        <span>I'm active duty military or a veteran (20% discount — I'll email a photo of my ID as proof)</span>
+      </label>
+
+      <!-- Honeypot -->
+      <div style="position:absolute; left:-9999px; opacity:0;" aria-hidden="true">
+        <input type="text" id="bWebsite" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button type="submit" id="buildSubmitBtn" class="btn-primary" style="width:100%; border:none; margin-top:0.4rem;">Send My Design</button>
+      <div class="msg" id="buildMsg"></div>
+    </form>
+    <p style="text-align:center; margin-top:1.4rem; font-size:0.85rem; color:#c2b39b;">We'll follow up by email to confirm details and pricing before anything is built or charged.</p>
+  </div>
+</section>
+<footer class="bark-bg">
+  <div class="wordmark">Mr Steeeck</div>
+  <p>Handmade steeecks, staffs &amp; pokers.</p>
+  <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
+</footer>
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    const adminSlot = document.getElementById('navAdminSlot');
+    const authSlot = document.getElementById('navAuthSlot');
+    if (session && ADMIN_EMAILS.includes(session.user.email)){
+      if (adminSlot) adminSlot.style.display = '';
+      if (authSlot){
+        authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+        document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
+          e.preventDefault();
+          await supabase.auth.signOut();
+          window.location.reload();
+        });
+      }
+    } else if (session){
+      if (authSlot) authSlot.innerHTML = '<a href="profile.html">My Profile</a>';
+    }
+  });
+</script>
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  const supabase = createClient(
+    'https://tckzvajdoyxpycbzonsf.supabase.co',
+    'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
+  );
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // Scroll-reveal: fade+rise elements into view as the user scrolls
+    const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head, .faq-item, .size-table-wrap');
+    revealEls.forEach(el => el.classList.add('reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Gentle tilt-on-hover for cards (desktop only)
+    if (window.matchMedia('(hover: hover)').matches){
+      document.querySelectorAll('.wood-card, .gallery-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `translateY(-4px) scale(1.02) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      });
+    }
+
+
+    const form = document.getElementById('buildForm');
+    const msg = document.getElementById('buildMsg');
+    const submitBtn = document.getElementById('buildSubmitBtn');
+    const loadTime = Date.now();
+
+    function showMsg(text, type){
+      msg.textContent = text;
+      msg.className = 'show ' + type;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (document.getElementById('bWebsite').value){
+        showMsg('Something went wrong. Please try again.', 'error');
+        return;
+      }
+      if (Date.now() - loadTime < 2000){
+        showMsg('Please take a moment to fill out the form.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      const payload = {
+        name: document.getElementById('bName').value.trim(),
+        email: document.getElementById('bEmail').value.trim(),
+        recipient: document.getElementById('bRecipient').value.trim(),
+        height: document.getElementById('bHeight').value.trim(),
+        purpose: document.getElementById('bPurpose').value,
+        wood_type: document.getElementById('bWood').value,
+        bark_preference: document.getElementById('bBark').value,
+        bend_request: document.getElementById('bBend').value,
+        knots_limbs: document.getElementById('bKnots').value,
+        wood_burning: document.getElementById('bBurning').value.trim(),
+        finish_choice: document.getElementById('bFinish').value,
+        grip_wrap: document.getElementById('bGrip').value,
+        metal_tip: document.getElementById('bMetalTip').checked,
+        veteran_discount: document.getElementById('bVeteran').checked,
+        additional_notes: document.getElementById('bNotes').value.trim()
+      };
+
+      const { error } = await supabase.from('custom_builds').insert(payload);
+
+      if (error){
+        showMsg('Something went wrong — please try again or email us directly.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send My Design';
+        return;
+      }
+
+      showMsg('Your design is in! We\'ll follow up by email soon.', 'success');
+      form.reset();
+      submitBtn.textContent = 'Sent ✓';
+    });
+  });
+</script>
+</body>
+</html>

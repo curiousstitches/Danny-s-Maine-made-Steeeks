@@ -19,6 +19,8 @@
     <li><a href="pets.html">Pet-Friendly</a></li>
     <li><a href="faq.html">FAQ</a></li>
     <li><a href="custom.html" class="active">Custom Order</a></li>
+    <li><a href="customize.html">Customize</a></li>
+    <li><a href="reviews.html">Reviews</a></li>
     <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
     <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
   </ul>
@@ -31,7 +33,7 @@
 <section class="custom" id="custom">
   <div class="custom-box">
     <div class="veteran-banner">
-      🇺🇸 <strong>20% off for Active Duty &amp; Veterans</strong> — thank you for your service. Check the box below when you order.
+      🇺🇸 <strong>20% off for Active Duty &amp; Veterans</strong> — thank you for your service. Check the box below when you order, and include a photo of your active or veteran ID in your confirmation email as proof.
     </div>
     <form id="orderForm" class="order-form">
       <div class="form-row">
@@ -75,7 +77,7 @@
 
       <label class="pay-confirm" style="justify-content:flex-start; margin-top:0.2rem; margin-bottom:1.2rem;">
         <input type="checkbox" id="orderVeteran">
-        <span>I'm active duty military or a veteran (20% discount)</span>
+        <span>I'm active duty military or a veteran (20% discount — I'll email a photo of my ID as proof)</span>
       </label>
 
       <!-- Honeypot -->
@@ -135,7 +137,7 @@
         });
       }
     } else if (session){
-      if (authSlot) authSlot.innerHTML = '<a href="auth.html">Account</a>';
+      if (authSlot) authSlot.innerHTML = '<a href="profile.html">My Profile</a>';
     }
   });
 </script>

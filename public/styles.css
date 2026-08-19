@@ -637,6 +637,32 @@
     margin-bottom:1.6rem;
   }
   .veteran-banner strong{color:var(--honey-bright);}
+  .builder-step{
+    font-family:'Fraunces', serif; font-size:1.15rem; color:var(--honey-bright);
+    margin:1.8rem 0 1rem; padding-top:1.2rem; border-top:1px solid rgba(250,246,239,0.12);
+  }
+  .builder-step:first-of-type{margin-top:0; padding-top:0; border-top:none;}
+
+  /* ===== REVIEWS PAGE ===== */
+  .reviews-summary{background:var(--bark); text-align:center; padding:3rem 6vw 1rem;}
+  .reviews-summary .section-head h2{color:var(--honey-bright); font-size:1.8rem;}
+  .reviews-form-section{background:var(--walnut); padding-top:1rem;}
+  .star-input{font-size:1.8rem; color:#5a4b3c; cursor:pointer; letter-spacing:0.1em;}
+  .star-input span{transition:color 0.15s ease;}
+  .star-input span.filled{color:var(--honey-bright);}
+  .reviews-list{background:rgba(250,246,239,0.35);}
+  .reviews-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:1.2rem; max-width:1000px; margin:0 auto;
+  }
+  .review-card{
+    background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
+    padding:1.4rem;
+  }
+  .review-stars{color:var(--honey); font-size:1.1rem; margin-bottom:0.5rem;}
+  .review-comment{color:#4a3c2e; font-size:0.95rem; line-height:1.6; margin-bottom:0.8rem;}
+  .review-meta{color:#8a7960; font-size:0.8rem;}
+  .suggestions-section{background:var(--bark); padding-bottom:5rem;}
 
   .pay-warning{
     margin-top:1.6rem;
