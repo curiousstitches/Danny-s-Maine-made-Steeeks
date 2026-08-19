@@ -107,7 +107,7 @@
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-  const ADMIN_EMAIL = 'mainesteeecksupport@gmail.com';
+  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
   const supabase = createClient(
     'https://tckzvajdoyxpycbzonsf.supabase.co',
     'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
@@ -119,7 +119,7 @@
   async function init(){
     const { data: { session } } = await supabase.auth.getSession();
 
-    if (!session || session.user.email !== ADMIN_EMAIL){
+    if (!session || !ADMIN_EMAILS.includes(session.user.email)){
       gate.innerHTML = `<div><p>This page is only for the site owner.</p>
         <p style="margin-top:1rem;"><a href="auth.html" style="color:#4a2e1e; font-weight:600;">Log in</a> with the admin account to view it.</p></div>`;
       return;

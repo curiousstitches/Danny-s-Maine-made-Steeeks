@@ -961,7 +961,7 @@
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-  const ADMIN_EMAIL = 'mainesteeecksupport@gmail.com';
+  const ADMIN_EMAILS = ['mainesteeecksupport@gmail.com', 'thegoodguy421@gmail.com'];
   const supabase = createClient(
     'https://tckzvajdoyxpycbzonsf.supabase.co',
     'sb_publishable_ArwWZFwAMOu5mmkwIIQebg_d4xwIUR6'
@@ -975,7 +975,7 @@
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
 
-    if (session && session.user.email === ADMIN_EMAIL){
+    if (session && ADMIN_EMAILS.includes(session.user.email)){
       if (adminSlot) adminSlot.style.display = '';
       if (authSlot){
         authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
