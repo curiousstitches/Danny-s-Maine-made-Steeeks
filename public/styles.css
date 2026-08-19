@@ -559,21 +559,31 @@
 
   /* ===== CARE ===== */
   .care{background:rgba(239,230,208,0.3);}
+  .canes.bark-bg{color:var(--bone); padding:5.5rem 6vw;}
+  .canes.bark-bg .section-head h2{color:var(--bone);}
+  .canes.bark-bg .section-head .eyebrow{color:var(--honey-bright);}
+  .canes.bark-bg .section-head p{color:#d8cdbc;}
+  .canes.bark-bg .wood-card{background:rgba(250,246,239,0.08); border-color:rgba(250,246,239,0.18);}
+  .canes.bark-bg .wood-card p{color:#e0d3bd;}
+  .canes.bark-bg .wood-card h3{color:var(--bone);}
+  @media (max-width:480px){.canes.bark-bg{padding:3.6rem 5.5vw;}}
 
   /* ===== FAQ ===== */
   .faq{background:rgba(250,246,239,0.35);}
 
   /* ===== PET-FRIENDLY PAGE ===== */
   .pets-intro{background:rgba(250,246,239,0.35);}
-  .pets-woods{background:rgba(239,230,208,0.3);}
+  .pets-explainer{background:rgba(239,230,208,0.3);}
+  .pets-woods{background:rgba(250,246,239,0.35);}
   .pets-finish.bark-bg{color:var(--bone); padding:5.5rem 6vw;}
   .pets-finish.bark-bg .section-head h2{color:var(--bone);}
   .pets-finish.bark-bg .section-head .eyebrow{color:var(--honey-bright);}
   .pets-finish.bark-bg .section-head p{color:#d8cdbc;}
+  .pets-cats{background:rgba(239,230,208,0.3);}
   .pets-other{background:rgba(250,246,239,0.35);}
   .pets-safety{background:rgba(239,230,208,0.3);}
   @media (max-width:480px){
-    .pets-intro, .pets-woods, .pets-finish.bark-bg, .pets-other, .pets-safety{padding:3.6rem 5.5vw;}
+    .pets-intro, .pets-explainer, .pets-woods, .pets-finish.bark-bg, .pets-cats, .pets-other, .pets-safety{padding:3.6rem 5.5vw;}
   }
   .faq-list{max-width:640px; margin:0 auto;}
   .faq-item{
@@ -616,6 +626,17 @@
   #orderMsg.show{display:block;}
   #orderMsg.error{background:rgba(180,60,50,0.18); color:#f0a898; border:1px solid rgba(180,60,50,0.3);}
   #orderMsg.success{background:rgba(107,125,79,0.22); color:#c8d6b0; border:1px solid rgba(107,125,79,0.4);}
+  .veteran-banner{
+    background:rgba(107,125,79,0.18);
+    border:1px solid rgba(107,125,79,0.35);
+    color:#e0d3bd;
+    font-size:0.9rem;
+    padding:0.9rem 1.1rem;
+    border-radius:4px;
+    text-align:center;
+    margin-bottom:1.6rem;
+  }
+  .veteran-banner strong{color:var(--honey-bright);}
 
   .pay-warning{
     margin-top:1.6rem;

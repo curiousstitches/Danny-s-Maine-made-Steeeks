@@ -30,6 +30,9 @@
 </div>
 <section class="custom" id="custom">
   <div class="custom-box">
+    <div class="veteran-banner">
+      🇺🇸 <strong>20% off for Active Duty &amp; Veterans</strong> — thank you for your service. Check the box below when you order.
+    </div>
     <form id="orderForm" class="order-form">
       <div class="form-row">
         <div class="form-field">
@@ -48,6 +51,7 @@
             <option value="" disabled selected>Choose one</option>
             <option>Adult</option>
             <option>Kid</option>
+            <option>Cane</option>
             <option>Pet</option>
             <option>Baby (display)</option>
             <option>Fire poker</option>
@@ -68,6 +72,11 @@
         <label for="orderNotes">What's it for? Any other details</label>
         <textarea id="orderNotes" rows="3" placeholder="e.g. hiking staff for my dad, exact length if you know it"></textarea>
       </div>
+
+      <label class="pay-confirm" style="justify-content:flex-start; margin-top:0.2rem; margin-bottom:1.2rem;">
+        <input type="checkbox" id="orderVeteran">
+        <span>I'm active duty military or a veteran (20% discount)</span>
+      </label>
 
       <!-- Honeypot -->
       <div style="position:absolute; left:-9999px; opacity:0;" aria-hidden="true">
@@ -206,7 +215,8 @@
         email: document.getElementById('orderEmail').value.trim(),
         size: document.getElementById('orderSize').value,
         wood: document.getElementById('orderWood').value,
-        notes: document.getElementById('orderNotes').value.trim()
+        notes: document.getElementById('orderNotes').value.trim(),
+        veteran_discount: document.getElementById('orderVeteran').checked
       };
 
       const { error } = await supabase.from('custom_orders').insert(payload);

@@ -88,9 +88,9 @@
 
     <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Custom order requests</h2>
     <table style="margin-bottom:2.6rem;">
-      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Date</th></tr></thead>
+      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Veteran?</th><th>Date</th></tr></thead>
       <tbody id="orderTableBody">
-        <tr><td colspan="6">Loading…</td></tr>
+        <tr><td colspan="7">Loading…</td></tr>
       </tbody>
     </table>
 
@@ -142,7 +142,7 @@
 
     const { data: orders, count: orderCount } = await supabase
       .from('custom_orders')
-      .select('name, email, size, wood, notes, created_at', { count: 'exact' })
+      .select('name, email, size, wood, notes, veteran_discount, created_at', { count: 'exact' })
       .order('created_at', { ascending: false });
 
     document.getElementById('visitCount').textContent = visitCount ?? '0';
@@ -151,7 +151,7 @@
 
     const orderBody = document.getElementById('orderTableBody');
     if (!orders || orders.length === 0){
-      orderBody.innerHTML = '<tr><td colspan="6">No custom order requests yet.</td></tr>';
+      orderBody.innerHTML = '<tr><td colspan="7">No custom order requests yet.</td></tr>';
     } else {
       orderBody.innerHTML = orders.map(o => `
         <tr>
@@ -160,6 +160,7 @@
           <td>${o.size}</td>
           <td>${o.wood}</td>
           <td>${o.notes || '—'}</td>
+          <td>${o.veteran_discount ? '🇺🇸 Yes' : '—'}</td>
           <td>${new Date(o.created_at).toLocaleDateString()}</td>
         </tr>
       `).join('');
