@@ -300,7 +300,7 @@
     chatChannel = supabase
       .channel('admin_chat_' + sessionId)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, (payload) => {
-        appendThreadMessage(payload.new);
+        if (payload.new.sender === 'customer') appendThreadMessage(payload.new);
       })
       .subscribe();
   }
@@ -331,12 +331,16 @@
     const text = input.value.trim();
     if (!text) return;
     input.value = '';
-    await supabase.from('chat_messages').insert({
+    appendThreadMessage({ sender: 'admin', message: text });
+    const { error } = await supabase.from('chat_messages').insert({
       session_id: sessionId,
       sender: 'admin',
       name: 'Mr Steeeck',
       message: text
     });
+    if (error){
+      appendThreadMessage({ sender: 'admin', message: '⚠️ That message failed to send — please try again.' });
+    }
   }
 
   // ===== NOTIFY NUMBERS =====
