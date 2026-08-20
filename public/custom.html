@@ -108,6 +108,7 @@
             <option>Gift</option>
             <option>Other (explain in notes)</option>
           </select>
+          <p id="petChewHint" hidden style="margin-top:0.5rem; font-size:0.83rem; color:#8a7960;">Heads up — pet-chewable pieces take extra care to make safely, so these usually take a bit longer than our standard turnaround. <a href="pets.html" style="color:var(--honey-bright);">Why?</a></p>
         </div>
         <div class="form-row">
           <div class="form-field">
@@ -248,6 +249,14 @@
     if (emailedConfirm && payRow){
       emailedConfirm.addEventListener('change', () => {
         payRow.classList.toggle('locked', !emailedConfirm.checked);
+      });
+    }
+
+    const dPurpose = document.getElementById('dPurpose');
+    const petChewHint = document.getElementById('petChewHint');
+    if (dPurpose && petChewHint){
+      dPurpose.addEventListener('change', () => {
+        petChewHint.hidden = dPurpose.value !== 'Pet chew or display';
       });
     }
 
