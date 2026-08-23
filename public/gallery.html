@@ -80,7 +80,12 @@
     <div class="modal-box">
       <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
       <div class="modal-photo">
-        <img id="modalImg" src="" alt="">
+        <div class="modal-carousel" id="modalCarousel">
+          <div class="modal-carousel-track" id="modalCarouselTrack"></div>
+          <button class="carousel-arrow prev" id="modalPrev" aria-label="Previous" hidden>&#10094;</button>
+          <button class="carousel-arrow next" id="modalNext" aria-label="Next" hidden>&#10095;</button>
+          <div class="carousel-dots" id="modalDots"></div>
+        </div>
       </div>
       <div class="modal-info">
         <h3 id="modalName">—</h3>
@@ -107,6 +112,16 @@
           <label id="editPriceWrap" hidden>Price
             <input id="editPrice" type="text" placeholder="$45">
           </label>
+          <label>Photos <span id="editPhotoCount" style="font-weight:400; color:#9a8564;"></span>
+            <div id="editPhotoThumbs" class="media-thumbs"></div>
+          </label>
+          <label id="editAddPhotosWrap">Add more photos (up to 5 total)
+            <input id="editAddPhotos" type="file" accept="image/*" multiple>
+          </label>
+          <label>Video <span style="font-weight:400; color:#9a8564;">(one, optional)</span>
+            <div id="editVideoThumb" class="media-thumbs"></div>
+            <input id="editVideoFile" type="file" accept="video/*">
+          </label>
           <button id="saveItemBtn" class="btn-primary" type="button">Save Changes</button>
           <div class="msg" id="saveMsg"></div>
         </div>
@@ -122,8 +137,11 @@
       <button class="modal-close" id="addModalClose" aria-label="Close">&times;</button>
       <h3 style="font-family:'Fraunces', serif; color:var(--walnut); margin-bottom:1rem;">Add New Gallery Item</h3>
       <div class="add-item-form">
-        <label>Photo
-          <input id="newItemFile" type="file" accept="image/*">
+        <label>Photos <span style="font-weight:400; color:#9a8564;">(1 to 5)</span>
+          <input id="newItemFile" type="file" accept="image/*" multiple>
+        </label>
+        <label>Video <span style="font-weight:400; color:#9a8564;">(optional, one)</span>
+          <input id="newItemVideo" type="file" accept="video/*">
         </label>
         <label>Name
           <input id="newItemName" type="text" placeholder="e.g. The Northwind">
@@ -221,6 +239,11 @@
     return 'Ask about availability';
   }
 
+  function firstPhoto(item){
+    if (item.image_paths && item.image_paths.length) return item.image_paths[0];
+    return item.image_path || '';
+  }
+
   function renderGallery(){
     const grid = document.getElementById('galleryGrid');
     // Remove any previously-rendered photo cards (keep the static "coming soon" ones)
@@ -232,8 +255,13 @@
       card.dataset.category = item.category;
       card.dataset.id = item.id;
       const statusClass = item.status === 'sold' ? 'sold' : (item.status === 'priced' ? 'priced' : '');
+      const photoCount = (item.image_paths && item.image_paths.length) || (item.image_path ? 1 : 0);
+      const mediaBadge = (photoCount > 1 || item.video_path)
+        ? `<div class="media-badge">${photoCount > 1 ? `📷 ${photoCount}` : ''}${photoCount > 1 && item.video_path ? ' · ' : ''}${item.video_path ? '🎬' : ''}</div>`
+        : '';
       card.innerHTML = `
-        <img src="${item.image_path}" alt="${item.name}" loading="lazy">
+        <img src="${firstPhoto(item)}" alt="${item.name}" loading="lazy">
+        ${mediaBadge}
         <div class="info">
           <div class="label">"${item.name}"</div>
           <div class="sub">${CATEGORY_LABELS[item.category] || item.category}</div>
@@ -267,7 +295,10 @@
 
   // --- Modal ---
   const overlay = document.getElementById('modalOverlay');
-  const modalImg = document.getElementById('modalImg');
+  const carouselTrack = document.getElementById('modalCarouselTrack');
+  const carouselPrev = document.getElementById('modalPrev');
+  const carouselNext = document.getElementById('modalNext');
+  const carouselDots = document.getElementById('modalDots');
   const modalName = document.getElementById('modalName');
   const modalCategory = document.getElementById('modalCategory');
   const modalDesc = document.getElementById('modalDesc');
@@ -278,12 +309,106 @@
   const editStatus = document.getElementById('editStatus');
   const editPrice = document.getElementById('editPrice');
   const editPriceWrap = document.getElementById('editPriceWrap');
+  const editPhotoCount = document.getElementById('editPhotoCount');
+  const editPhotoThumbs = document.getElementById('editPhotoThumbs');
+  const editAddPhotosWrap = document.getElementById('editAddPhotosWrap');
+  const editAddPhotos = document.getElementById('editAddPhotos');
+  const editVideoThumb = document.getElementById('editVideoThumb');
+  const editVideoFile = document.getElementById('editVideoFile');
   const saveMsg = document.getElementById('saveMsg');
+
+  let carouselSlides = [];
+  let carouselIndex = 0;
+  let editPhotosPending = []; // {path, isNew, file}
+
+  function buildSlides(item){
+    const photos = (item.image_paths && item.image_paths.length) ? item.image_paths : (item.image_path ? [item.image_path] : []);
+    const slides = photos.map(p => ({ type: 'image', src: p }));
+    if (item.video_path) slides.push({ type: 'video', src: publicUrlOrPath(item.video_path) });
+    return slides;
+  }
+
+  function publicUrlOrPath(path){
+    // gallery-photos bucket is public; stored paths are already relative site paths for legacy images,
+    // or storage object paths for anything uploaded through the new flow.
+    if (path.startsWith('http') || path.startsWith('images/')) return path;
+    const { data } = supabase.storage.from('gallery-photos').getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  function renderCarousel(){
+    carouselTrack.innerHTML = carouselSlides.map(s =>
+      s.type === 'video'
+        ? `<div class="carousel-slide"><video src="${s.src}" controls playsinline></video></div>`
+        : `<div class="carousel-slide"><img src="${publicUrlOrPath(s.src)}" alt=""></div>`
+    ).join('');
+    carouselTrack.style.transform = `translateX(-${carouselIndex * 100}%)`;
+    const multi = carouselSlides.length > 1;
+    carouselPrev.hidden = !multi;
+    carouselNext.hidden = !multi;
+    carouselDots.hidden = !multi;
+    carouselDots.innerHTML = multi ? carouselSlides.map((_, i) =>
+      `<span class="dot ${i === carouselIndex ? 'active' : ''}" data-i="${i}"></span>`
+    ).join('') : '';
+    carouselDots.querySelectorAll('.dot').forEach(d => {
+      d.addEventListener('click', () => { carouselIndex = parseInt(d.dataset.i); renderCarousel(); });
+    });
+  }
+
+  carouselPrev.addEventListener('click', () => {
+    carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+    renderCarousel();
+  });
+  carouselNext.addEventListener('click', () => {
+    carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+    renderCarousel();
+  });
+
+  function renderEditThumbs(item){
+    const photos = (item.image_paths && item.image_paths.length) ? item.image_paths : (item.image_path ? [item.image_path] : []);
+    editPhotosPending = photos.map(p => ({ path: p, isNew: false, file: null }));
+    drawEditThumbs();
+    editVideoThumb.innerHTML = item.video_path
+      ? `<div class="media-thumb"><video src="${publicUrlOrPath(item.video_path)}" muted></video><button type="button" class="thumb-remove" id="removeVideoBtn">&times;</button></div>`
+      : '<span style="color:#9a8564; font-size:0.85rem;">No video yet</span>';
+    const removeBtn = document.getElementById('removeVideoBtn');
+    if (removeBtn) removeBtn.addEventListener('click', () => { activeItem._videoRemoved = true; editVideoThumb.innerHTML = '<span style="color:#9a8564; font-size:0.85rem;">Will be removed on save</span>'; });
+  }
+
+  function drawEditThumbs(){
+    editPhotoCount.textContent = `(${editPhotosPending.length}/5)`;
+    editPhotoThumbs.innerHTML = editPhotosPending.map((p, i) => `
+      <div class="media-thumb">
+        <img src="${p.isNew ? p.preview : publicUrlOrPath(p.path)}" alt="">
+        <button type="button" class="thumb-remove" data-i="${i}">&times;</button>
+      </div>
+    `).join('');
+    editPhotoThumbs.querySelectorAll('.thumb-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editPhotosPending.splice(parseInt(btn.dataset.i), 1);
+        drawEditThumbs();
+      });
+    });
+    editAddPhotosWrap.hidden = editPhotosPending.length >= 5;
+  }
+
+  editAddPhotos.addEventListener('change', () => {
+    const room = 5 - editPhotosPending.length;
+    const files = Array.from(editAddPhotos.files).slice(0, room);
+    files.forEach(file => {
+      editPhotosPending.push({ path: null, isNew: true, file, preview: URL.createObjectURL(file) });
+    });
+    editAddPhotos.value = '';
+    drawEditThumbs();
+  });
 
   function openModal(item){
     activeItem = item;
-    modalImg.src = item.image_path;
-    modalImg.alt = item.name;
+    activeItem._videoRemoved = false;
+    carouselSlides = buildSlides(item);
+    carouselIndex = 0;
+    renderCarousel();
+
     modalName.textContent = `"${item.name}"`;
     modalCategory.textContent = CATEGORY_LABELS[item.category] || item.category;
     modalDesc.textContent = item.description || 'No description yet.';
@@ -297,6 +422,8 @@
       editStatus.value = item.status || 'ask';
       editPrice.value = item.price || '';
       editPriceWrap.hidden = editStatus.value !== 'priced';
+      renderEditThumbs(item);
+      editVideoFile.value = '';
       saveMsg.textContent = '';
     } else {
       adminControls.hidden = true;
@@ -320,29 +447,63 @@
     editPriceWrap.hidden = editStatus.value !== 'priced';
   });
 
+  async function uploadGalleryFile(file){
+    const ext = file.name.split('.').pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from('gallery-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    if (error) throw error;
+    return path;
+  }
+
   document.getElementById('saveItemBtn').addEventListener('click', async () => {
     if (!activeItem) return;
-    saveMsg.textContent = 'Saving...';
-    const updates = {
-      name: editName.value.trim(),
-      description: editDesc.value.trim(),
-      status: editStatus.value,
-      price: editStatus.value === 'priced' ? editPrice.value.trim() : null
-    };
-    const { error } = await supabase.from('gallery_items').update(updates).eq('id', activeItem.id);
-    if (error){
-      saveMsg.textContent = 'Could not save — try again.';
-      console.error(error);
+    if (editPhotosPending.length === 0){
+      saveMsg.textContent = 'Please keep at least 1 photo.';
       return;
     }
-    Object.assign(activeItem, updates);
-    const idx = galleryItems.findIndex(g => g.id === activeItem.id);
-    if (idx !== -1) galleryItems[idx] = activeItem;
-    saveMsg.textContent = 'Saved!';
-    modalName.textContent = `"${activeItem.name}"`;
-    modalDesc.textContent = activeItem.description || 'No description yet.';
-    modalStatus.textContent = statusLabel(activeItem);
-    renderGallery();
+    saveMsg.textContent = 'Saving...';
+    try {
+      const finalPaths = [];
+      for (const p of editPhotosPending){
+        if (p.isNew){
+          finalPaths.push(await uploadGalleryFile(p.file));
+        } else {
+          finalPaths.push(p.path);
+        }
+      }
+
+      let videoPath = activeItem.video_path;
+      if (activeItem._videoRemoved) videoPath = null;
+      if (editVideoFile.files[0]){
+        videoPath = await uploadGalleryFile(editVideoFile.files[0]);
+      }
+
+      const updates = {
+        name: editName.value.trim(),
+        description: editDesc.value.trim(),
+        status: editStatus.value,
+        price: editStatus.value === 'priced' ? editPrice.value.trim() : null,
+        image_paths: finalPaths,
+        image_path: finalPaths[0],
+        video_path: videoPath
+      };
+      const { error } = await supabase.from('gallery_items').update(updates).eq('id', activeItem.id);
+      if (error) throw error;
+      Object.assign(activeItem, updates);
+      const idx = galleryItems.findIndex(g => g.id === activeItem.id);
+      if (idx !== -1) galleryItems[idx] = activeItem;
+      saveMsg.textContent = 'Saved!';
+      modalName.textContent = `"${activeItem.name}"`;
+      modalDesc.textContent = activeItem.description || 'No description yet.';
+      modalStatus.textContent = statusLabel(activeItem);
+      carouselSlides = buildSlides(activeItem);
+      carouselIndex = 0;
+      renderCarousel();
+      renderGallery();
+    } catch (err) {
+      console.error(err);
+      saveMsg.textContent = 'Could not save — try again.';
+    }
   });
 
   // --- Add New Item (admin only) ---
@@ -350,6 +511,7 @@
   const addItemBtn = document.getElementById('addItemBtn');
   const addModalClose = document.getElementById('addModalClose');
   const newItemFile = document.getElementById('newItemFile');
+  const newItemVideo = document.getElementById('newItemVideo');
   const newItemName = document.getElementById('newItemName');
   const newItemCategory = document.getElementById('newItemCategory');
   const newItemDesc = document.getElementById('newItemDesc');
@@ -361,6 +523,7 @@
 
   function openAddModal(){
     newItemFile.value = '';
+    newItemVideo.value = '';
     newItemName.value = '';
     newItemCategory.value = 'walking-stick';
     newItemDesc.value = '';
@@ -387,10 +550,10 @@
   });
 
   createItemBtn.addEventListener('click', async () => {
-    const file = newItemFile.files[0];
+    const files = Array.from(newItemFile.files).slice(0, 5);
     const name = newItemName.value.trim();
-    if (!file){
-      createMsg.textContent = 'Please choose a photo.';
+    if (files.length === 0){
+      createMsg.textContent = 'Please choose at least 1 photo (up to 5).';
       return;
     }
     if (!name){
@@ -398,56 +561,53 @@
       return;
     }
 
-    createMsg.textContent = 'Uploading photo...';
     createItemBtn.disabled = true;
 
-    const ext = file.name.split('.').pop();
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    try {
+      createMsg.textContent = `Uploading photo 1 of ${files.length}...`;
+      const imagePaths = [];
+      for (let i = 0; i < files.length; i++){
+        createMsg.textContent = `Uploading photo ${i + 1} of ${files.length}...`;
+        imagePaths.push(await uploadGalleryFile(files[i]));
+      }
 
-    const { error: uploadError } = await supabase.storage
-      .from('gallery-photos')
-      .upload(path, file, { cacheControl: '3600', upsert: false });
+      let videoPath = null;
+      if (newItemVideo.files[0]){
+        createMsg.textContent = 'Uploading video...';
+        videoPath = await uploadGalleryFile(newItemVideo.files[0]);
+      }
 
-    if (uploadError){
-      createMsg.textContent = 'Upload failed — try again.';
-      console.error(uploadError);
+      createMsg.textContent = 'Saving item...';
+      const maxSort = galleryItems.reduce((max, it) => Math.max(max, it.sort_order || 0), 0);
+
+      const { data: inserted, error: insertError } = await supabase
+        .from('gallery_items')
+        .insert({
+          name,
+          category: newItemCategory.value,
+          image_path: imagePaths[0],
+          image_paths: imagePaths,
+          video_path: videoPath,
+          description: newItemDesc.value.trim(),
+          status: newItemStatus.value,
+          price: newItemStatus.value === 'priced' ? newItemPrice.value.trim() : null,
+          sort_order: maxSort + 1
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      galleryItems.push(inserted);
+      renderGallery();
+      createMsg.textContent = 'Added!';
+      setTimeout(closeAddModal, 700);
+    } catch (err) {
+      console.error(err);
+      createMsg.textContent = 'Could not save — try again.';
+    } finally {
       createItemBtn.disabled = false;
-      return;
     }
-
-    const { data: urlData } = supabase.storage.from('gallery-photos').getPublicUrl(path);
-    const imageUrl = urlData.publicUrl;
-
-    createMsg.textContent = 'Saving item...';
-
-    const maxSort = galleryItems.reduce((max, it) => Math.max(max, it.sort_order || 0), 0);
-
-    const { data: inserted, error: insertError } = await supabase
-      .from('gallery_items')
-      .insert({
-        name,
-        category: newItemCategory.value,
-        image_path: imageUrl,
-        description: newItemDesc.value.trim(),
-        status: newItemStatus.value,
-        price: newItemStatus.value === 'priced' ? newItemPrice.value.trim() : null,
-        sort_order: maxSort + 1
-      })
-      .select()
-      .single();
-
-    createItemBtn.disabled = false;
-
-    if (insertError){
-      createMsg.textContent = 'Could not save item — try again.';
-      console.error(insertError);
-      return;
-    }
-
-    galleryItems.push(inserted);
-    renderGallery();
-    createMsg.textContent = 'Added!';
-    setTimeout(closeAddModal, 700);
   });
 
   // --- Reveal + tilt (re-run after each render since cards are recreated) ---

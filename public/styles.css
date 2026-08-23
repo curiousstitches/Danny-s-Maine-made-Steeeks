@@ -520,6 +520,7 @@
     background-size:cover; background-position:center;
     border:1px solid #e3d5ba;
     padding:0; overflow:hidden; justify-content:flex-start;
+    position:relative;
   }
   .gallery-card.has-photo img{
     width:100%; height:70%; object-fit:cover; display:block;
@@ -591,6 +592,58 @@
   .modal-photo{
     border-radius:8px; overflow:hidden; margin-bottom:1.1rem;
   }
+
+  /* ===== PHOTO/VIDEO CAROUSEL ===== */
+  .modal-carousel{ position:relative; }
+  .modal-carousel-track{
+    display:flex; transition:transform 0.3s ease; border-radius:8px; overflow:hidden;
+  }
+  .carousel-slide{ min-width:100%; }
+  .carousel-slide img, .carousel-slide video{
+    display:block; width:100%; max-height:52vh; object-fit:cover; background:#000;
+  }
+  .carousel-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    background:rgba(20,14,9,0.55); color:#fff; border:none; border-radius:50%;
+    width:36px; height:36px; font-size:1rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s ease;
+  }
+  .carousel-arrow:hover{ background:rgba(20,14,9,0.8); }
+  .carousel-arrow.prev{ left:8px; }
+  .carousel-arrow.next{ right:8px; }
+  .carousel-dots{
+    display:flex; justify-content:center; gap:6px; margin-top:0.6rem;
+  }
+  .carousel-dots .dot{
+    width:8px; height:8px; border-radius:50%; background:#d3c2a0; cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .carousel-dots .dot.active{ background:var(--honey); }
+
+  /* ===== ADMIN MEDIA THUMBS ===== */
+  .media-thumbs{
+    display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.4rem;
+  }
+  .media-thumb{
+    position:relative; width:64px; height:64px; border-radius:6px; overflow:hidden;
+    border:1px solid #d3c2a0;
+  }
+  .media-thumb img, .media-thumb video{
+    width:100%; height:100%; object-fit:cover;
+  }
+  .media-thumb .thumb-remove{
+    position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%;
+    background:rgba(20,14,9,0.75); color:#fff; border:none; font-size:0.75rem;
+    cursor:pointer; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+
+  .media-badge{
+    position:absolute; top:8px; right:8px; z-index:2;
+    background:rgba(20,14,9,0.68); color:#fff; font-size:0.72rem; font-weight:600;
+    padding:0.2rem 0.5rem; border-radius:20px;
+  }
+
   .modal-photo img{
     display:block; width:100%; max-height:52vh; object-fit:cover;
   }
