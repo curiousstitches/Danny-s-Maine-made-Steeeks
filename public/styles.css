@@ -656,6 +656,21 @@
   .gallery-admin-bar{
     display:flex; justify-content:center; margin-bottom:1.4rem;
   }
+
+  /* ===== WOOD GUIDE MODAL ===== */
+  .wood-photo-pair{
+    display:grid; grid-template-columns:1fr 1fr; gap:0.7rem;
+    margin-bottom:1.1rem;
+  }
+  .wood-photo-col{ text-align:center; }
+  .wood-photo-label{
+    font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+    color:#8f7c5c; margin-bottom:0.3rem;
+  }
+  .wood-modal-img{
+    width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px;
+    display:block;
+  }
   .add-item-form{
     display:flex; flex-direction:column; gap:0.8rem;
   }
@@ -825,6 +840,30 @@
     margin-bottom:1.6rem;
   }
   .veteran-banner strong{color:var(--honey-bright);}
+
+  .order-type-toggle{
+    display:flex; gap:0.8rem; margin-bottom:1.4rem; flex-wrap:wrap;
+  }
+  .order-type-option{
+    flex:1; min-width:200px; display:flex; align-items:center; gap:0.6rem;
+    background:rgba(250,246,239,0.06); border:1.5px solid rgba(250,246,239,0.18);
+    border-radius:8px; padding:0.9rem 1rem; cursor:pointer; transition:all 0.2s ease;
+  }
+  .order-type-option:has(input:checked){
+    background:rgba(201,138,62,0.15); border-color:var(--honey);
+  }
+  .order-type-option input{ width:18px; height:18px; flex-shrink:0; accent-color:var(--honey); }
+  .order-type-option span{ color:#e0d3bd; font-weight:600; font-size:0.95rem; }
+  .order-type-option small{ display:block; font-weight:400; color:#a0937a; font-size:0.8rem; margin-top:0.15rem; }
+
+  .byo-info-box{
+    background:rgba(107,125,79,0.14); border:1px solid rgba(107,125,79,0.3);
+    border-radius:6px; padding:1rem 1.2rem; margin-bottom:1.6rem; color:#e0d3bd; font-size:0.92rem;
+  }
+  .byo-info-box p{ margin-bottom:0.6rem; }
+  .byo-info-box p:last-child{ margin-bottom:0; }
+  #byoMailAddress{ color:var(--honey-bright); font-weight:600; }
+
   .builder-step{
     font-family:'Fraunces', serif; font-size:1.15rem; color:var(--honey-bright);
     margin:1.8rem 0 1rem; padding-top:1.2rem; border-top:1px solid rgba(250,246,239,0.12);

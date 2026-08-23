@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wood Guide — Mr Steeeck</title>
+<meta name="description" content="A visual reference guide to the wood species we use — bark and grain photos for identification.">
+<meta name="theme-color" content="#241a13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav>
+  <div class="wordmark"><a href="index.html" style="color:inherit; text-decoration:none;">Mr <span>Steeeck</span></a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu">&#9776;</button>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="craft.html">The Craft</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="woods.html" class="active">Wood Guide</a></li>
+    <li><a href="sizing.html">Sizing</a></li>
+    <li><a href="pets.html">Pet-Friendly</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="custom.html">Order</a></li>
+    <li><a href="reviews.html">Reviews</a></li>
+    <li id="navAuthSlot"><a href="auth.html">Sign In</a></li>
+    <li id="navAdminSlot" style="display:none;"><a href="admin.html" style="color:var(--honey-bright); font-weight:600;">Admin</a></li>
+  </ul>
+</nav>
+<script>
+  document.getElementById('navToggle')?.addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.querySelector('.nav-links').classList.remove('open'));
+  });
+</script>
+
+<div class="page-header bark-bg">
+  <a href="index.html" class="back-btn">&larr; Back to Home</a>
+  <h1>Wood Guide</h1>
+  <p>A field reference for the species we work with — bark for identification, grain for what the finished piece looks like.</p>
+</div>
+
+<section class="gallery" id="woodGuide">
+  <div class="section-head">
+    <span class="eyebrow">Know Your Wood</span>
+    <h2>Species Reference</h2>
+    <p>Tap any wood for a closer look at both its bark and its sanded grain.</p>
+  </div>
+
+  <div class="gallery-filters" role="tablist" aria-label="Filter by category">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="hardwood">Hardwood</button>
+    <button class="filter-btn" data-filter="softwood">Softwood</button>
+  </div>
+
+  <div class="gallery-admin-bar" id="woodAdminBar" hidden>
+    <button class="btn-primary" id="addWoodBtn" type="button">+ Add Wood Species</button>
+  </div>
+
+  <div class="gallery-grid" id="woodGrid"></div>
+</section>
+
+<!-- Wood detail modal -->
+<div class="modal-overlay" id="woodModalOverlay" hidden>
+  <div class="modal-frame">
+    <div class="modal-box">
+      <button class="modal-close" id="woodModalClose" aria-label="Close">&times;</button>
+      <div class="wood-photo-pair">
+        <div class="wood-photo-col">
+          <div class="wood-photo-label">Bark</div>
+          <img id="woodModalBark" src="" alt="" class="wood-modal-img">
+        </div>
+        <div class="wood-photo-col">
+          <div class="wood-photo-label">Grain</div>
+          <img id="woodModalGrain" src="" alt="" class="wood-modal-img">
+        </div>
+      </div>
+      <div class="modal-info">
+        <h3 id="woodModalName">—</h3>
+        <p class="modal-category" id="woodModalCategory"></p>
+        <p class="modal-desc" id="woodModalDesc"></p>
+
+        <div id="woodModalAdminControls" class="modal-admin" hidden>
+          <div class="admin-divider">Admin — visible only to you</div>
+          <label>Name
+            <input id="editWoodName" type="text">
+          </label>
+          <label>Category
+            <select id="editWoodCategory">
+              <option value="hardwood">Hardwood</option>
+              <option value="softwood">Softwood</option>
+            </select>
+          </label>
+          <label>Description
+            <textarea id="editWoodDesc" rows="4"></textarea>
+          </label>
+          <label>Replace bark photo
+            <input id="editWoodBarkFile" type="file" accept="image/*">
+          </label>
+          <label>Replace grain photo
+            <input id="editWoodGrainFile" type="file" accept="image/*">
+          </label>
+          <button id="saveWoodBtn" class="btn-primary" type="button">Save Changes</button>
+          <div class="msg" id="saveWoodMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add wood modal (admin only) -->
+<div class="modal-overlay" id="addWoodModalOverlay" hidden>
+  <div class="modal-frame">
+    <div class="modal-box">
+      <button class="modal-close" id="addWoodModalClose" aria-label="Close">&times;</button>
+      <h3 style="font-family:'Fraunces', serif; color:var(--walnut); margin-bottom:1rem;">Add New Wood Species</h3>
+      <div class="add-item-form">
+        <label>Name
+          <input id="newWoodName" type="text" placeholder="e.g. Hickory">
+        </label>
+        <label>Category
+          <select id="newWoodCategory">
+            <option value="hardwood">Hardwood</option>
+            <option value="softwood">Softwood</option>
+          </select>
+        </label>
+        <label>Description
+          <textarea id="newWoodDesc" rows="4" placeholder="What the bark looks like, what the grain looks like, any notes for identifying it in the field"></textarea>
+        </label>
+        <label>Bark photo
+          <input id="newWoodBarkFile" type="file" accept="image/*">
+        </label>
+        <label>Grain photo
+          <input id="newWoodGrainFile" type="file" accept="image/*">
+        </label>
+        <button id="createWoodBtn" class="btn-primary" type="button">Add Wood Species</button>
+        <div class="msg" id="createWoodMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="bark-bg">
+  <div class="wordmark">Mr Steeeck</div>
+  <p>Handmade steeecks, staffs &amp; pokers.</p>
+  <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
+</footer>
+
+<script type="module">
+  import { supabase, ADMIN_EMAILS } from './supabase-client.js';
+
+  let isAdmin = false;
+  let woodItems = [];
+  let activeWood = null;
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    const adminSlot = document.getElementById('navAdminSlot');
+    const authSlot = document.getElementById('navAuthSlot');
+    if (session && ADMIN_EMAILS.includes(session.user.email)) {
+      isAdmin = true;
+      if (adminSlot) adminSlot.style.display = '';
+      document.getElementById('woodAdminBar').hidden = false;
+      if (authSlot) {
+        authSlot.innerHTML = '<a href="#" id="navLogoutLink">Log Out</a>';
+        document.getElementById('navLogoutLink').addEventListener('click', async (e) => {
+          e.preventDefault();
+          await supabase.auth.signOut();
+          window.location.reload();
+        });
+      }
+    } else if (session) {
+      if (authSlot) authSlot.innerHTML = '<a href="profile.html">My Profile</a>';
+    }
+    loadWoods();
+  });
+
+  function publicUrl(bucket, path) {
+    if (!path) return null;
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  async function loadWoods() {
+    const { data, error } = await supabase
+      .from('wood_species')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (error) { console.error(error); return; }
+    woodItems = data || [];
+    renderWoods();
+  }
+
+  function renderWoods() {
+    const grid = document.getElementById('woodGrid');
+    grid.innerHTML = '';
+    woodItems.forEach(w => {
+      const bark = publicUrl('wood-photos', w.bark_image_path);
+      const grain = publicUrl('wood-photos', w.grain_image_path);
+      const card = document.createElement('div');
+      card.className = 'gallery-card has-photo';
+      card.dataset.category = w.category;
+      const thumb = bark || grain;
+      card.innerHTML = `
+        ${thumb ? `<img src="${thumb}" alt="${w.name} bark" loading="lazy">` : `<div class="icon">🪵</div>`}
+        <div class="info">
+          <div class="label">${w.name}</div>
+          <div class="sub">${w.category === 'hardwood' ? 'Hardwood' : 'Softwood'}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => openWoodModal(w));
+      grid.appendChild(card);
+    });
+    setupRevealAndTilt();
+    applyActiveFilter();
+  }
+
+  function applyActiveFilter() {
+    const active = document.querySelector('.filter-btn.active');
+    const filter = active ? active.dataset.filter : 'all';
+    document.querySelectorAll('#woodGrid .gallery-card').forEach(card => {
+      card.hidden = !(filter === 'all' || card.dataset.category === filter);
+    });
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyActiveFilter();
+    });
+  });
+
+  // --- Detail modal ---
+  const overlay = document.getElementById('woodModalOverlay');
+  const barkImg = document.getElementById('woodModalBark');
+  const grainImg = document.getElementById('woodModalGrain');
+  const modalName = document.getElementById('woodModalName');
+  const modalCategory = document.getElementById('woodModalCategory');
+  const modalDesc = document.getElementById('woodModalDesc');
+  const adminControls = document.getElementById('woodModalAdminControls');
+  const editName = document.getElementById('editWoodName');
+  const editCategory = document.getElementById('editWoodCategory');
+  const editDesc = document.getElementById('editWoodDesc');
+  const editBarkFile = document.getElementById('editWoodBarkFile');
+  const editGrainFile = document.getElementById('editWoodGrainFile');
+  const saveMsg = document.getElementById('saveWoodMsg');
+
+  const PLACEHOLDER_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="#e8dcc0"/><text x="50%" y="50%" font-family="sans-serif" font-size="18" fill="#8a7960" text-anchor="middle">Photo coming soon</text></svg>`
+  );
+
+  function openWoodModal(w) {
+    activeWood = w;
+    barkImg.src = publicUrl('wood-photos', w.bark_image_path) || PLACEHOLDER_IMG;
+    grainImg.src = publicUrl('wood-photos', w.grain_image_path) || PLACEHOLDER_IMG;
+    modalName.textContent = w.name;
+    modalCategory.textContent = w.category === 'hardwood' ? 'Hardwood' : 'Softwood';
+    modalDesc.textContent = w.description || 'No description yet.';
+
+    if (isAdmin) {
+      adminControls.hidden = false;
+      editName.value = w.name;
+      editCategory.value = w.category;
+      editDesc.value = w.description || '';
+      editBarkFile.value = '';
+      editGrainFile.value = '';
+      saveMsg.textContent = '';
+    } else {
+      adminControls.hidden = true;
+    }
+
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeWoodModal() {
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    activeWood = null;
+  }
+
+  document.getElementById('woodModalClose').addEventListener('click', closeWoodModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeWoodModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hidden) closeWoodModal(); });
+
+  async function uploadWoodPhoto(file) {
+    const ext = file.name.split('.').pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from('wood-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    if (error) throw error;
+    return path;
+  }
+
+  document.getElementById('saveWoodBtn').addEventListener('click', async () => {
+    if (!activeWood) return;
+    saveMsg.textContent = 'Saving...';
+    try {
+      const updates = {
+        name: editName.value.trim(),
+        category: editCategory.value,
+        description: editDesc.value.trim()
+      };
+      if (editBarkFile.files[0]) {
+        updates.bark_image_path = await uploadWoodPhoto(editBarkFile.files[0]);
+      }
+      if (editGrainFile.files[0]) {
+        updates.grain_image_path = await uploadWoodPhoto(editGrainFile.files[0]);
+      }
+      const { error } = await supabase.from('wood_species').update(updates).eq('id', activeWood.id);
+      if (error) throw error;
+      Object.assign(activeWood, updates);
+      const idx = woodItems.findIndex(x => x.id === activeWood.id);
+      if (idx !== -1) woodItems[idx] = activeWood;
+      saveMsg.textContent = 'Saved!';
+      renderWoods();
+      openWoodModal(activeWood);
+    } catch (err) {
+      console.error(err);
+      saveMsg.textContent = 'Could not save — try again.';
+    }
+  });
+
+  // --- Add wood modal ---
+  const addOverlay = document.getElementById('addWoodModalOverlay');
+  const addWoodBtn = document.getElementById('addWoodBtn');
+  const createWoodBtn = document.getElementById('createWoodBtn');
+  const createMsg = document.getElementById('createWoodMsg');
+
+  function openAddWoodModal() {
+    document.getElementById('newWoodName').value = '';
+    document.getElementById('newWoodCategory').value = 'hardwood';
+    document.getElementById('newWoodDesc').value = '';
+    document.getElementById('newWoodBarkFile').value = '';
+    document.getElementById('newWoodGrainFile').value = '';
+    createMsg.textContent = '';
+    addOverlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAddWoodModal() {
+    addOverlay.hidden = true;
+    document.body.style.overflow = '';
+  }
+  addWoodBtn?.addEventListener('click', openAddWoodModal);
+  document.getElementById('addWoodModalClose').addEventListener('click', closeAddWoodModal);
+  addOverlay.addEventListener('click', (e) => { if (e.target === addOverlay) closeAddWoodModal(); });
+
+  createWoodBtn.addEventListener('click', async () => {
+    const name = document.getElementById('newWoodName').value.trim();
+    if (!name) { createMsg.textContent = 'Please give it a name.'; return; }
+    createMsg.textContent = 'Saving...';
+    createWoodBtn.disabled = true;
+    try {
+      let barkPath = null, grainPath = null;
+      const barkFile = document.getElementById('newWoodBarkFile').files[0];
+      const grainFile = document.getElementById('newWoodGrainFile').files[0];
+      if (barkFile) barkPath = await uploadWoodPhoto(barkFile);
+      if (grainFile) grainPath = await uploadWoodPhoto(grainFile);
+
+      const maxSort = woodItems.reduce((m, w) => Math.max(m, w.sort_order || 0), 0);
+      const { data: inserted, error } = await supabase.from('wood_species').insert({
+        name,
+        category: document.getElementById('newWoodCategory').value,
+        description: document.getElementById('newWoodDesc').value.trim(),
+        bark_image_path: barkPath,
+        grain_image_path: grainPath,
+        sort_order: maxSort + 1
+      }).select().single();
+      if (error) throw error;
+      woodItems.push(inserted);
+      renderWoods();
+      createMsg.textContent = 'Added!';
+      setTimeout(closeAddWoodModal, 700);
+    } catch (err) {
+      console.error(err);
+      createMsg.textContent = 'Could not save — try again.';
+    } finally {
+      createWoodBtn.disabled = false;
+    }
+  });
+
+  // --- Reveal + tilt ---
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  function setupRevealAndTilt() {
+    const revealEls = document.querySelectorAll('.gallery-card, .section-head');
+    revealEls.forEach(el => {
+      if (!el.classList.contains('reveal')) {
+        el.classList.add('reveal');
+        revealObserver.observe(el);
+      }
+    });
+    if (window.matchMedia('(hover: hover)').matches) {
+      document.querySelectorAll('.gallery-card').forEach(card => {
+        if (card.dataset.tiltBound) return;
+        card.dataset.tiltBound = '1';
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `translateY(-4px) scale(1.02) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      });
+    }
+  }
+
+  setupRevealAndTilt();
+</script>
+<script type="module" src="chat-widget.js"></script>
+</body>
+</html>

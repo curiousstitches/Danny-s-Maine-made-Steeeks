@@ -17,6 +17,7 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="craft.html">The Craft</a></li>
     <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="woods.html">Wood Guide</a></li>
     <li><a href="sizing.html">Sizing</a></li>
     <li><a href="pets.html">Pet-Friendly</a></li>
     <li><a href="faq.html">FAQ</a></li>
@@ -44,6 +45,24 @@
     <div class="veteran-banner">
       🇺🇸 <strong>20% off for Active Duty &amp; Veterans</strong> — thank you for your service. Check the box below when you order, and include a photo of your active or veteran ID in your confirmation email as proof.
     </div>
+
+    <div class="order-type-toggle">
+      <label class="order-type-option">
+        <input type="radio" name="orderType" id="orderTypeNew" value="new_piece" checked>
+        <span>New Piece <small>— we source the wood</small></span>
+      </label>
+      <label class="order-type-option">
+        <input type="radio" name="orderType" id="orderTypeByo" value="send_stick">
+        <span>Send Us Your Stick <small>— you mail it, we finish it</small></span>
+      </label>
+    </div>
+
+    <div id="byoInfoBox" class="byo-info-box" hidden>
+      <p><strong>How it works:</strong> Fill out the form below (skip the wood preference — it's already picked!), then mail your stick to us. We'll confirm final pricing by email once we've seen photos or have it in hand — nothing gets charged until you approve it.</p>
+      <p><strong>Mail your stick to:</strong> <span id="byoMailAddress">[Address — ask Danny to confirm before this goes live]</span></p>
+      <p style="font-size:0.85rem; color:#8a7960;">Please package it well — we're not responsible for damage that happens in shipping before it reaches us.</p>
+    </div>
+
     <form id="orderForm" class="order-form">
       <div class="form-row">
         <div class="form-field">
@@ -69,7 +88,7 @@
             <option>Not sure — help me pick</option>
           </select>
         </div>
-        <div class="form-field">
+        <div class="form-field" id="woodPrefField">
           <label for="orderWood">Wood preference</label>
           <select id="orderWood" required>
             <option value="" disabled selected>Choose one</option>
@@ -78,6 +97,13 @@
             <option>No preference</option>
           </select>
         </div>
+      </div>
+
+      <div class="form-field" id="byoFieldsWrap" hidden>
+        <label for="byoPhoto">Photo of your stick (optional, but helps us quote faster)</label>
+        <input type="file" id="byoPhoto" accept="image/*">
+        <label for="byoNotes" style="margin-top:0.8rem;">What would you like done with it?</label>
+        <textarea id="byoNotes" rows="3" placeholder="e.g. trim to 55in, add a rubber tip, sand and finish, add a leather wrist strap..."></textarea>
       </div>
       <div class="form-field">
         <label for="orderNotes">What's it for? Any other details</label>
@@ -271,6 +297,22 @@
       });
     }
 
+    // Order type toggle: New Piece vs Send Us Your Stick
+    const orderTypeRadios = document.querySelectorAll('input[name="orderType"]');
+    const byoInfoBox = document.getElementById('byoInfoBox');
+    const byoFieldsWrap = document.getElementById('byoFieldsWrap');
+    const woodPrefField = document.getElementById('woodPrefField');
+    const orderWood = document.getElementById('orderWood');
+    function applyOrderType(){
+      const isByo = document.getElementById('orderTypeByo').checked;
+      byoInfoBox.hidden = !isByo;
+      byoFieldsWrap.hidden = !isByo;
+      woodPrefField.hidden = isByo;
+      orderWood.required = !isByo;
+    }
+    orderTypeRadios.forEach(r => r.addEventListener('change', applyOrderType));
+    applyOrderType();
+
     // Scroll-reveal: fade+rise elements into view as the user scrolls
     const revealEls = document.querySelectorAll('.wood-card, .gallery-card, .process-step, .custom-box, .section-head, .faq-item, .size-table-wrap');
     revealEls.forEach(el => el.classList.add('reveal'));
@@ -326,12 +368,28 @@
       orderSubmitBtn.disabled = true;
       orderSubmitBtn.textContent = 'Sending…';
 
+      const isByo = document.getElementById('orderTypeByo').checked;
+      let byoPhotoPath = null;
+      const byoFile = document.getElementById('byoPhoto').files[0];
+      if (isByo && byoFile){
+        const ext = byoFile.name.split('.').pop();
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const { error: uploadError } = await supabase.storage.from('byo-photos').upload(path, byoFile, { cacheControl: '3600', upsert: false });
+        if (!uploadError) byoPhotoPath = path;
+      }
+
+      let notes = document.getElementById('orderNotes').value.trim();
+      if (isByo){
+        const byoNotes = document.getElementById('byoNotes').value.trim();
+        notes = `[SEND US YOUR STICK ORDER]${byoNotes ? ' — ' + byoNotes : ''}${notes ? ' | ' + notes : ''}`;
+      }
+
       const payload = {
         name: document.getElementById('orderName').value.trim(),
         email: document.getElementById('orderEmail').value.trim(),
         size: document.getElementById('orderSize').value,
-        wood: document.getElementById('orderWood').value,
-        notes: document.getElementById('orderNotes').value.trim(),
+        wood: isByo ? 'Customer-provided' : document.getElementById('orderWood').value,
+        notes: notes,
         veteran_discount: document.getElementById('orderVeteran').checked,
         recipient: document.getElementById('dRecipient').value.trim() || null,
         height: document.getElementById('dHeight').value.trim() || null,
@@ -343,7 +401,9 @@
         finish_choice: document.getElementById('dFinish').value || null,
         grip_wrap: document.getElementById('dGrip').value || null,
         metal_tip: document.getElementById('dMetalTip').checked,
-        liability_accepted: document.getElementById('orderLiability').checked
+        liability_accepted: document.getElementById('orderLiability').checked,
+        order_type: isByo ? 'send_stick' : 'new_piece',
+        byo_photo_path: byoPhotoPath
       };
 
       const { error } = await supabase.from('custom_orders').insert(payload);
