@@ -594,11 +594,11 @@
   }
 
   /* ===== PHOTO/VIDEO CAROUSEL ===== */
-  .modal-carousel{ position:relative; }
+  .modal-carousel{ position:relative; overflow:hidden; border-radius:8px; }
   .modal-carousel-track{
-    display:flex; transition:transform 0.3s ease; border-radius:8px; overflow:hidden;
+    display:flex; transition:transform 0.3s ease;
   }
-  .carousel-slide{ min-width:100%; }
+  .carousel-slide{ min-width:100%; flex-shrink:0; }
   .carousel-slide img, .carousel-slide video{
     display:block; width:100%; max-height:52vh; object-fit:cover; background:#000;
   }
