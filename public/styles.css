@@ -783,7 +783,7 @@
   }
   .faq-list{max-width:640px; margin:0 auto;}
   .faq-item{
-    background-image:linear-gradient(rgba(250,246,239,0.93), rgba(250,246,239,0.93)), url('images/box-bark-birch.webp');
+    background-image:linear-gradient(rgba(250,246,239,0.65), rgba(250,246,239,0.65)), url('images/embers-molten.webp');
     background-size:cover; background-position:center;
     border:1px solid #e3d5ba; border-radius:5px;
     padding:1rem 1.3rem; margin-bottom:0.8rem;
@@ -792,14 +792,16 @@
     font-family:'Fraunces', serif; font-weight:600; font-size:1.02rem;
     color:var(--walnut); cursor:pointer; list-style:none;
     display:flex; align-items:center; justify-content:space-between;
+    text-shadow:0 0 7px rgba(250,246,239,0.85);
   }
   .faq-item summary::-webkit-details-marker{display:none;}
   .faq-item summary::after{
     content:"+"; font-size:1.3rem; color:var(--honey); margin-left:1rem;
     transition:transform 0.2s ease;
+    text-shadow:0 0 7px rgba(250,246,239,0.85);
   }
   .faq-item[open] summary::after{transform:rotate(45deg);}
-  .faq-item p{margin-top:0.8rem; font-size:0.92rem; line-height:1.65; color:#4a3c2e;}
+  .faq-item p{margin-top:0.8rem; font-size:0.92rem; line-height:1.65; color:#4a3c2e; text-shadow:0 0 7px rgba(250,246,239,0.85);}
 
   /* ===== ORDER FORM ===== */
   .order-form{text-align:left; margin-bottom:0.4rem;}
