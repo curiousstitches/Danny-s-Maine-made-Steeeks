@@ -41,19 +41,14 @@
   html{scroll-behavior:smooth;}
   body{
     font-family:'Work Sans', sans-serif;
-    background:
-      radial-gradient(ellipse 600px 400px at 8% 8%, rgba(107,125,79,0.14), transparent 60%),
-      radial-gradient(ellipse 500px 350px at 95% 30%, rgba(63,75,44,0.12), transparent 55%),
-      radial-gradient(ellipse 700px 500px at 50% 90%, rgba(201,138,62,0.10), transparent 60%),
-      repeating-linear-gradient(0deg,
-        transparent 0px, transparent 38px,
-        rgba(58,51,42,0.05) 38px, rgba(58,51,42,0.05) 40px,
-        transparent 40px, transparent 74px,
-        rgba(58,51,42,0.09) 74px, rgba(58,51,42,0.09) 77px),
-      repeating-linear-gradient(90deg,
-        rgba(58,51,42,0.02) 0px, rgba(58,51,42,0.02) 2px,
-        transparent 2px, transparent 5px),
-      var(--birch);
+    background-image:
+      linear-gradient(rgba(239,230,208,0.55), rgba(239,230,208,0.55)),
+      url('images/body-birch.webp');
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    background-repeat:no-repeat;
+    background-color:var(--birch);
     color:var(--bark);
     line-height:1.6;
     position:relative;
@@ -66,16 +61,6 @@
     opacity:0.035;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     mix-blend-mode:multiply;
-  }
-  body::after{
-    content:"";
-    position:fixed; inset:0;
-    pointer-events:none;
-    z-index:999;
-    opacity:0.5;
-    mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg stroke='%233a332a' stroke-linecap='round' fill='none'%3E%3Cpath d='M12 24 q8 -2 16 0' stroke-width='2.4' opacity='0.55'/%3E%3Cpath d='M60 15 q10 -3 20 1' stroke-width='2' opacity='0.4'/%3E%3Cpath d='M140 40 q9 -2 18 0' stroke-width='2.6' opacity='0.5'/%3E%3Cpath d='M200 20 q7 -2 14 1' stroke-width='1.8' opacity='0.35'/%3E%3Cpath d='M30 110 q9 -2 17 1' stroke-width='2.2' opacity='0.45'/%3E%3Cpath d='M100 130 q11 -3 21 0' stroke-width='2.6' opacity='0.5'/%3E%3Cpath d='M180 150 q8 -2 16 1' stroke-width='2' opacity='0.4'/%3E%3Cpath d='M230 100 q7 -2 13 0' stroke-width='1.8' opacity='0.3'/%3E%3Cpath d='M50 200 q9 -2 18 0' stroke-width='2.3' opacity='0.45'/%3E%3Cpath d='M150 220 q10 -3 19 1' stroke-width='2.4' opacity='0.5'/%3E%3Cpath d='M220 230 q8 -2 15 0' stroke-width='1.9' opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
-    background-size:260px 260px;
   }
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
@@ -104,7 +89,12 @@
     position:sticky; top:0; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
     padding:1.1rem 6vw;
-    background:rgba(36,26,19,0.92);
+    background-image:
+      linear-gradient(rgba(36,26,19,0.80), rgba(36,26,19,0.80)),
+      url('images/nav-oak.webp');
+    background-size:cover;
+    background-position:center;
+    background-color:rgba(36,26,19,0.92);
     backdrop-filter:blur(6px);
     color:var(--bone);
   }
@@ -510,12 +500,12 @@
   .gallery-card{
     aspect-ratio:4/5;
     border-radius:4px;
-    background:
-      repeating-linear-gradient(115deg, #d8c6a2 0px, #d8c6a2 8px, #cdb88f 8px, #cdb88f 16px);
+    background-image:linear-gradient(rgba(216,198,162,0.75), rgba(216,198,162,0.75)), url('images/box-bark-oak2.webp');
+    background-size:cover; background-position:center;
     border:1.5px dashed #a98f63;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:1.2rem;
-    color:#6b5a40;
+    color:#4a3c2e;
   }
   .gallery-card .icon{font-size:1.8rem; margin-bottom:0.6rem;}
   .gallery-card .label{font-weight:600; font-size:0.92rem;}
@@ -745,7 +735,11 @@
   .size-table-wrap{max-width:640px; margin:0 auto; overflow-x:auto;}
   .size-table{width:100%; border-collapse:collapse; background:var(--bone); border-radius:5px; overflow:hidden;}
   .size-table th, .size-table td{text-align:left; padding:0.85rem 1.1rem; font-size:0.92rem; border-bottom:1px solid #e3d5ba;}
-  .size-table th{background:var(--walnut); color:var(--bone); font-weight:600;}
+  .size-table th{
+    background-image:linear-gradient(rgba(74,46,30,0.68), rgba(74,46,30,0.68)), url('images/birch-ember-transition.webp');
+    background-size:cover; background-position:center 30%;
+    color:var(--bone); font-weight:600;
+  }
   .size-table tr:last-child td{border-bottom:none;}
   .size-table tr:hover td{background:rgba(201,138,62,0.08);}
 
@@ -823,9 +817,13 @@
   #orderMsg.error{background:rgba(180,60,50,0.18); color:#f0a898; border:1px solid rgba(180,60,50,0.3);}
   #orderMsg.success{background:rgba(107,125,79,0.22); color:#c8d6b0; border:1px solid rgba(107,125,79,0.4);}
   .veteran-banner{
-    background:rgba(107,125,79,0.18);
-    border:1px solid rgba(107,125,79,0.35);
-    color:#e0d3bd;
+    background-image:
+      linear-gradient(rgba(30,20,10,0.72), rgba(30,20,10,0.72)),
+      url('images/embers-pure.webp');
+    background-size:cover;
+    background-position:center;
+    border:1px solid rgba(220,120,40,0.4);
+    color:#f0e2ca;
     font-size:0.9rem;
     padding:0.9rem 1.1rem;
     border-radius:4px;
@@ -891,7 +889,9 @@
     gap:1.2rem; max-width:1000px; margin:0 auto;
   }
   .review-card{
-    background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
+    background-image:linear-gradient(rgba(250,246,239,0.92), rgba(250,246,239,0.92)), url('images/box-bark-birch2.webp');
+    background-size:cover; background-position:center;
+    border:1px solid #e3d5ba; border-radius:5px;
     padding:1.4rem;
   }
   .review-stars{color:var(--honey); font-size:1.1rem; margin-bottom:0.5rem;}
