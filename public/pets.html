@@ -224,6 +224,10 @@
 </footer>
 <script type="module">
   import { supabase, ADMIN_EMAILS } from './supabase-client.js';
+
+  // Log this visit (fire and forget)
+  supabase.from('site_visits').insert({ page: 'pets' }).then(() => {});
+
   supabase.auth.getSession().then(({ data: { session } }) => {
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');

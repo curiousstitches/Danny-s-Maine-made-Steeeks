@@ -32,17 +32,22 @@
   p.sub{color:#6b5a40; margin-bottom:2.4rem;}
 
   .stat-grid{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;
-    margin-bottom:2.6rem;
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1.2rem;
+    margin-bottom:1.6rem;
   }
+  @media (max-width:900px){.stat-grid{grid-template-columns:1fr 1fr 1fr;}}
   @media (max-width:700px){.stat-grid{grid-template-columns:1fr 1fr;}}
   @media (max-width:420px){.stat-grid{grid-template-columns:1fr;}}
+  .stat-group-h{
+    font-family:'Fraunces', serif; font-size:1.05rem; color:var(--walnut);
+    margin:0 0 0.9rem; text-transform:uppercase; letter-spacing:0.05em;
+  }
   .stat-card{
     background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
-    padding:1.6rem;
+    padding:1.3rem;
   }
-  .stat-card .num{font-family:'Fraunces', serif; font-size:2.4rem; color:var(--walnut);}
-  .stat-card .label{font-size:0.85rem; color:#8a7960; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.3rem;}
+  .stat-card .num{font-family:'Fraunces', serif; font-size:1.7rem; color:var(--walnut); word-break:break-word; line-height:1.2;}
+  .stat-card .label{font-size:0.78rem; color:#8a7960; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.4rem;}
 
   table{width:100%; border-collapse:collapse; background:var(--bone); border-radius:5px; overflow:hidden;}
   th, td{text-align:left; padding:0.8rem 1rem; font-size:0.9rem; border-bottom:1px solid #e3d5ba;}
@@ -108,18 +113,87 @@
     <h1>Dashboard</h1>
     <p class="sub">Only you can see this page.</p>
 
+    <h3 class="stat-group-h">Traffic</h3>
     <div class="stat-grid">
       <div class="stat-card">
         <div class="num" id="visitCount">–</div>
-        <div class="label">Total site visits</div>
+        <div class="label">Total site visits (all pages)</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="visitMonthCount">–</div>
+        <div class="label">Visits this month</div>
       </div>
       <div class="stat-card">
         <div class="num" id="userCount">–</div>
         <div class="label">Registered customers</div>
       </div>
       <div class="stat-card">
+        <div class="num" id="newSignupsCount">–</div>
+        <div class="label">New signups this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="conversionRate">–</div>
+        <div class="label">Visitor → signup rate</div>
+      </div>
+    </div>
+
+    <h3 class="stat-group-h">Orders</h3>
+    <div class="stat-grid">
+      <div class="stat-card">
         <div class="num" id="orderCount">–</div>
-        <div class="label">Order requests</div>
+        <div class="label">Order requests (all-time)</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="orderMonthCount">–</div>
+        <div class="label">Orders this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="newPieceCount">–</div>
+        <div class="label">New piece orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="sendStickCount">–</div>
+        <div class="label">"Send us your stick" orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="veteranCount">–</div>
+        <div class="label">Veteran discount orders</div>
+      </div>
+    </div>
+
+    <h3 class="stat-group-h">Revenue <span style="font-weight:400; font-size:0.7rem; color:#9a8564;">(from orders you've marked paid below)</span></h3>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="num" id="totalRevenue">–</div>
+        <div class="label">Total revenue (paid)</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="revenueMonth">–</div>
+        <div class="label">Revenue this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="pendingRevenue">–</div>
+        <div class="label">Quoted, not yet paid</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="avgOrderValue">–</div>
+        <div class="label">Average order value</div>
+      </div>
+    </div>
+
+    <h3 class="stat-group-h">Other</h3>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="num" id="topWood">–</div>
+        <div class="label">Most requested wood</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="soldCount">–</div>
+        <div class="label">Gallery items sold</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="avgRating">–</div>
+        <div class="label">Average review rating</div>
       </div>
     </div>
 
@@ -149,7 +223,7 @@
 
     <h2 style="font-family:'Fraunces', serif; font-size:1.3rem; margin-bottom:1rem; color:var(--walnut);">Order requests</h2>
     <table style="margin-bottom:2.6rem;">
-      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Veteran?</th><th>Date</th><th></th></tr></thead>
+      <thead><tr><th>Name</th><th>Email</th><th>Size</th><th>Wood</th><th>Notes</th><th>Veteran?</th><th>Date</th><th>Payment</th><th></th></tr></thead>
       <tbody id="orderTableBody">
         <tr><td colspan="8">Loading…</td></tr>
       </tbody>
@@ -188,28 +262,112 @@
     loadNotifyNumbers();
   }
 
+  window.saveQuote = async function(orderId){
+    const input = document.getElementById(`quote-${orderId}`);
+    const msg = document.getElementById(`pay-msg-${orderId}`);
+    const value = parseFloat(input.value);
+    if (isNaN(value) || value < 0){ msg.textContent = 'Enter a valid amount.'; return; }
+    msg.textContent = 'Saving...';
+    const { error } = await supabase.from('custom_orders').update({ quoted_price: value }).eq('id', orderId);
+    if (error){ msg.textContent = 'Could not save.'; console.error(error); return; }
+    msg.textContent = 'Quote saved!';
+    loadStats();
+  };
+
+  window.markPaid = async function(orderId){
+    const input = document.getElementById(`paidamt-${orderId}`);
+    const msg = document.getElementById(`pay-msg-${orderId}`);
+    const value = parseFloat(input.value);
+    if (isNaN(value) || value < 0){ msg.textContent = 'Enter a valid amount.'; return; }
+    msg.textContent = 'Saving...';
+    const { error } = await supabase.from('custom_orders')
+      .update({ paid: true, paid_amount: value, paid_at: new Date().toISOString() })
+      .eq('id', orderId);
+    if (error){ msg.textContent = 'Could not save.'; console.error(error); return; }
+    msg.textContent = 'Marked paid!';
+    loadStats();
+  };
+
   async function loadStats(){
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
     const { count: visitCount } = await supabase
       .from('site_visits')
       .select('*', { count: 'exact', head: true });
+
+    const { count: visitMonthCount } = await supabase
+      .from('site_visits')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', monthStart);
 
     const { data: profiles, count: userCount } = await supabase
       .from('profiles')
       .select('email, created_at', { count: 'exact' })
       .order('created_at', { ascending: false });
 
+    const newSignupsCount = (profiles || []).filter(p => p.created_at >= monthStart).length;
+
     const { data: orders, count: orderCount } = await supabase
       .from('custom_orders')
-      .select('id, name, email, size, wood, notes, veteran_discount, created_at, recipient, height, purpose, bark_preference, bend_request, knots_limbs, wood_burning, finish_choice, grip_wrap, metal_tip', { count: 'exact' })
+      .select('id, name, email, size, wood, notes, veteran_discount, created_at, recipient, height, purpose, bark_preference, bend_request, knots_limbs, wood_burning, finish_choice, grip_wrap, metal_tip, order_type, quoted_price, paid, paid_amount, paid_at', { count: 'exact' })
       .order('created_at', { ascending: false });
 
+    const { count: soldCount } = await supabase
+      .from('gallery_items')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'sold');
+
+    const { data: reviewRows } = await supabase
+      .from('reviews')
+      .select('rating');
+
+    // --- Traffic ---
     document.getElementById('visitCount').textContent = visitCount ?? '0';
+    document.getElementById('visitMonthCount').textContent = visitMonthCount ?? '0';
     document.getElementById('userCount').textContent = userCount ?? '0';
+    document.getElementById('newSignupsCount').textContent = newSignupsCount;
+    document.getElementById('conversionRate').textContent =
+      visitCount ? `${((userCount || 0) / visitCount * 100).toFixed(1)}%` : '—';
+
+    // --- Orders ---
+    const ordersList = orders || [];
     document.getElementById('orderCount').textContent = orderCount ?? '0';
+    document.getElementById('orderMonthCount').textContent =
+      ordersList.filter(o => o.created_at >= monthStart).length;
+    document.getElementById('newPieceCount').textContent =
+      ordersList.filter(o => o.order_type !== 'send_stick').length;
+    document.getElementById('sendStickCount').textContent =
+      ordersList.filter(o => o.order_type === 'send_stick').length;
+    document.getElementById('veteranCount').textContent =
+      ordersList.filter(o => o.veteran_discount).length;
+
+    // --- Revenue ---
+    const paidOrders = ordersList.filter(o => o.paid && o.paid_amount);
+    const totalRevenue = paidOrders.reduce((sum, o) => sum + Number(o.paid_amount), 0);
+    const revenueMonth = paidOrders.filter(o => o.paid_at && o.paid_at >= monthStart)
+      .reduce((sum, o) => sum + Number(o.paid_amount), 0);
+    const pendingRevenue = ordersList.filter(o => !o.paid && o.quoted_price)
+      .reduce((sum, o) => sum + Number(o.quoted_price), 0);
+    document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
+    document.getElementById('revenueMonth').textContent = `$${revenueMonth.toFixed(2)}`;
+    document.getElementById('pendingRevenue').textContent = `$${pendingRevenue.toFixed(2)}`;
+    document.getElementById('avgOrderValue').textContent =
+      paidOrders.length ? `$${(totalRevenue / paidOrders.length).toFixed(2)}` : '—';
+
+    // --- Other ---
+    const woodCounts = {};
+    ordersList.forEach(o => { if (o.wood) woodCounts[o.wood] = (woodCounts[o.wood] || 0) + 1; });
+    const topWoodEntry = Object.entries(woodCounts).sort((a, b) => b[1] - a[1])[0];
+    document.getElementById('topWood').textContent = topWoodEntry ? topWoodEntry[0] : '—';
+    document.getElementById('soldCount').textContent = soldCount ?? '0';
+    const ratings = (reviewRows || []).map(r => r.rating).filter(r => r != null);
+    document.getElementById('avgRating').textContent =
+      ratings.length ? `${(ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)} ★` : '—';
 
     const orderBody = document.getElementById('orderTableBody');
     if (!orders || orders.length === 0){
-      orderBody.innerHTML = '<tr><td colspan="8">No order requests yet.</td></tr>';
+      orderBody.innerHTML = '<tr><td colspan="9">No order requests yet.</td></tr>';
     } else {
       const detailFields = [
         ['recipient', 'Who for'], ['height', 'Height/Size'], ['purpose', 'Purpose'],
@@ -223,18 +381,39 @@
           .map(([key, label]) => `<div><strong>${label}:</strong> ${o[key]}</div>`)
           .join('');
         const metalTipRow = o.metal_tip ? '<div><strong>Metal tip:</strong> Yes</div>' : '';
+        const typeTag = o.order_type === 'send_stick' ? '<div style="color:#6b7d4f; font-weight:600; font-size:0.78rem;">📦 Send-in</div>' : '';
+        const paymentCell = o.paid
+          ? `<span style="color:#4a7; font-weight:600;">Paid $${Number(o.paid_amount).toFixed(2)}</span>`
+          : `<button class="remove-number-btn" style="color:#c98a3e; border-color:#c98a3e;" onclick="document.getElementById('pay-${o.id}').classList.toggle('hidden')">${o.quoted_price ? `Quoted $${Number(o.quoted_price).toFixed(2)}` : 'Set price'}</button>`;
         return `
         <tr>
-          <td>${o.name}</td>
+          <td>${o.name}${typeTag}</td>
           <td>${o.email}</td>
           <td>${o.size}</td>
           <td>${o.wood}</td>
           <td>${o.notes || '—'}</td>
           <td>${o.veteran_discount ? '🇺🇸 Yes' : '—'}</td>
           <td>${new Date(o.created_at).toLocaleDateString()}</td>
+          <td>${paymentCell}</td>
           <td>${hasDetails ? `<button class="remove-number-btn" style="color:#4a7; border-color:#4a7;" onclick="document.getElementById('detail-${o.id}').classList.toggle('hidden')">Details</button>` : '—'}</td>
         </tr>
-        ${hasDetails ? `<tr id="detail-${o.id}" class="hidden"><td colspan="8" style="background:var(--parchment); font-size:0.85rem;">${detailRows}${metalTipRow}</td></tr>` : ''}
+        <tr id="pay-${o.id}" class="hidden">
+          <td colspan="9" style="background:var(--parchment);">
+            <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; padding:0.4rem 0;">
+              <label style="font-size:0.82rem;">Quoted price
+                <input type="number" step="0.01" id="quote-${o.id}" value="${o.quoted_price || ''}" style="width:90px; margin-left:0.4rem; padding:0.3rem 0.5rem;">
+              </label>
+              <button class="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.82rem;" onclick="saveQuote('${o.id}')">Save Quote</button>
+              <span style="color:#c3b291;">|</span>
+              <label style="font-size:0.82rem;">Amount paid
+                <input type="number" step="0.01" id="paidamt-${o.id}" value="${o.paid_amount || o.quoted_price || ''}" style="width:90px; margin-left:0.4rem; padding:0.3rem 0.5rem;">
+              </label>
+              <button class="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.82rem;" onclick="markPaid('${o.id}')">Mark Paid</button>
+              <span id="pay-msg-${o.id}" style="font-size:0.8rem; color:#8a7960;"></span>
+            </div>
+          </td>
+        </tr>
+        ${hasDetails ? `<tr id="detail-${o.id}" class="hidden"><td colspan="9" style="background:var(--parchment); font-size:0.85rem;">${detailRows}${metalTipRow}</td></tr>` : ''}
       `;
       }).join('');
     }

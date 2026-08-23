@@ -185,6 +185,10 @@
 <script type="module">
   import { supabase, ADMIN_EMAILS } from './supabase-client.js';
 
+  // Log this visit (fire and forget)
+  supabase.from('site_visits').insert({ page: 'gallery' }).then(() => {});
+
+
   const CATEGORY_LABELS = {
     'walking-stick': 'Walking Steeeck',
     'staff': 'Staff',

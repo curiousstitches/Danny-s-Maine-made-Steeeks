@@ -153,6 +153,10 @@
 <script type="module">
   import { supabase, ADMIN_EMAILS } from './supabase-client.js';
 
+  // Log this visit (fire and forget)
+  supabase.from('site_visits').insert({ page: 'woods' }).then(() => {});
+
+
   let isAdmin = false;
   let woodItems = [];
   let activeWood = null;
