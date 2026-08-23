@@ -169,14 +169,16 @@
   }
   .explore-card{
     display:block; text-decoration:none;
-    background:var(--bone); border:1px solid #e3d5ba; border-radius:6px;
+    background-image:linear-gradient(rgba(250,246,239,0.86), rgba(250,246,239,0.86)), url('images/embers-molten.webp');
+    background-size:cover; background-position:center;
+    border:1px solid #e3d5ba; border-radius:6px;
     padding:1.4rem 1.1rem; text-align:center;
     transition:transform 0.2s ease, box-shadow 0.2s ease;
   }
   .explore-card:hover{transform:translateY(-4px); box-shadow:0 14px 26px rgba(74,46,30,0.18);}
   .explore-card .icon{font-size:1.7rem; margin-bottom:0.6rem;}
-  .explore-card .label{font-family:'Fraunces', serif; font-weight:600; color:var(--walnut); font-size:1rem;}
-  .explore-card .sub{font-size:0.78rem; color:#8a7960; margin-top:0.3rem;}
+  .explore-card .label{font-family:'Fraunces', serif; font-weight:600; color:var(--walnut); font-size:1rem; text-shadow:0 0 6px rgba(250,246,239,0.9);}
+  .explore-card .sub{font-size:0.78rem; color:#6b5a40; margin-top:0.3rem; text-shadow:0 0 6px rgba(250,246,239,0.9);}
 
   /* ===== PAGE HEADER (subpage back button + title) ===== */
   .page-header{
@@ -514,7 +516,9 @@
   .gallery-card:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(74,46,30,0.15);}
 
   .gallery-card.has-photo{
-    background:var(--bone); border:1px solid #e3d5ba;
+    background-image:linear-gradient(rgba(250,246,239,0.88), rgba(250,246,239,0.88)), url('images/embers-molten.webp');
+    background-size:cover; background-position:center;
+    border:1px solid #e3d5ba;
     padding:0; overflow:hidden; justify-content:flex-start;
   }
   .gallery-card.has-photo img{
@@ -555,7 +559,9 @@
   }
   .modal-overlay[hidden]{display:none;}
   .modal-box{
-    background:var(--bone); border-radius:11px; width:100%;
+    background-image:linear-gradient(rgba(250,246,239,0.90), rgba(250,246,239,0.90)), url('images/embers-molten.webp');
+    background-size:cover; background-position:center;
+    border-radius:11px; width:100%;
     padding:1.6rem; position:relative; max-height:90vh; overflow-y:auto;
     animation:modalPop 0.22s ease;
   }
@@ -614,25 +620,23 @@
   .modal-admin .btn-primary{align-self:flex-start;}
 
   /* ===== GLOSSY "POLYURETHANE" SHINE ===== */
-  /* A soft permanent highlight plus a light sweep on hover/tap — like a clear coat finish */
-  .gallery-card, .wood-card, .btn-primary, .process-step, .custom-box, .faq-item, .shop-slide .swatch{
+  /* Scoped to solid-color buttons/swatches only — a diagonal glare looks like an
+     artifact on top of the real photo textures used elsewhere on the site. */
+  .btn-primary, .shop-slide .swatch{
     position:relative; overflow:hidden;
   }
-  .gallery-card::before, .wood-card::before, .btn-primary::before, .process-step::before,
-  .custom-box::before, .faq-item::before, .shop-slide .swatch::before{
+  .btn-primary::before, .shop-slide .swatch::before{
     content:''; position:absolute; inset:0;
     background:linear-gradient(115deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.06) 20%, transparent 34%);
     pointer-events:none; z-index:2;
   }
-  .gallery-card::after, .wood-card::after, .btn-primary::after, .process-step::after,
-  .custom-box::after, .faq-item::after, .shop-slide .swatch::after{
+  .btn-primary::after, .shop-slide .swatch::after{
     content:''; position:absolute; top:0; left:-75%; width:45%; height:100%;
     background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0.1) 60%, transparent 100%);
     transform:skewX(-20deg); pointer-events:none; z-index:3;
     transition:left 0.75s ease;
   }
-  .gallery-card:hover::after, .wood-card:hover::after, .btn-primary:hover::after, .process-step:hover::after,
-  .custom-box:hover::after, .faq-item:hover::after, .shop-slide .swatch:hover::after{
+  .btn-primary:hover::after, .shop-slide .swatch:hover::after{
     left:130%;
   }
 
@@ -710,7 +714,7 @@
   .custom .section-head p{color:#e0d3bd;}
   .custom-box{
     max-width:640px; margin:0 auto;
-    background-image:linear-gradient(rgba(250,246,239,0.08), rgba(250,246,239,0.08)), url('images/box-bark-oak.webp');
+    background-image:linear-gradient(rgba(250,246,239,0.18), rgba(250,246,239,0.18)), url('images/box-bark-oak.webp');
     background-size:cover; background-position:center;
     border:1px solid rgba(250,246,239,0.18);
     border-radius:4px;
@@ -733,7 +737,11 @@
   /* ===== SIZING GUIDE ===== */
   .sizing{background:rgba(250,246,239,0.35);}
   .size-table-wrap{max-width:640px; margin:0 auto; overflow-x:auto;}
-  .size-table{width:100%; border-collapse:collapse; background:var(--bone); border-radius:5px; overflow:hidden;}
+  .size-table{
+    width:100%; border-collapse:collapse; border-radius:5px; overflow:hidden;
+    background-image:linear-gradient(rgba(250,246,239,0.90), rgba(250,246,239,0.90)), url('images/embers-molten.webp');
+    background-size:cover; background-position:center;
+  }
   .size-table th, .size-table td{text-align:left; padding:0.85rem 1.1rem; font-size:0.92rem; border-bottom:1px solid #e3d5ba;}
   .size-table th{
     background-image:linear-gradient(rgba(74,46,30,0.68), rgba(74,46,30,0.68)), url('images/birch-ember-transition.webp');
@@ -829,8 +837,9 @@
     border-radius:4px;
     text-align:center;
     margin-bottom:1.6rem;
+    text-shadow:0 1px 4px rgba(0,0,0,0.75), 0 0 10px rgba(0,0,0,0.5);
   }
-  .veteran-banner strong{color:var(--honey-bright);}
+  .veteran-banner strong{color:var(--honey-bright); text-shadow:0 1px 4px rgba(0,0,0,0.75), 0 0 10px rgba(0,0,0,0.5);}
 
   .order-type-toggle{
     display:flex; gap:0.8rem; margin-bottom:1.4rem; flex-wrap:wrap;
@@ -844,12 +853,13 @@
     background:rgba(201,138,62,0.15); border-color:var(--honey);
   }
   .order-type-option input{ width:18px; height:18px; flex-shrink:0; accent-color:var(--honey); }
-  .order-type-option span{ color:#e0d3bd; font-weight:600; font-size:0.95rem; }
-  .order-type-option small{ display:block; font-weight:400; color:#a0937a; font-size:0.8rem; margin-top:0.15rem; }
+  .order-type-option span{ color:#e0d3bd; font-weight:600; font-size:0.95rem; text-shadow:0 1px 4px rgba(0,0,0,0.7); }
+  .order-type-option small{ display:block; font-weight:400; color:#b8ac95; font-size:0.8rem; margin-top:0.15rem; text-shadow:0 1px 4px rgba(0,0,0,0.7); }
 
   .byo-info-box{
-    background:rgba(107,125,79,0.14); border:1px solid rgba(107,125,79,0.3);
+    background:rgba(20,14,9,0.68); border:1px solid rgba(107,125,79,0.4);
     border-radius:6px; padding:1rem 1.2rem; margin-bottom:1.6rem; color:#e0d3bd; font-size:0.92rem;
+    text-shadow:0 1px 4px rgba(0,0,0,0.7);
   }
   .byo-info-box p{ margin-bottom:0.6rem; }
   .byo-info-box p:last-child{ margin-bottom:0; }
