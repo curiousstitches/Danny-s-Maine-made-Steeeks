@@ -23,26 +23,12 @@
 
   /* Real bark texture: vertical ridges + cracks + scattered moss patches */
   .bark-bg{
-    background:
-      radial-gradient(circle 85px at 12% 18%, rgba(120,140,90,0.32), transparent 70%),
-      radial-gradient(circle 55px at 88% 12%, rgba(63,75,44,0.3), transparent 70%),
-      radial-gradient(circle 110px at 78% 68%, rgba(107,125,79,0.22), transparent 70%),
-      radial-gradient(circle 45px at 18% 78%, rgba(63,75,44,0.28), transparent 70%),
-      radial-gradient(circle 65px at 48% 40%, rgba(107,125,79,0.14), transparent 70%),
-      radial-gradient(circle 40px at 60% 90%, rgba(120,140,90,0.2), transparent 70%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.12) 7px, rgba(0,0,0,0.12) 9px,
-        transparent 9px, transparent 19px),
-      repeating-linear-gradient(93deg,
-        rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px,
-        transparent 1px, transparent 13px),
-      repeating-linear-gradient(86deg,
-        rgba(0,0,0,0.28) 0px, rgba(0,0,0,0.28) 1px,
-        transparent 1px, transparent 41px),
-      radial-gradient(ellipse at 30% 0%, #3a2818 0%, transparent 60%),
-      var(--bark);
+    background-image:
+      linear-gradient(rgba(18,12,8,0.42), rgba(18,12,8,0.42)),
+      url('images/bg-oak-fire.webp');
+    background-size:cover;
+    background-position:center top;
+    background-color:var(--bark);
   }
   .wood-card, .gallery-card, .process-step{transform-style:preserve-3d;}
   .reveal{opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease;}
@@ -204,7 +190,7 @@
 
   /* ===== PAGE HEADER (subpage back button + title) ===== */
   .page-header{
-    background:var(--bark);
+    background-color:var(--bark);
     padding:2.2rem 6vw 1.6rem;
     text-align:center;
   }
@@ -496,14 +482,22 @@
     border-radius:4px;
     padding:2rem;
   }
+  .wood-card.hard{
+    border-left:5px solid var(--walnut);
+    background-image:linear-gradient(rgba(239,230,208,0.90), rgba(239,230,208,0.90)), url('images/box-bark-oak.webp');
+    background-size:cover; background-position:center;
+  }
+  .wood-card.soft{
+    border-left:5px solid var(--moss);
+    background-image:linear-gradient(rgba(239,230,208,0.90), rgba(239,230,208,0.90)), url('images/box-bark-birch.webp');
+    background-size:cover; background-position:center;
+  }
   .wood-card .tag{
     font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;
     font-weight:600; color:var(--honey);
   }
   .wood-card h3{font-size:1.35rem; margin:0.4rem 0 0.7rem; color:var(--walnut);}
   .wood-card p{color:#4a3c2e; font-size:1rem; line-height:1.65;}
-  .wood-card.hard{border-left:5px solid var(--walnut);}
-  .wood-card.soft{border-left:5px solid var(--moss);}
 
   /* ===== GALLERY ===== */
   .gallery{background:rgba(239,230,208,0.3);}
@@ -713,18 +707,12 @@
 
   /* ===== CUSTOM ORDER ===== */
   .custom{
-    background:
-      radial-gradient(circle 100px at 85% 10%, rgba(107,125,79,0.26), transparent 65%),
-      radial-gradient(circle 55px at 15% 75%, rgba(63,75,44,0.22), transparent 65%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.16) 0px, rgba(0,0,0,0.16) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.09) 7px, rgba(0,0,0,0.09) 9px,
-        transparent 9px, transparent 19px),
-      repeating-linear-gradient(93deg,
-        rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
-        transparent 1px, transparent 13px),
-      var(--walnut);
+    background-image:
+      linear-gradient(rgba(74,46,30,0.72), rgba(74,46,30,0.72)),
+      url('images/bg-oak-fire.webp');
+    background-size:cover;
+    background-position:center;
+    background-color:var(--walnut);
     color:var(--bone);
   }
   .custom .section-head h2{color:var(--bone);}
@@ -732,7 +720,8 @@
   .custom .section-head p{color:#e0d3bd;}
   .custom-box{
     max-width:640px; margin:0 auto;
-    background:rgba(250,246,239,0.06);
+    background-image:linear-gradient(rgba(250,246,239,0.08), rgba(250,246,239,0.08)), url('images/box-bark-oak.webp');
+    background-size:cover; background-position:center;
     border:1px solid rgba(250,246,239,0.18);
     border-radius:4px;
     padding:2.2rem;
@@ -766,7 +755,9 @@
   .canes.bark-bg .section-head h2{color:var(--bone);}
   .canes.bark-bg .section-head .eyebrow{color:var(--honey-bright);}
   .canes.bark-bg .section-head p{color:#d8cdbc;}
-  .canes.bark-bg .wood-card{background:rgba(250,246,239,0.08); border-color:rgba(250,246,239,0.18);}
+  .canes.bark-bg .wood-card{background-color:rgba(250,246,239,0.08); border-color:rgba(250,246,239,0.18);}
+  .canes.bark-bg .wood-card.hard{background-image:linear-gradient(rgba(74,46,30,0.55), rgba(74,46,30,0.55)), url('images/box-bark-oak.webp');}
+  .canes.bark-bg .wood-card.soft{background-image:linear-gradient(rgba(74,46,30,0.5), rgba(74,46,30,0.5)), url('images/box-bark-birch.webp');}
   .canes.bark-bg .wood-card p{color:#e0d3bd;}
   .canes.bark-bg .wood-card h3{color:var(--bone);}
   @media (max-width:480px){.canes.bark-bg{padding:3.6rem 5.5vw;}}
@@ -790,7 +781,9 @@
   }
   .faq-list{max-width:640px; margin:0 auto;}
   .faq-item{
-    background:var(--bone); border:1px solid #e3d5ba; border-radius:5px;
+    background-image:linear-gradient(rgba(250,246,239,0.93), rgba(250,246,239,0.93)), url('images/box-bark-birch.webp');
+    background-size:cover; background-position:center;
+    border:1px solid #e3d5ba; border-radius:5px;
     padding:1rem 1.3rem; margin-bottom:0.8rem;
   }
   .faq-item summary{
@@ -948,17 +941,15 @@
   .pay-btn:hover{transform:translateY(-2px) scale(1.03); box-shadow:0 10px 22px rgba(0,0,0,0.3);}
 
   /* ===== FOOTER ===== */
+  footer.bark-bg{
+    background-image:
+      linear-gradient(rgba(18,12,8,0.62), rgba(18,12,8,0.62)),
+      url('images/bg-birch-fire.webp');
+    background-size:cover;
+    background-position:center;
+  }
   footer{
-    background:
-      radial-gradient(circle 70px at 20% 30%, rgba(107,125,79,0.2), transparent 65%),
-      radial-gradient(circle 50px at 80% 60%, rgba(63,75,44,0.18), transparent 65%),
-      repeating-linear-gradient(89deg,
-        rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px,
-        transparent 2px, transparent 7px,
-        rgba(0,0,0,0.1) 7px, rgba(0,0,0,0.1) 9px,
-        transparent 9px, transparent 19px),
-      var(--bark);
-    color:#8f8171;
+    color:#c9bda3;
     padding:3rem 6vw 2.2rem;
     text-align:center;
     font-size:0.85rem;
