@@ -698,20 +698,6 @@
     display:flex; justify-content:center; margin-bottom:1.4rem;
   }
 
-  /* ===== WOOD GUIDE MODAL ===== */
-  .wood-photo-pair{
-    display:grid; grid-template-columns:1fr 1fr; gap:0.7rem;
-    margin-bottom:1.1rem;
-  }
-  .wood-photo-col{ text-align:center; }
-  .wood-photo-label{
-    font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
-    color:#8f7c5c; margin-bottom:0.3rem;
-  }
-  .wood-modal-img{
-    width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px;
-    display:block;
-  }
   .add-item-form{
     display:flex; flex-direction:column; gap:0.8rem;
   }

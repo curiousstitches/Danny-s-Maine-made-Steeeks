@@ -270,6 +270,7 @@
 
   let carouselSlides = [];
   let carouselIndex = 0;
+  let carouselTimer = null;
   let editPhotosPending = [];
 
   function woodSlides(w) {
@@ -281,6 +282,23 @@
     const slides = photos.map(p => ({ type: 'image', src: publicUrl('wood-photos', p) }));
     if (w.video_path) slides.push({ type: 'video', src: publicUrl('wood-photos', w.video_path) });
     return slides;
+  }
+
+  function stopCarouselAuto(){
+    if (carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+  }
+
+  function startCarouselAuto(){
+    stopCarouselAuto();
+    if (carouselSlides.length > 1){
+      carouselTimer = setInterval(() => {
+        const activeEl = carouselTrack.children[carouselIndex];
+        const activeVideo = activeEl?.querySelector('video');
+        if (activeVideo && !activeVideo.paused) return;
+        carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+        renderCarousel();
+      }, 3000);
+    }
   }
 
   function renderCarousel() {
@@ -303,17 +321,30 @@
       `<span class="dot ${i === carouselIndex ? 'active' : ''}" data-i="${i}"></span>`
     ).join('') : '';
     carouselDots.querySelectorAll('.dot').forEach(d => {
-      d.addEventListener('click', () => { carouselIndex = parseInt(d.dataset.i); renderCarousel(); });
+      d.addEventListener('click', () => {
+        carouselIndex = parseInt(d.dataset.i);
+        renderCarousel();
+        startCarouselAuto();
+      });
+    });
+    carouselTrack.querySelectorAll('video').forEach(v => {
+      v.addEventListener('play', stopCarouselAuto);
+      v.addEventListener('pause', startCarouselAuto);
+      v.addEventListener('ended', startCarouselAuto);
     });
   }
   carouselPrev.addEventListener('click', () => {
     carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
     renderCarousel();
+    startCarouselAuto();
   });
   carouselNext.addEventListener('click', () => {
     carouselIndex = (carouselIndex + 1) % carouselSlides.length;
     renderCarousel();
+    startCarouselAuto();
   });
+  document.getElementById('woodCarousel').addEventListener('mouseenter', stopCarouselAuto);
+  document.getElementById('woodCarousel').addEventListener('mouseleave', startCarouselAuto);
 
   function drawEditThumbs() {
     editPhotoCount.textContent = `(${editPhotosPending.length}/5)`;
@@ -369,6 +400,7 @@
     carouselSlides = woodSlides(w);
     carouselIndex = 0;
     renderCarousel();
+    startCarouselAuto();
 
     modalName.textContent = w.name;
     modalCategory.textContent = w.category === 'hardwood' ? 'Hardwood' : 'Softwood';
@@ -391,6 +423,7 @@
   }
 
   function closeWoodModal() {
+    stopCarouselAuto();
     overlay.hidden = true;
     document.body.style.overflow = '';
     activeWood = null;
@@ -442,6 +475,7 @@
       carouselSlides = woodSlides(activeWood);
       carouselIndex = 0;
       renderCarousel();
+      startCarouselAuto();
       renderWoods();
     } catch (err) {
       console.error(err);
