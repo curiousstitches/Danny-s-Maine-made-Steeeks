@@ -67,14 +67,12 @@
   <div class="modal-frame">
     <div class="modal-box">
       <button class="modal-close" id="woodModalClose" aria-label="Close">&times;</button>
-      <div class="wood-photo-pair">
-        <div class="wood-photo-col">
-          <div class="wood-photo-label">Bark</div>
-          <img id="woodModalBark" src="" alt="" class="wood-modal-img">
-        </div>
-        <div class="wood-photo-col">
-          <div class="wood-photo-label">Grain</div>
-          <img id="woodModalGrain" src="" alt="" class="wood-modal-img">
+      <div class="modal-photo">
+        <div class="modal-carousel" id="woodCarousel">
+          <div class="modal-carousel-track" id="woodCarouselTrack"></div>
+          <button class="carousel-arrow prev" id="woodPrev" aria-label="Previous" hidden>&#10094;</button>
+          <button class="carousel-arrow next" id="woodNext" aria-label="Next" hidden>&#10095;</button>
+          <div class="carousel-dots" id="woodDots"></div>
         </div>
       </div>
       <div class="modal-info">
@@ -96,11 +94,15 @@
           <label>Description
             <textarea id="editWoodDesc" rows="4"></textarea>
           </label>
-          <label>Replace bark photo
-            <input id="editWoodBarkFile" type="file" accept="image/*">
+          <label>Photos <span id="editWoodPhotoCount" style="font-weight:400; color:#9a8564;"></span>
+            <div id="editWoodPhotoThumbs" class="media-thumbs"></div>
           </label>
-          <label>Replace grain photo
-            <input id="editWoodGrainFile" type="file" accept="image/*">
+          <label id="editWoodAddPhotosWrap">Add more photos (up to 5 total)
+            <input id="editWoodAddPhotos" type="file" accept="image/*" multiple>
+          </label>
+          <label>Video <span style="font-weight:400; color:#9a8564;">(one, optional)</span>
+            <div id="editWoodVideoThumb" class="media-thumbs"></div>
+            <input id="editWoodVideoFile" type="file" accept="video/*">
           </label>
           <button id="saveWoodBtn" class="btn-primary" type="button">Save Changes</button>
           <div class="msg" id="saveWoodMsg"></div>
@@ -129,11 +131,11 @@
         <label>Description
           <textarea id="newWoodDesc" rows="4" placeholder="What the bark looks like, what the grain looks like, any notes for identifying it in the field"></textarea>
         </label>
-        <label>Bark photo
-          <input id="newWoodBarkFile" type="file" accept="image/*">
+        <label>Photos <span style="font-weight:400; color:#9a8564;">(1 to 5 — bark, grain, whatever you've got)</span>
+          <input id="newWoodFiles" type="file" accept="image/*" multiple>
         </label>
-        <label>Grain photo
-          <input id="newWoodGrainFile" type="file" accept="image/*">
+        <label>Video <span style="font-weight:400; color:#9a8564;">(optional, one)</span>
+          <input id="newWoodVideo" type="file" accept="video/*">
         </label>
         <button id="createWoodBtn" class="btn-primary" type="button">Add Wood Species</button>
         <div class="msg" id="createWoodMsg"></div>
@@ -192,18 +194,26 @@
     renderWoods();
   }
 
+  function firstWoodPhoto(w) {
+    if (w.image_paths && w.image_paths.length) return publicUrl('wood-photos', w.image_paths[0]);
+    return publicUrl('wood-photos', w.bark_image_path) || publicUrl('wood-photos', w.grain_image_path);
+  }
+
   function renderWoods() {
     const grid = document.getElementById('woodGrid');
     grid.innerHTML = '';
     woodItems.forEach(w => {
-      const bark = publicUrl('wood-photos', w.bark_image_path);
-      const grain = publicUrl('wood-photos', w.grain_image_path);
+      const thumb = firstWoodPhoto(w);
+      const photoCount = (w.image_paths && w.image_paths.length) || ((w.bark_image_path ? 1 : 0) + (w.grain_image_path ? 1 : 0));
+      const mediaBadge = (photoCount > 1 || w.video_path)
+        ? `<div class="media-badge">${photoCount > 1 ? `📷 ${photoCount}` : ''}${photoCount > 1 && w.video_path ? ' · ' : ''}${w.video_path ? '🎬' : ''}</div>`
+        : '';
       const card = document.createElement('div');
       card.className = 'gallery-card has-photo';
       card.dataset.category = w.category;
-      const thumb = bark || grain;
       card.innerHTML = `
         ${thumb ? `<img src="${thumb}" alt="${w.name} bark" loading="lazy">` : `<div class="icon">🪵</div>`}
+        ${mediaBadge}
         <div class="info">
           <div class="label">${w.name}</div>
           <div class="sub">${w.category === 'hardwood' ? 'Hardwood' : 'Softwood'}</div>
@@ -234,8 +244,10 @@
 
   // --- Detail modal ---
   const overlay = document.getElementById('woodModalOverlay');
-  const barkImg = document.getElementById('woodModalBark');
-  const grainImg = document.getElementById('woodModalGrain');
+  const carouselTrack = document.getElementById('woodCarouselTrack');
+  const carouselPrev = document.getElementById('woodPrev');
+  const carouselNext = document.getElementById('woodNext');
+  const carouselDots = document.getElementById('woodDots');
   const modalName = document.getElementById('woodModalName');
   const modalCategory = document.getElementById('woodModalCategory');
   const modalDesc = document.getElementById('woodModalDesc');
@@ -243,9 +255,104 @@
   const editName = document.getElementById('editWoodName');
   const editCategory = document.getElementById('editWoodCategory');
   const editDesc = document.getElementById('editWoodDesc');
-  const editBarkFile = document.getElementById('editWoodBarkFile');
-  const editGrainFile = document.getElementById('editWoodGrainFile');
+  const editPhotoCount = document.getElementById('editWoodPhotoCount');
+  const editPhotoThumbs = document.getElementById('editWoodPhotoThumbs');
+  const editAddPhotosWrap = document.getElementById('editWoodAddPhotosWrap');
+  const editAddPhotos = document.getElementById('editWoodAddPhotos');
+  const editVideoThumb = document.getElementById('editWoodVideoThumb');
+  const editVideoFile = document.getElementById('editWoodVideoFile');
   const saveMsg = document.getElementById('saveWoodMsg');
+
+  let carouselSlides = [];
+  let carouselIndex = 0;
+  let editPhotosPending = [];
+
+  function woodSlides(w) {
+    let photos = (w.image_paths && w.image_paths.length) ? w.image_paths.slice() : [];
+    if (!photos.length) {
+      if (w.bark_image_path) photos.push(w.bark_image_path);
+      if (w.grain_image_path) photos.push(w.grain_image_path);
+    }
+    const slides = photos.map(p => ({ type: 'image', src: publicUrl('wood-photos', p) }));
+    if (w.video_path) slides.push({ type: 'video', src: publicUrl('wood-photos', w.video_path) });
+    return slides;
+  }
+
+  function renderCarousel() {
+    if (carouselSlides.length === 0) {
+      carouselTrack.innerHTML = `<div class="carousel-slide"><img src="${PLACEHOLDER_IMG}" alt="Photo coming soon"></div>`;
+      carouselPrev.hidden = true; carouselNext.hidden = true; carouselDots.hidden = true;
+      return;
+    }
+    carouselTrack.innerHTML = carouselSlides.map(s =>
+      s.type === 'video'
+        ? `<div class="carousel-slide"><video src="${s.src}" controls playsinline></video></div>`
+        : `<div class="carousel-slide"><img src="${s.src}" alt=""></div>`
+    ).join('');
+    carouselTrack.style.transform = `translateX(-${carouselIndex * 100}%)`;
+    const multi = carouselSlides.length > 1;
+    carouselPrev.hidden = !multi;
+    carouselNext.hidden = !multi;
+    carouselDots.hidden = !multi;
+    carouselDots.innerHTML = multi ? carouselSlides.map((_, i) =>
+      `<span class="dot ${i === carouselIndex ? 'active' : ''}" data-i="${i}"></span>`
+    ).join('') : '';
+    carouselDots.querySelectorAll('.dot').forEach(d => {
+      d.addEventListener('click', () => { carouselIndex = parseInt(d.dataset.i); renderCarousel(); });
+    });
+  }
+  carouselPrev.addEventListener('click', () => {
+    carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+    renderCarousel();
+  });
+  carouselNext.addEventListener('click', () => {
+    carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+    renderCarousel();
+  });
+
+  function drawEditThumbs() {
+    editPhotoCount.textContent = `(${editPhotosPending.length}/5)`;
+    editPhotoThumbs.innerHTML = editPhotosPending.map((p, i) => `
+      <div class="media-thumb">
+        <img src="${p.isNew ? p.preview : publicUrl('wood-photos', p.path)}" alt="">
+        <button type="button" class="thumb-remove" data-i="${i}">&times;</button>
+      </div>
+    `).join('');
+    editPhotoThumbs.querySelectorAll('.thumb-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editPhotosPending.splice(parseInt(btn.dataset.i), 1);
+        drawEditThumbs();
+      });
+    });
+    editAddPhotosWrap.hidden = editPhotosPending.length >= 5;
+  }
+
+  editAddPhotos.addEventListener('change', () => {
+    const room = 5 - editPhotosPending.length;
+    Array.from(editAddPhotos.files).slice(0, room).forEach(file => {
+      editPhotosPending.push({ path: null, isNew: true, file, preview: URL.createObjectURL(file) });
+    });
+    editAddPhotos.value = '';
+    drawEditThumbs();
+  });
+
+  function renderEditThumbs(w) {
+    let photos = (w.image_paths && w.image_paths.length) ? w.image_paths.slice() : [];
+    if (!photos.length) {
+      if (w.bark_image_path) photos.push(w.bark_image_path);
+      if (w.grain_image_path) photos.push(w.grain_image_path);
+    }
+    editPhotosPending = photos.map(p => ({ path: p, isNew: false, file: null }));
+    drawEditThumbs();
+    editVideoThumb.innerHTML = w.video_path
+      ? `<div class="media-thumb"><video src="${publicUrl('wood-photos', w.video_path)}" muted></video><button type="button" class="thumb-remove" id="removeWoodVideoBtn">&times;</button></div>`
+      : '<span style="color:#9a8564; font-size:0.85rem;">No video yet</span>';
+    const removeBtn = document.getElementById('removeWoodVideoBtn');
+    if (removeBtn) removeBtn.addEventListener('click', () => {
+      activeWood._videoRemoved = true;
+      editVideoThumb.innerHTML = '<span style="color:#9a8564; font-size:0.85rem;">Will be removed on save</span>';
+    });
+  }
 
   const PLACEHOLDER_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="#e8dcc0"/><text x="50%" y="50%" font-family="sans-serif" font-size="18" fill="#8a7960" text-anchor="middle">Photo coming soon</text></svg>`
@@ -253,8 +360,11 @@
 
   function openWoodModal(w) {
     activeWood = w;
-    barkImg.src = publicUrl('wood-photos', w.bark_image_path) || PLACEHOLDER_IMG;
-    grainImg.src = publicUrl('wood-photos', w.grain_image_path) || PLACEHOLDER_IMG;
+    activeWood._videoRemoved = false;
+    carouselSlides = woodSlides(w);
+    carouselIndex = 0;
+    renderCarousel();
+
     modalName.textContent = w.name;
     modalCategory.textContent = w.category === 'hardwood' ? 'Hardwood' : 'Softwood';
     modalDesc.textContent = w.description || 'No description yet.';
@@ -264,8 +374,8 @@
       editName.value = w.name;
       editCategory.value = w.category;
       editDesc.value = w.description || '';
-      editBarkFile.value = '';
-      editGrainFile.value = '';
+      renderEditThumbs(w);
+      editVideoFile.value = '';
       saveMsg.textContent = '';
     } else {
       adminControls.hidden = true;
@@ -295,27 +405,39 @@
 
   document.getElementById('saveWoodBtn').addEventListener('click', async () => {
     if (!activeWood) return;
+    if (editPhotosPending.length === 0) {
+      saveMsg.textContent = 'Please keep at least 1 photo.';
+      return;
+    }
     saveMsg.textContent = 'Saving...';
     try {
+      const finalPaths = [];
+      for (const p of editPhotosPending) {
+        finalPaths.push(p.isNew ? await uploadWoodPhoto(p.file) : p.path);
+      }
+      let videoPath = activeWood.video_path;
+      if (activeWood._videoRemoved) videoPath = null;
+      if (editVideoFile.files[0]) videoPath = await uploadWoodPhoto(editVideoFile.files[0]);
+
       const updates = {
         name: editName.value.trim(),
         category: editCategory.value,
-        description: editDesc.value.trim()
+        description: editDesc.value.trim(),
+        image_paths: finalPaths,
+        bark_image_path: finalPaths[0] || null,
+        grain_image_path: finalPaths[1] || null,
+        video_path: videoPath
       };
-      if (editBarkFile.files[0]) {
-        updates.bark_image_path = await uploadWoodPhoto(editBarkFile.files[0]);
-      }
-      if (editGrainFile.files[0]) {
-        updates.grain_image_path = await uploadWoodPhoto(editGrainFile.files[0]);
-      }
       const { error } = await supabase.from('wood_species').update(updates).eq('id', activeWood.id);
       if (error) throw error;
       Object.assign(activeWood, updates);
       const idx = woodItems.findIndex(x => x.id === activeWood.id);
       if (idx !== -1) woodItems[idx] = activeWood;
       saveMsg.textContent = 'Saved!';
+      carouselSlides = woodSlides(activeWood);
+      carouselIndex = 0;
+      renderCarousel();
       renderWoods();
-      openWoodModal(activeWood);
     } catch (err) {
       console.error(err);
       saveMsg.textContent = 'Could not save — try again.';
@@ -327,13 +449,15 @@
   const addWoodBtn = document.getElementById('addWoodBtn');
   const createWoodBtn = document.getElementById('createWoodBtn');
   const createMsg = document.getElementById('createWoodMsg');
+  const newWoodFiles = document.getElementById('newWoodFiles');
+  const newWoodVideo = document.getElementById('newWoodVideo');
 
   function openAddWoodModal() {
     document.getElementById('newWoodName').value = '';
     document.getElementById('newWoodCategory').value = 'hardwood';
     document.getElementById('newWoodDesc').value = '';
-    document.getElementById('newWoodBarkFile').value = '';
-    document.getElementById('newWoodGrainFile').value = '';
+    newWoodFiles.value = '';
+    newWoodVideo.value = '';
     createMsg.textContent = '';
     addOverlay.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -348,23 +472,33 @@
 
   createWoodBtn.addEventListener('click', async () => {
     const name = document.getElementById('newWoodName').value.trim();
+    const files = Array.from(newWoodFiles.files).slice(0, 5);
     if (!name) { createMsg.textContent = 'Please give it a name.'; return; }
-    createMsg.textContent = 'Saving...';
+    if (files.length === 0) { createMsg.textContent = 'Please choose at least 1 photo (up to 5).'; return; }
+
     createWoodBtn.disabled = true;
     try {
-      let barkPath = null, grainPath = null;
-      const barkFile = document.getElementById('newWoodBarkFile').files[0];
-      const grainFile = document.getElementById('newWoodGrainFile').files[0];
-      if (barkFile) barkPath = await uploadWoodPhoto(barkFile);
-      if (grainFile) grainPath = await uploadWoodPhoto(grainFile);
+      const imagePaths = [];
+      for (let i = 0; i < files.length; i++) {
+        createMsg.textContent = `Uploading photo ${i + 1} of ${files.length}...`;
+        imagePaths.push(await uploadWoodPhoto(files[i]));
+      }
+      let videoPath = null;
+      if (newWoodVideo.files[0]) {
+        createMsg.textContent = 'Uploading video...';
+        videoPath = await uploadWoodPhoto(newWoodVideo.files[0]);
+      }
 
+      createMsg.textContent = 'Saving...';
       const maxSort = woodItems.reduce((m, w) => Math.max(m, w.sort_order || 0), 0);
       const { data: inserted, error } = await supabase.from('wood_species').insert({
         name,
         category: document.getElementById('newWoodCategory').value,
         description: document.getElementById('newWoodDesc').value.trim(),
-        bark_image_path: barkPath,
-        grain_image_path: grainPath,
+        image_paths: imagePaths,
+        bark_image_path: imagePaths[0] || null,
+        grain_image_path: imagePaths[1] || null,
+        video_path: videoPath,
         sort_order: maxSort + 1
       }).select().single();
       if (error) throw error;
