@@ -180,6 +180,7 @@
 
   function publicUrl(bucket, path) {
     if (!path) return null;
+    if (path.startsWith('http') || path.startsWith('images/')) return path;
     const { data } = supabase.storage.from(bucket).getPublicUrl(path);
     return data.publicUrl;
   }
