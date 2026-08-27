@@ -594,13 +594,13 @@
   }
 
   /* ===== PHOTO/VIDEO CAROUSEL ===== */
-  .modal-carousel{ position:relative; overflow:hidden; border-radius:8px; }
+  .modal-carousel{ position:relative; overflow:hidden; border-radius:8px; height:min(52vh, 420px); }
   .modal-carousel-track{
-    display:flex; transition:transform 0.3s ease;
+    display:flex; transition:transform 0.3s ease; height:100%;
   }
-  .carousel-slide{ min-width:100%; flex-shrink:0; }
+  .carousel-slide{ min-width:100%; flex-shrink:0; height:100%; }
   .carousel-slide img, .carousel-slide video{
-    display:block; width:100%; max-height:52vh; object-fit:cover; background:#000;
+    display:block; width:100%; height:100%; object-fit:cover; background:#000;
   }
   .carousel-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
