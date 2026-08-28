@@ -46,12 +46,17 @@
       url('images/body-birch.webp');
     background-size:cover;
     background-position:center;
-    background-attachment:fixed;
+    background-attachment:scroll;
     background-repeat:no-repeat;
     background-color:var(--birch);
     color:var(--bark);
     line-height:1.6;
     position:relative;
+  }
+  /* fixed-background "parallax" backdrop only on devices that can afford it —
+     background-attachment:fixed is a well-known scroll-jank culprit on mobile browsers */
+  @media (hover:hover) and (pointer:fine){
+    body{ background-attachment:fixed; }
   }
   body::before{
     content:"";
@@ -90,12 +95,11 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:1.1rem 6vw;
     background-image:
-      linear-gradient(rgba(36,26,19,0.80), rgba(36,26,19,0.80)),
+      linear-gradient(rgba(36,26,19,0.88), rgba(36,26,19,0.88)),
       url('images/nav-oak.webp');
     background-size:cover;
     background-position:center;
-    background-color:rgba(36,26,19,0.92);
-    backdrop-filter:blur(6px);
+    background-color:rgba(36,26,19,0.94);
     color:var(--bone);
   }
   nav .wordmark{
@@ -1010,4 +1014,48 @@
     color:var(--bone);
     font-size:1.1rem;
     margin-bottom:0.6rem;
+  }
+
+  /* ===== MOBILE PERFORMANCE: swap the biggest background photos for
+     properly-sized mobile versions instead of downscaling desktop-sized
+     ones — cuts image payload roughly 65-70% on phones ===== */
+  @media (max-width:600px){
+    .bark-bg{
+      background-image:
+        linear-gradient(rgba(18,12,8,0.42), rgba(18,12,8,0.42)),
+        url('images/bg-oak-fire-mobile.webp');
+    }
+    .custom{
+      background-image:
+        linear-gradient(rgba(74,46,30,0.72), rgba(74,46,30,0.72)),
+        url('images/bg-oak-fire-mobile.webp');
+    }
+    footer.bark-bg{
+      background-image:
+        linear-gradient(rgba(18,12,8,0.62), rgba(18,12,8,0.62)),
+        url('images/bg-birch-fire-mobile.webp');
+    }
+    body{
+      background-image:
+        linear-gradient(rgba(239,230,208,0.55), rgba(239,230,208,0.55)),
+        url('images/body-birch-mobile.webp');
+    }
+    .explore-card{
+      background-image:linear-gradient(rgba(250,246,239,0.86), rgba(250,246,239,0.86)), url('images/embers-molten-mobile.webp');
+    }
+    .gallery-card.has-photo{
+      background-image:linear-gradient(rgba(250,246,239,0.88), rgba(250,246,239,0.88)), url('images/embers-molten-mobile.webp');
+    }
+    .modal-box{
+      background-image:linear-gradient(rgba(250,246,239,0.90), rgba(250,246,239,0.90)), url('images/embers-molten-mobile.webp');
+    }
+    .size-table{
+      background-image:linear-gradient(rgba(250,246,239,0.90), rgba(250,246,239,0.90)), url('images/embers-molten-mobile.webp');
+    }
+    .size-table th{
+      background-image:linear-gradient(rgba(74,46,30,0.68), rgba(74,46,30,0.68)), url('images/birch-ember-transition-mobile.webp');
+    }
+    .faq-item{
+      background-image:linear-gradient(rgba(250,246,239,0.65), rgba(250,246,239,0.65)), url('images/embers-molten-mobile.webp');
+    }
   }
