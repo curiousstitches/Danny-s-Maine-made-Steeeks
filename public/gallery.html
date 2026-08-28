@@ -397,8 +397,10 @@
     renderCarousel();
     startCarouselAuto();
   });
-  document.getElementById('modalCarousel').addEventListener('mouseenter', stopCarouselAuto);
-  document.getElementById('modalCarousel').addEventListener('mouseleave', startCarouselAuto);
+  // Note: no pause-on-hover — that caused a stuck-paused bug when a modal opens
+  // directly under a stationary cursor (mouseenter fires, mouseleave never does
+  // since the mouse never actually moves). Pausing during video playback is
+  // handled separately in renderCarousel() and is sufficient.
 
   function renderEditThumbs(item){
     const photos = (item.image_paths && item.image_paths.length) ? item.image_paths : (item.image_path ? [item.image_path] : []);

@@ -343,8 +343,7 @@
     renderCarousel();
     startCarouselAuto();
   });
-  document.getElementById('woodCarousel').addEventListener('mouseenter', stopCarouselAuto);
-  document.getElementById('woodCarousel').addEventListener('mouseleave', startCarouselAuto);
+  // Note: no pause-on-hover — see gallery.html for why.
 
   function drawEditThumbs() {
     editPhotoCount.textContent = `(${editPhotosPending.length}/5)`;
