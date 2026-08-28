@@ -99,6 +99,15 @@
 <script type="module">
   import { supabase } from './supabase-client.js';
 
+  // If already logged in, don't show the login form — send them where they meant to go
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session){
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get('redirect');
+      const safeRedirect = redirectTo && /^[a-zA-Z0-9_-]+\.html$/.test(redirectTo) ? redirectTo : 'index.html';
+      window.location.replace(safeRedirect);
+    }
+  });
 
   const pageLoadTime = Date.now();
   let mode = 'login'; // or 'signup'
@@ -173,7 +182,10 @@
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        window.location.href = 'index.html';
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get('redirect');
+        const safeRedirect = redirectTo && /^[a-zA-Z0-9_-]+\.html$/.test(redirectTo) ? redirectTo : 'index.html';
+        window.location.href = safeRedirect;
       }
     } catch (err) {
       showMsg(err.message || 'Something went wrong. Try again.', 'error');

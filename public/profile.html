@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script src="require-auth.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profile — Mr Steeeck</title>
 <meta name="description" content="Customer profile on Mr Steeeck.">
@@ -98,6 +99,11 @@
   const viewId = params.get('id');
 
   supabase.auth.getSession().then(async ({ data: { session } }) => {
+    if (!session){
+      const here = location.pathname.split('/').pop() || 'index.html';
+      window.location.replace('auth.html?redirect=' + encodeURIComponent(here));
+      return;
+    }
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
     if (session && ADMIN_EMAILS.includes(session.user.email)){
