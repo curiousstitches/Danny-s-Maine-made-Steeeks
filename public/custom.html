@@ -257,6 +257,13 @@
   // Log this visit (fire and forget)
   supabase.from('site_visits').insert({ page: 'order' }).then(() => {});
 
+  // If arriving from the Stick Builder, pre-fill the notes with their design
+  const builderNotes = new URLSearchParams(window.location.search).get('builderNotes');
+  if (builderNotes){
+    const notesField = document.getElementById('orderNotes');
+    if (notesField) notesField.value = 'From Stick Builder — ' + builderNotes;
+  }
+
   supabase.auth.getSession().then(({ data: { session } }) => {
     if (!session){
       const here = location.pathname.split('/').pop() || 'index.html';

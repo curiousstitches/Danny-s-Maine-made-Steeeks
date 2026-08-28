@@ -18,11 +18,9 @@
 }
 </script>
 <style>
-  .builder-wrap{
-    display:flex; flex-direction:column; min-height:60vh;
-  }
+  .builder-wrap{ display:flex; flex-direction:column; min-height:60vh; }
   #builderCanvas{
-    width:100%; height:52vh; display:block; touch-action:none;
+    width:100%; height:48vh; display:block; touch-action:none;
     background:radial-gradient(circle at 50% 40%, #3a2a1c, #1c130c 80%);
     cursor:grab;
   }
@@ -31,19 +29,20 @@
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color:#e0d3bd; font-family:'Fraunces', serif; font-size:1.1rem;
     background:radial-gradient(circle at 50% 40%, #3a2a1c, #1c130c 80%);
+    pointer-events:none; transition:opacity 0.3s ease;
   }
   .builder-canvas-wrap{ position:relative; }
-  .builder-controls{
-    padding:1.4rem 6vw 3rem; max-width:640px; margin:0 auto; width:100%;
-  }
+  .builder-controls{ padding:1.4rem 6vw 3rem; max-width:640px; margin:0 auto; width:100%; }
   .builder-controls h2{
-    font-family:'Fraunces', serif; color:var(--walnut); font-size:1.3rem; margin-bottom:0.6rem;
+    font-family:'Fraunces', serif; color:var(--walnut); font-size:1.15rem;
+    margin:1.6rem 0 0.6rem;
   }
-  .wood-swatches{ display:flex; gap:0.7rem; flex-wrap:wrap; margin-bottom:1.6rem; }
+  .builder-controls h2:first-of-type{ margin-top:0; }
+  .wood-swatches{ display:flex; gap:0.6rem; flex-wrap:wrap; }
   .wood-swatch{
-    width:52px; height:52px; border-radius:50%; border:3px solid transparent;
+    width:48px; height:48px; border-radius:50%; border:3px solid transparent;
     cursor:pointer; background-size:cover; background-position:center;
-    transition:border-color 0.2s ease, transform 0.2s ease;
+    transition:border-color 0.2s ease, transform 0.2s ease; position:relative;
   }
   .wood-swatch:hover{ transform:scale(1.08); }
   .wood-swatch.active{ border-color:var(--honey); }
@@ -51,9 +50,62 @@
   .wood-swatch.locked:hover{ transform:none; }
   .beta-note{
     background:rgba(107,125,79,0.14); border:1px solid rgba(107,125,79,0.3);
-    border-radius:6px; padding:1rem 1.2rem; margin-bottom:1.6rem; font-size:0.9rem; color:#4a3c2e;
+    border-radius:6px; padding:1rem 1.2rem; margin-bottom:0.4rem; font-size:0.88rem; color:#4a3c2e;
   }
   .beta-note strong{ color:var(--walnut); }
+  .builder-row{ display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.4rem; }
+  .builder-row label{ font-size:0.85rem; font-weight:600; color:var(--walnut); }
+  .builder-row input[type="range"]{ width:100%; accent-color:var(--honey); }
+  .toggle-group{ display:flex; gap:0.6rem; flex-wrap:wrap; }
+  .toggle-btn{
+    padding:0.5rem 0.9rem; border-radius:20px; border:1.5px solid #d3c2a0;
+    background:#fff; font-size:0.85rem; cursor:pointer; transition:all 0.15s ease;
+    font-family:inherit; color:#4a3c2e;
+  }
+  .toggle-btn.active{ background:var(--walnut); color:#fff; border-color:var(--walnut); }
+  .builder-text-input{
+    width:100%; padding:0.6rem 0.8rem; border:1.5px solid #d3c2a0; border-radius:6px;
+    font-family:inherit; font-size:0.95rem;
+  }
+  .price-estimate{
+    background:var(--parchment); border:1px solid #e3d5ba; border-radius:8px;
+    padding:1.1rem 1.3rem; margin:1.6rem 0; text-align:center;
+  }
+  .price-estimate .amount{ font-family:'Fraunces', serif; font-size:1.6rem; color:var(--walnut); }
+  .price-estimate .note{ font-size:0.78rem; color:#8a7960; margin-top:0.3rem; }
+  .builder-actions{ display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1rem; }
+  .builder-actions .btn-primary{ flex:1; min-width:180px; text-align:center; }
+  .btn-secondary{
+    flex:1; min-width:180px; text-align:center; padding:0.85rem 1.2rem; border-radius:6px;
+    border:1.5px solid var(--walnut); color:var(--walnut); background:transparent;
+    font-weight:600; cursor:pointer; font-family:inherit; font-size:0.95rem;
+  }
+  .save-result{
+    background:rgba(107,125,79,0.15); border:1px solid rgba(107,125,79,0.35);
+    border-radius:6px; padding:1rem 1.2rem; margin-top:1rem; text-align:center; display:none;
+  }
+  .save-result .code{ font-family:'Fraunces', serif; font-size:1.3rem; color:var(--walnut); font-weight:700; }
+
+  /* ===== onboarding bubbles ===== */
+  .tut-bubble{
+    position:absolute; z-index:50; max-width:230px; background:#241a13; color:#f0e5d3;
+    border:2px solid var(--honey); border-radius:10px; padding:0.8rem 1rem; font-size:0.85rem;
+    box-shadow:0 8px 20px rgba(0,0,0,0.4); line-height:1.4;
+  }
+  .tut-bubble::after{
+    content:''; position:absolute; top:-9px; left:24px; width:14px; height:14px;
+    background:#241a13; border-left:2px solid var(--honey); border-top:2px solid var(--honey);
+    transform:rotate(45deg);
+  }
+  .tut-bubble .tut-dismiss{
+    display:block; margin-top:0.6rem; color:var(--honey-bright); font-size:0.78rem;
+    cursor:pointer; text-decoration:underline; text-align:right;
+  }
+  .tut-overlay-tip{
+    position:absolute; z-index:49; border:2px dashed var(--honey-bright); border-radius:10px;
+    pointer-events:none; animation:tutPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes tutPulse{ 0%,100%{opacity:0.5;} 50%{opacity:1;} }
 </style>
 </head>
 <body>
@@ -90,7 +142,7 @@
 </div>
 
 <div class="builder-wrap">
-  <div class="builder-canvas-wrap">
+  <div class="builder-canvas-wrap" id="canvasWrap">
     <canvas id="builderCanvas"></canvas>
     <div class="builder-loading" id="builderLoading">Loading preview&hellip;</div>
   </div>
@@ -98,15 +150,72 @@
   <div class="builder-controls">
     <div class="beta-note">
       <strong>This tool is completely optional.</strong> You can order with just the
-      form on our Order page and skip this entirely if you'd rather. And however a
-      design looks here, your actual piece will have natural variation — real wood
-      grain, bends, and knots are never exactly the same twice, and this preview is
+      form on our Order page and skip this entirely. And however a design looks
+      here, your actual piece will have natural variation — real wood grain,
+      bends, and knots are never exactly the same twice, and this preview is
       meant to give you a feel for it, not an exact match.
     </div>
 
-    <h2>Wood</h2>
+    <h2 id="woodLabel">Wood</h2>
     <div class="wood-swatches" id="woodSwatches"></div>
-    <p style="font-size:0.85rem; color:#8a7960;">More woods, bark placement, bend, and burn options are coming soon to this tool — starting simple for now.</p>
+
+    <h2>Bark &harr; Polished split</h2>
+    <div class="builder-row">
+      <label>Drag to choose how much stays bark vs. sanded smooth</label>
+      <input type="range" id="barkSplit" min="0" max="100" value="50">
+    </div>
+
+    <h2>Polished finish</h2>
+    <div class="toggle-group" id="textureToggle">
+      <button class="toggle-btn active" data-value="sanded">Sanded smooth</button>
+      <button class="toggle-btn" data-value="rough">Rough-hewn</button>
+    </div>
+
+    <h2>Burnt finish</h2>
+    <div class="toggle-group" id="burntToggle">
+      <button class="toggle-btn active" data-value="no">Natural</button>
+      <button class="toggle-btn" data-value="yes">Burnt / charred</button>
+    </div>
+
+    <h2>Bend</h2>
+    <div class="builder-row">
+      <label>Slight natural bend along the shaft</label>
+      <input type="range" id="bendAmount" min="-100" max="100" value="0">
+    </div>
+
+    <h2>Grip wrap</h2>
+    <div class="toggle-group" id="gripToggle">
+      <button class="toggle-btn active" data-value="none">None</button>
+      <button class="toggle-btn" data-value="leather">Leather wrap</button>
+      <button class="toggle-btn" data-value="paracord">Paracord wrap</button>
+    </div>
+
+    <h2>Metal tip</h2>
+    <div class="toggle-group" id="tipToggle">
+      <button class="toggle-btn active" data-value="no">No</button>
+      <button class="toggle-btn" data-value="yes">Yes</button>
+    </div>
+
+    <h2>Wood-burned personalization <span style="font-weight:400; color:#8a7960;">(optional)</span></h2>
+    <div class="builder-row">
+      <label for="burnText">Initials, name, or short word to preview burned into the wood</label>
+      <input type="text" id="burnText" class="builder-text-input" maxlength="14" placeholder="e.g. J.D. or FAITH">
+    </div>
+
+    <div class="price-estimate">
+      <div class="amount" id="priceEstimate">$40–$55</div>
+      <div class="note">Rough estimate only — final pricing confirmed by email based on size, wood, and add-ons.</div>
+    </div>
+
+    <div class="builder-actions">
+      <button class="btn-primary" id="saveDesignBtn" type="button" style="border:none; cursor:pointer;">Save This Design</button>
+      <button class="btn-secondary" id="useDesignBtn" type="button">Use This Design to Order</button>
+    </div>
+    <div class="save-result" id="saveResult">
+      <div>Saved! Your reference code:</div>
+      <div class="code" id="refCodeDisplay">—</div>
+      <div style="font-size:0.8rem; color:#6b5a40; margin-top:0.4rem;">Mention this code by email or on your order and we'll know exactly what you built.</div>
+    </div>
   </div>
 </div>
 
@@ -119,12 +228,15 @@
 <script type="module">
   import { supabase, ADMIN_EMAILS } from './supabase-client.js';
 
+  let currentUser = null;
+
   supabase.auth.getSession().then(({ data: { session } }) => {
     if (!session){
       const here = location.pathname.split('/').pop() || 'index.html';
       window.location.replace('auth.html?redirect=' + encodeURIComponent(here));
       return;
     }
+    currentUser = session.user;
     const adminSlot = document.getElementById('navAdminSlot');
     const authSlot = document.getElementById('navAuthSlot');
     if (ADMIN_EMAILS.includes(session.user.email)){
@@ -139,6 +251,17 @@
       authSlot.innerHTML = '<a href="profile.html">My Profile</a>';
     }
   });
+
+  window.__saveDesignToSupabase = async function(payload){
+    const refCode = 'WS-' + Math.floor(1000 + Math.random() * 9000);
+    const { error } = await supabase.from('saved_designs').insert({
+      user_id: currentUser?.id,
+      ref_code: refCode,
+      ...payload
+    });
+    if (error) throw error;
+    return refCode;
+  };
 </script>
 
 <script type="module">
@@ -146,28 +269,35 @@
   import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
   const WOODS = [
-    { id: 'oak', name: 'Oak', bark: 'images/wood/bark-oak.webp', stick: 'images/wood/stick-oak.webp', available: true },
-    { id: 'maple', name: 'Maple', bark: 'images/wood/bark-maple.webp', stick: 'images/wood/stick-maple.webp', available: false },
-    { id: 'birch', name: 'Birch', bark: 'images/wood/bark-birch.webp', stick: 'images/wood/stick-birch.webp', available: false },
-    { id: 'ash', name: 'Ash', bark: 'images/wood/bark-ash.webp', stick: 'images/wood/stick-ash.webp', available: false },
-    { id: 'cherry', name: 'Cherry', bark: 'images/wood/bark-cherry.webp', stick: 'images/wood/stick-cherry.webp', available: false },
-    { id: 'black-walnut', name: 'Black Walnut', bark: 'images/wood/bark-black-walnut.webp', stick: 'images/wood/stick-black-walnut.webp', available: false },
-    { id: 'white-pine', name: 'White Pine', bark: 'images/wood/bark-white-pine.webp', stick: 'images/wood/stick-white-pine.webp', available: false },
-    { id: 'eastern-white-cedar', name: 'Eastern White Cedar', bark: 'images/wood/bark-eastern-white-cedar.webp', stick: 'images/wood/stick-eastern-white-cedar.webp', available: false },
+    { id: 'oak', name: 'Oak', bark: 'images/wood/bark-oak.webp', polishColor: 0xb8905a, available: true },
+    { id: 'maple', name: 'Maple', bark: 'images/wood/bark-maple.webp', polishColor: 0xe0c99a, available: false },
+    { id: 'birch', name: 'Birch', bark: 'images/wood/bark-birch.webp', polishColor: 0xe8d9b8, available: false },
+    { id: 'ash', name: 'Ash', bark: 'images/wood/bark-ash.webp', polishColor: 0xd4b98a, available: false },
+    { id: 'cherry', name: 'Cherry', bark: 'images/wood/bark-cherry.webp', polishColor: 0x8b4a3a, available: false },
+    { id: 'black-walnut', name: 'Black Walnut', bark: 'images/wood/bark-black-walnut.webp', polishColor: 0x3f2a1c, available: false },
+    { id: 'white-pine', name: 'White Pine', bark: 'images/wood/bark-white-pine.webp', polishColor: 0xe8dcc0, available: false },
+    { id: 'eastern-white-cedar', name: 'Eastern White Cedar', bark: 'images/wood/bark-eastern-white-cedar.webp', polishColor: 0xb08050, available: false },
   ];
+
+  const state = {
+    wood: WOODS[0],
+    barkSplit: 0.5,
+    texture: 'sanded',
+    burnt: false,
+    bend: 0,
+    grip: 'none',
+    tip: false,
+    burnText: '',
+  };
 
   const canvas = document.getElementById('builderCanvas');
   const loadingEl = document.getElementById('builderLoading');
-
-  function sizeCanvas(){
-    const rect = canvas.getBoundingClientRect();
-    return { w: rect.width, h: rect.height };
-  }
+  function sizeCanvas(){ const r = canvas.getBoundingClientRect(); return { w: r.width, h: r.height }; }
 
   const scene = new THREE.Scene();
   let { w, h } = sizeCanvas();
   const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-  camera.position.set(1.8, 0.3, 5.4);
+  camera.position.set(2.0, 0.1, 6.6);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -180,7 +310,6 @@
   controls.minDistance = 3;
   controls.maxDistance = 10;
 
-  // Lighting: warm key light + soft fill, matching the site's fire/amber palette
   scene.add(new THREE.AmbientLight(0xffffff, 0.55));
   const keyLight = new THREE.DirectionalLight(0xffd9a0, 1.1);
   keyLight.position.set(3, 4, 4);
@@ -189,28 +318,35 @@
   fillLight.position.set(-3, -1, 2);
   scene.add(fillLight);
 
-  // A stick is a tapered tube following a curve — this same curve becomes the
-  // "bend" control in a later phase.
-  const curvePoints = [
-    new THREE.Vector3(0, -2.2, 0),
-    new THREE.Vector3(0.05, -1.1, 0.02),
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(-0.03, 1.1, -0.02),
-    new THREE.Vector3(0, 2.2, 0),
-  ];
-  const curve = new THREE.CatmullRomCurve3(curvePoints);
+  const stickGroup = new THREE.Group();
+  scene.add(stickGroup);
+
+  function buildCurve(bend){
+    const xOff = (bend / 100) * 0.5;
+    return new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, -2.2, 0),
+      new THREE.Vector3(xOff * 0.5, -1.1, 0.02),
+      new THREE.Vector3(xOff, 0, 0),
+      new THREE.Vector3(xOff * 0.6, 1.1, -0.02),
+      new THREE.Vector3(0, 2.2, 0),
+    ]);
+  }
 
   class TaperedTubeGeometry extends THREE.BufferGeometry {
-    constructor(path, tubularSegments = 64, radialSegments = 16, radiusTop = 0.09, radiusBottom = 0.14) {
+    constructor(path, tStart, tEnd, tubularSegments, radialSegments, radiusTop, radiusBottom) {
       super();
       const positions = [], normals = [], uvs = [], indices = [];
-      const frames = path.computeFrenetFrames(tubularSegments, false);
+      const frames = path.computeFrenetFrames(128, false);
+      const frameAt = (t) => {
+        const idx = Math.min(127, Math.max(0, Math.round(t * 128)));
+        return { normal: frames.normals[idx], binormal: frames.binormals[idx] };
+      };
       for (let i = 0; i <= tubularSegments; i++) {
-        const t = i / tubularSegments;
+        const localT = i / tubularSegments;
+        const t = tStart + (tEnd - tStart) * localT;
         const point = path.getPointAt(t);
         const radius = radiusBottom + (radiusTop - radiusBottom) * t;
-        const normal = frames.normals[i];
-        const binormal = frames.binormals[i];
+        const { normal, binormal } = frameAt(t);
         for (let j = 0; j <= radialSegments; j++) {
           const v = (j / radialSegments) * Math.PI * 2;
           const sin = Math.sin(v), cos = -Math.cos(v);
@@ -219,16 +355,14 @@
           const nz = cos * normal.z + sin * binormal.z;
           positions.push(point.x + radius * nx, point.y + radius * ny, point.z + radius * nz);
           normals.push(nx, ny, nz);
-          uvs.push(t * 2.5, j / radialSegments);
+          uvs.push(localT * (tEnd - tStart) * 4, j / radialSegments);
         }
       }
       const segRadial = radialSegments + 1;
       for (let i = 0; i < tubularSegments; i++) {
         for (let j = 0; j < radialSegments; j++) {
-          const a = segRadial * i + j;
-          const b = segRadial * (i + 1) + j;
-          const c = segRadial * (i + 1) + j + 1;
-          const d = segRadial * i + j + 1;
+          const a = segRadial * i + j, b = segRadial * (i + 1) + j;
+          const c = segRadial * (i + 1) + j + 1, d = segRadial * i + j + 1;
           indices.push(a, b, d, b, c, d);
         }
       }
@@ -239,34 +373,148 @@
     }
   }
 
-  const geometry = new TaperedTubeGeometry(curve, 80, 20, 0.13, 0.21);
   const textureLoader = new THREE.TextureLoader();
-  let stickMesh = null;
-
-  function loadWood(wood){
-    const tex = textureLoader.load(wood.bark, () => { loadingEl.style.display = 'none'; });
+  const barkTexCache = {};
+  function getBarkTexture(wood){
+    if (barkTexCache[wood.id]) return barkTexCache[wood.id];
+    const tex = textureLoader.load(wood.bark, () => { loadingEl.style.opacity = '0'; setTimeout(() => loadingEl.style.display = 'none', 300); });
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(2.2, 4);
     tex.colorSpace = THREE.SRGBColorSpace;
-
-    const material = new THREE.MeshStandardMaterial({
-      map: tex,
-      roughness: 0.75,
-      metalness: 0.02,
-    });
-
-    if (stickMesh) {
-      scene.remove(stickMesh);
-      stickMesh.material.dispose();
-    }
-    stickMesh = new THREE.Mesh(geometry, material);
-    scene.add(stickMesh);
+    barkTexCache[wood.id] = tex;
+    return tex;
   }
 
-  loadWood(WOODS[0]);
+  let barkMesh = null, polishMesh = null, tipMesh = null, gripMesh = null, burnMesh = null;
 
-  // Wood picker
+  function burnTintColor(hex, burnt){
+    if (!burnt) return hex;
+    const c = new THREE.Color(hex);
+    c.multiplyScalar(0.32);
+    return c.getHex();
+  }
+
+  function makeGripTexture(kind){
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 128;
+    const ctx = c.getContext('2d');
+    if (kind === 'leather'){
+      ctx.fillStyle = '#4a2e1c';
+      ctx.fillRect(0, 0, 128, 128);
+      for (let i = 0; i < 300; i++){
+        ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.15})`;
+        ctx.fillRect(Math.random()*128, Math.random()*128, 2, 2);
+      }
+    } else {
+      ctx.fillStyle = '#2a2016';
+      ctx.fillRect(0, 0, 128, 128);
+      ctx.strokeStyle = '#9a8560';
+      ctx.lineWidth = 10;
+      for (let i = -128; i < 256; i += 22){
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + 128, 128);
+        ctx.stroke();
+      }
+    }
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(3, 2);
+    return tex;
+  }
+
+  function makeBurnTextTexture(text){
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 128;
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, 512, 128);
+    ctx.font = 'italic 700 56px Georgia, serif';
+    ctx.fillStyle = '#1a0f08';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(90,40,10,0.6)';
+    ctx.shadowBlur = 8;
+    ctx.fillText(text.slice(0, 14), 256, 64);
+    const tex = new THREE.CanvasTexture(c);
+    return tex;
+  }
+
+  function rebuildStick(){
+    const curve = buildCurve(state.bend);
+    const split = state.barkSplit;
+
+    if (barkMesh) { stickGroup.remove(barkMesh); barkMesh.geometry.dispose(); barkMesh.material.dispose(); }
+    if (polishMesh) { stickGroup.remove(polishMesh); polishMesh.geometry.dispose(); polishMesh.material.dispose(); }
+    if (tipMesh) { stickGroup.remove(tipMesh); tipMesh.geometry.dispose(); tipMesh.material.dispose(); }
+    if (gripMesh) { stickGroup.remove(gripMesh); gripMesh.geometry.dispose(); gripMesh.material.dispose(); }
+    if (burnMesh) { stickGroup.remove(burnMesh); burnMesh.geometry.dispose(); burnMesh.material.dispose(); }
+
+    if (split > 0.01){
+      const barkGeo = new TaperedTubeGeometry(curve, 0, split, 80, 20, 0.13 + (split) * (0.21 - 0.13), 0.21);
+      const barkTex = getBarkTexture(state.wood);
+      const barkMat = new THREE.MeshStandardMaterial({
+        map: barkTex,
+        roughness: 0.85,
+        color: burnTintColor(0xffffff, state.burnt),
+      });
+      barkMesh = new THREE.Mesh(barkGeo, barkMat);
+      stickGroup.add(barkMesh);
+    }
+
+    if (split < 0.99){
+      const polishGeo = new TaperedTubeGeometry(curve, split, 1, 80, 20, 0.13, 0.13 + (split) * (0.21 - 0.13));
+      const polishMat = new THREE.MeshStandardMaterial({
+        color: burnTintColor(state.wood.polishColor, state.burnt),
+        roughness: state.texture === 'sanded' ? 0.28 : 0.7,
+        metalness: state.texture === 'sanded' ? 0.06 : 0.0,
+      });
+      polishMesh = new THREE.Mesh(polishGeo, polishMat);
+      stickGroup.add(polishMesh);
+    }
+
+    // metal tip at the bottom (t=0) end
+    if (state.tip){
+      const tipGeo = new THREE.ConeGeometry(0.14, 0.22, 16);
+      const tipMat = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, roughness: 0.3, metalness: 0.85 });
+      tipMesh = new THREE.Mesh(tipGeo, tipMat);
+      const bottomPt = curve.getPointAt(0);
+      tipMesh.position.set(bottomPt.x, bottomPt.y - 0.1, bottomPt.z);
+      stickGroup.add(tipMesh);
+    }
+
+    // grip wrap near the top (t=0.82 to 0.98)
+    if (state.grip !== 'none'){
+      const gripGeo = new TaperedTubeGeometry(curve, 0.8, 0.97, 30, 16, 0.145, 0.15);
+      const gripMat = new THREE.MeshStandardMaterial({
+        map: makeGripTexture(state.grip),
+        roughness: state.grip === 'leather' ? 0.6 : 0.5,
+      });
+      gripMesh = new THREE.Mesh(gripGeo, gripMat);
+      stickGroup.add(gripMesh);
+    }
+
+    // wood-burned text, placed as a small decal plane on the polished section
+    if (state.burnText.trim() && split < 0.7){
+      const burnGeo = new THREE.PlaneGeometry(0.55, 0.16);
+      const burnMat = new THREE.MeshBasicMaterial({
+        map: makeBurnTextTexture(state.burnText.trim()),
+        transparent: true,
+        depthWrite: false,
+      });
+      const placeT = Math.min(0.85, split + 0.12);
+      const pt = curve.getPointAt(placeT);
+      burnMesh = new THREE.Mesh(burnGeo, burnMat);
+      burnMesh.position.set(pt.x + 0.17, pt.y, pt.z);
+      burnMesh.rotation.y = Math.PI / 2;
+      stickGroup.add(burnMesh);
+    }
+  }
+
+  rebuildStick();
+
+  // ===== Wood picker =====
   const swatchWrap = document.getElementById('woodSwatches');
   WOODS.forEach((wood, i) => {
     const el = document.createElement('div');
@@ -277,10 +525,101 @@
       if (!wood.available) return;
       document.querySelectorAll('.wood-swatch').forEach(s => s.classList.remove('active'));
       el.classList.add('active');
+      state.wood = wood;
       loadingEl.style.display = 'flex';
-      loadWood(wood);
+      loadingEl.style.opacity = '1';
+      rebuildStick();
     });
     swatchWrap.appendChild(el);
+  });
+
+  // ===== Sliders =====
+  document.getElementById('barkSplit').addEventListener('input', (e) => {
+    state.barkSplit = e.target.value / 100;
+    rebuildStick();
+    updatePrice();
+  });
+  document.getElementById('bendAmount').addEventListener('input', (e) => {
+    state.bend = parseFloat(e.target.value);
+    rebuildStick();
+  });
+
+  // ===== Toggle groups =====
+  function wireToggle(id, onChange){
+    const group = document.getElementById(id);
+    group.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        onChange(btn.dataset.value);
+      });
+    });
+  }
+  wireToggle('textureToggle', (v) => { state.texture = v; rebuildStick(); });
+  wireToggle('burntToggle', (v) => { state.burnt = v === 'yes'; rebuildStick(); updatePrice(); });
+  wireToggle('gripToggle', (v) => { state.grip = v; rebuildStick(); updatePrice(); });
+  wireToggle('tipToggle', (v) => { state.tip = v === 'yes'; rebuildStick(); updatePrice(); });
+
+  document.getElementById('burnText').addEventListener('input', (e) => {
+    state.burnText = e.target.value;
+    rebuildStick();
+    updatePrice();
+  });
+
+  // ===== Price estimate =====
+  function updatePrice(){
+    let low = 35, high = 45;
+    if (state.grip !== 'none'){ low += 6; high += 10; }
+    if (state.tip){ low += 5; high += 8; }
+    if (state.burnText.trim()){ low += 8; high += 12; }
+    if (state.burnt){ low += 3; high += 5; }
+    document.getElementById('priceEstimate').textContent = `$${low}–$${high}`;
+  }
+  updatePrice();
+
+  // ===== Save / Use design =====
+  document.getElementById('saveDesignBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('saveDesignBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    try {
+      const priceText = document.getElementById('priceEstimate').textContent;
+      const [low, high] = priceText.replace(/\$/g, '').split('–').map(Number);
+      const refCode = await window.__saveDesignToSupabase({
+        wood: state.wood.id,
+        bark_split: state.barkSplit,
+        texture: state.texture,
+        burnt: state.burnt,
+        bend: state.bend,
+        grip: state.grip,
+        metal_tip: state.tip,
+        burn_text: state.burnText.trim() || null,
+        est_price_low: low,
+        est_price_high: high,
+      });
+      document.getElementById('refCodeDisplay').textContent = refCode;
+      document.getElementById('saveResult').style.display = 'block';
+      window.__lastRefCode = refCode;
+    } catch (err) {
+      console.error(err);
+      alert('Could not save your design — please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save This Design';
+    }
+  });
+
+  document.getElementById('useDesignBtn').addEventListener('click', () => {
+    const summary = [
+      `Wood: ${state.wood.name}`,
+      `Bark/polish split: ${Math.round(state.barkSplit * 100)}% bark`,
+      `Finish: ${state.texture}${state.burnt ? ', burnt/charred' : ''}`,
+      state.grip !== 'none' ? `Grip: ${state.grip} wrap` : null,
+      state.tip ? 'Metal tip: yes' : null,
+      state.burnText.trim() ? `Wood-burned text: "${state.burnText.trim()}"` : null,
+      window.__lastRefCode ? `Builder ref: ${window.__lastRefCode}` : null,
+    ].filter(Boolean).join(' | ');
+    window.location.href = 'custom.html?builderNotes=' + encodeURIComponent(summary);
   });
 
   function animate(){
@@ -296,6 +635,55 @@
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
   });
+
+  // ===== First-visit tutorial bubbles =====
+  function showTutorial(){
+    if (localStorage.getItem('builder_tutorial_seen')) return;
+    const steps = [
+      { target: '#canvasWrap', text: 'Drag anywhere on the preview to rotate the stick and see it from every angle.' },
+      { target: '#woodSwatches', text: 'Tap a wood swatch to change the material — more species are coming soon.' },
+      { target: '#barkSplit', text: 'Slide to choose how much of the stick stays natural bark vs. sanded smooth.' },
+      { target: '#priceEstimate', text: "A rough price estimate updates live as you build — final pricing is always confirmed by email." },
+    ];
+    let i = 0;
+    const bubble = document.createElement('div');
+    bubble.className = 'tut-bubble';
+    document.body.appendChild(bubble);
+    const highlight = document.createElement('div');
+    highlight.className = 'tut-overlay-tip';
+    document.body.appendChild(highlight);
+
+    function place(){
+      const step = steps[i];
+      const el = document.querySelector(step.target);
+      if (!el){ next(); return; }
+      const rect = el.getBoundingClientRect();
+      const top = rect.bottom + window.scrollY + 12;
+      const left = Math.min(rect.left + window.scrollX, window.innerWidth - 250);
+      bubble.style.top = top + 'px';
+      bubble.style.left = left + 'px';
+      bubble.innerHTML = step.text + '<span class="tut-dismiss" id="tutNext">' +
+        (i < steps.length - 1 ? 'Got it, next tip &rarr;' : 'Got it, thanks!') + '</span>';
+      highlight.style.top = (rect.top + window.scrollY - 4) + 'px';
+      highlight.style.left = (rect.left + window.scrollX - 4) + 'px';
+      highlight.style.width = (rect.width + 8) + 'px';
+      highlight.style.height = (rect.height + 8) + 'px';
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('tutNext').addEventListener('click', next);
+    }
+    function next(){
+      i++;
+      if (i >= steps.length){
+        bubble.remove();
+        highlight.remove();
+        localStorage.setItem('builder_tutorial_seen', '1');
+        return;
+      }
+      setTimeout(place, 400);
+    }
+    setTimeout(place, 800);
+  }
+  showTutorial();
 </script>
 <script type="module" src="chat-widget.js"></script>
 </body>
