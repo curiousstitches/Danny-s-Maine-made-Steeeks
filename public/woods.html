@@ -432,10 +432,38 @@
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeWoodModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hidden) closeWoodModal(); });
 
+  async function resizeImageFile(file, maxDim = 1400, quality = 0.75) {
+    if (!file.type.startsWith('image/')) return file; // never touch videos
+    try {
+      const bitmap = await createImageBitmap(file);
+      const { width, height } = bitmap;
+      if (Math.max(width, height) <= maxDim) {
+        bitmap.close?.();
+        return file;
+      }
+      const scale = maxDim / Math.max(width, height);
+      const targetW = Math.round(width * scale);
+      const targetH = Math.round(height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+      bitmap.close?.();
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', quality));
+      if (!blob) return file;
+      return new File([blob], file.name.replace(/\.\w+$/, '.webp'), { type: 'image/webp' });
+    } catch (e) {
+      console.warn('Image resize failed, uploading original file instead', e);
+      return file;
+    }
+  }
+
   async function uploadWoodPhoto(file) {
-    const ext = file.name.split('.').pop();
+    const processed = await resizeImageFile(file);
+    const ext = processed.name.split('.').pop();
     const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { error } = await supabase.storage.from('wood-photos').upload(path, file, { cacheControl: '3600', upsert: false });
+    const { error } = await supabase.storage.from('wood-photos').upload(path, processed, { cacheControl: '3600', upsert: false });
     if (error) throw error;
     return path;
   }
