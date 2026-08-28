@@ -21,17 +21,60 @@
   .builder-wrap{ display:flex; flex-direction:column; min-height:60vh; }
   #builderCanvas{
     width:100%; height:48vh; display:block; touch-action:none;
-    background:radial-gradient(circle at 50% 40%, #3a2a1c, #1c130c 80%);
+    background:radial-gradient(circle at 50% 40%, #a88a68, #7a6248 80%);
     cursor:grab;
   }
   #builderCanvas:active{ cursor:grabbing; }
   .builder-loading{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    color:#e0d3bd; font-family:'Fraunces', serif; font-size:1.1rem;
-    background:radial-gradient(circle at 50% 40%, #3a2a1c, #1c130c 80%);
+    color:#3a2a1c; font-family:'Fraunces', serif; font-size:1.1rem;
+    background:radial-gradient(circle at 50% 40%, #a88a68, #7a6248 80%);
     pointer-events:none; transition:opacity 0.3s ease;
   }
   .builder-canvas-wrap{ position:relative; }
+
+  .rotate-arrows{
+    display:flex; justify-content:center; gap:1rem; padding:0.7rem 0;
+    background:var(--parchment); border-bottom:1px solid #e3d5ba;
+  }
+  .rotate-btn{
+    width:40px; height:40px; border-radius:50%; border:1.5px solid var(--walnut);
+    background:#fff; color:var(--walnut); font-size:1.1rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:background 0.15s ease;
+  }
+  .rotate-btn:hover{ background:var(--honey); color:#fff; }
+  .rotate-btn:active{ transform:scale(0.94); }
+
+  .stepper{
+    display:flex; align-items:center; gap:0; border:1.5px solid #d3c2a0; border-radius:8px;
+    overflow:hidden; width:fit-content;
+  }
+  .stepper-arrow{
+    width:38px; height:38px; border:none; background:var(--parchment); color:var(--walnut);
+    font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background 0.15s ease;
+  }
+  .stepper-arrow:hover{ background:var(--honey); color:#fff; }
+  .stepper-value{
+    min-width:150px; text-align:center; padding:0.5rem 0.8rem; font-size:0.88rem;
+    font-weight:600; color:#4a3c2e; background:#fff;
+  }
+
+  .paint-tool-wrap{ margin-bottom:0.6rem; }
+  .paint-mode-row{ display:flex; gap:0.6rem; margin-bottom:0.6rem; }
+  .paint-strip{
+    display:flex; height:44px; border-radius:8px; overflow:hidden; border:1.5px solid #d3c2a0;
+    cursor:pointer; touch-action:none; user-select:none;
+  }
+  .paint-cell{ flex:1; background-size:cover; background-position:center; }
+  .paint-cell.is-bark{ filter:brightness(0.75) saturate(1.1); }
+  .paint-cell.is-polish{ filter:brightness(1.15); }
+  .paint-quick-actions{ display:flex; gap:0.6rem; margin-top:0.6rem; }
+  .paint-quick-btn{
+    font-size:0.78rem; padding:0.35rem 0.7rem; border-radius:14px; border:1.5px solid #d3c2a0;
+    background:#fff; cursor:pointer; color:#6b5a40; font-family:inherit;
+  }
+  .paint-hint{ font-size:0.78rem; color:#8a7960; margin-top:0.5rem; }
   .builder-controls{ padding:1.4rem 6vw 3rem; max-width:640px; margin:0 auto; width:100%; }
   .builder-controls h2{
     font-family:'Fraunces', serif; color:var(--walnut); font-size:1.15rem;
@@ -146,6 +189,10 @@
     <canvas id="builderCanvas"></canvas>
     <div class="builder-loading" id="builderLoading">Loading preview&hellip;</div>
   </div>
+  <div class="rotate-arrows">
+    <button class="rotate-btn" id="rotateLeftBtn" aria-label="Rotate left" type="button">&#8592;</button>
+    <button class="rotate-btn" id="rotateRightBtn" aria-label="Rotate right" type="button">&#8594;</button>
+  </div>
 
   <div class="builder-controls">
     <div class="beta-note">
@@ -159,22 +206,33 @@
     <h2 id="woodLabel">Wood</h2>
     <div class="wood-swatches" id="woodSwatches"></div>
 
-    <h2>Bark &harr; Polished split</h2>
-    <div class="builder-row">
-      <label>Drag to choose how much stays bark vs. sanded smooth</label>
-      <input type="range" id="barkSplit" min="0" max="100" value="50">
+    <h2>Paint bark &amp; polished areas</h2>
+    <div class="paint-tool-wrap">
+      <div class="paint-mode-row">
+        <button class="toggle-btn active" id="paintModeBark" type="button" data-mode="bark">🖌️ Paint Bark</button>
+        <button class="toggle-btn" id="paintModePolish" type="button" data-mode="polish">🖌️ Paint Polished</button>
+      </div>
+      <div class="paint-strip" id="paintStrip"></div>
+      <div class="paint-quick-actions">
+        <button class="paint-quick-btn" id="paintAllBark" type="button">All bark</button>
+        <button class="paint-quick-btn" id="paintAllPolish" type="button">All polished</button>
+        <button class="paint-quick-btn" id="paintHalfHalf" type="button">Half &amp; half</button>
+      </div>
+      <p class="paint-hint">Like drawing on a real branch — drag across the strip to mark exactly where bark stays on and where it's sanded smooth. Left = handle end, right = tip.</p>
     </div>
 
     <h2>Polished finish</h2>
-    <div class="toggle-group" id="textureToggle">
-      <button class="toggle-btn active" data-value="sanded">Sanded smooth</button>
-      <button class="toggle-btn" data-value="rough">Rough-hewn</button>
+    <div class="stepper" id="textureStepper" data-options="sanded,rough" data-labels="Sanded smooth,Rough-hewn">
+      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+      <div class="stepper-value">Sanded smooth</div>
+      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
     </div>
 
     <h2>Burnt finish</h2>
-    <div class="toggle-group" id="burntToggle">
-      <button class="toggle-btn active" data-value="no">Natural</button>
-      <button class="toggle-btn" data-value="yes">Burnt / charred</button>
+    <div class="stepper" id="burntStepper" data-options="no,yes" data-labels="Natural,Burnt / charred">
+      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+      <div class="stepper-value">Natural</div>
+      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
     </div>
 
     <h2>Bend</h2>
@@ -184,16 +242,17 @@
     </div>
 
     <h2>Grip wrap</h2>
-    <div class="toggle-group" id="gripToggle">
-      <button class="toggle-btn active" data-value="none">None</button>
-      <button class="toggle-btn" data-value="leather">Leather wrap</button>
-      <button class="toggle-btn" data-value="paracord">Paracord wrap</button>
+    <div class="stepper" id="gripStepper" data-options="none,leather,paracord" data-labels="None,Leather wrap,Paracord wrap">
+      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+      <div class="stepper-value">None</div>
+      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
     </div>
 
     <h2>Metal tip</h2>
-    <div class="toggle-group" id="tipToggle">
-      <button class="toggle-btn active" data-value="no">No</button>
-      <button class="toggle-btn" data-value="yes">Yes</button>
+    <div class="stepper" id="tipStepper" data-options="no,yes" data-labels="No,Yes">
+      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+      <div class="stepper-value">No</div>
+      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
     </div>
 
     <h2>Wood-burned personalization <span style="font-weight:400; color:#8a7960;">(optional)</span></h2>
@@ -279,9 +338,11 @@
     { id: 'eastern-white-cedar', name: 'Eastern White Cedar', bark: 'images/wood/bark-eastern-white-cedar.webp', polishColor: 0xb08050, available: false },
   ];
 
+  const PAINT_SEGMENTS = 24;
   const state = {
     wood: WOODS[0],
-    barkSplit: 0.5,
+    // true = bark, false = polished, one entry per segment along the stick's length
+    barkMask: Array.from({ length: PAINT_SEGMENTS }, (_, i) => i < PAINT_SEGMENTS * 0.5),
     texture: 'sanded',
     burnt: false,
     bend: 0,
@@ -333,7 +394,7 @@
   }
 
   class TaperedTubeGeometry extends THREE.BufferGeometry {
-    constructor(path, tStart, tEnd, tubularSegments, radialSegments, radiusTop, radiusBottom) {
+    constructor(path, tStart, tEnd, tubularSegments, radialSegments, radiusTop, radiusBottom, materialIndexFn) {
       super();
       const positions = [], normals = [], uvs = [], indices = [];
       const frames = path.computeFrenetFrames(128, false);
@@ -359,12 +420,28 @@
         }
       }
       const segRadial = radialSegments + 1;
+      const indicesPerRing = radialSegments * 6;
+      let currentGroupStart = 0;
+      let currentGroupMat = materialIndexFn ? materialIndexFn(0) : 0;
       for (let i = 0; i < tubularSegments; i++) {
         for (let j = 0; j < radialSegments; j++) {
           const a = segRadial * i + j, b = segRadial * (i + 1) + j;
           const c = segRadial * (i + 1) + j + 1, d = segRadial * i + j + 1;
           indices.push(a, b, d, b, c, d);
         }
+        if (materialIndexFn){
+          const localT = (i + 1) / tubularSegments;
+          const nextMat = materialIndexFn(localT);
+          if (nextMat !== currentGroupMat || i === tubularSegments - 1){
+            const endRing = i === tubularSegments - 1 ? i + 1 : i + 1;
+            this.addGroup(currentGroupStart * indicesPerRing, (endRing - currentGroupStart) * indicesPerRing, currentGroupMat);
+            currentGroupStart = endRing;
+            currentGroupMat = nextMat;
+          }
+        }
+      }
+      if (!materialIndexFn){
+        this.addGroup(0, indices.length, 0);
       }
       this.setIndex(indices);
       this.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -386,7 +463,7 @@
     return tex;
   }
 
-  let barkMesh = null, polishMesh = null, tipMesh = null, gripMesh = null, burnMesh = null;
+  let stickMesh = null, tipMesh = null, gripMesh = null, burnMesh = null;
 
   function burnTintColor(hex, burnt){
     if (!burnt) return hex;
@@ -443,36 +520,32 @@
 
   function rebuildStick(){
     const curve = buildCurve(state.bend);
-    const split = state.barkSplit;
+    const mask = state.barkMask;
 
-    if (barkMesh) { stickGroup.remove(barkMesh); barkMesh.geometry.dispose(); barkMesh.material.dispose(); }
-    if (polishMesh) { stickGroup.remove(polishMesh); polishMesh.geometry.dispose(); polishMesh.material.dispose(); }
+    if (stickMesh) { stickGroup.remove(stickMesh); stickMesh.geometry.dispose(); }
     if (tipMesh) { stickGroup.remove(tipMesh); tipMesh.geometry.dispose(); tipMesh.material.dispose(); }
     if (gripMesh) { stickGroup.remove(gripMesh); gripMesh.geometry.dispose(); gripMesh.material.dispose(); }
     if (burnMesh) { stickGroup.remove(burnMesh); burnMesh.geometry.dispose(); burnMesh.material.dispose(); }
 
-    if (split > 0.01){
-      const barkGeo = new TaperedTubeGeometry(curve, 0, split, 80, 20, 0.13 + (split) * (0.21 - 0.13), 0.21);
-      const barkTex = getBarkTexture(state.wood);
-      const barkMat = new THREE.MeshStandardMaterial({
-        map: barkTex,
-        roughness: 0.85,
-        color: burnTintColor(0xffffff, state.burnt),
-      });
-      barkMesh = new THREE.Mesh(barkGeo, barkMat);
-      stickGroup.add(barkMesh);
-    }
-
-    if (split < 0.99){
-      const polishGeo = new TaperedTubeGeometry(curve, split, 1, 80, 20, 0.13, 0.13 + (split) * (0.21 - 0.13));
-      const polishMat = new THREE.MeshStandardMaterial({
-        color: burnTintColor(state.wood.polishColor, state.burnt),
-        roughness: state.texture === 'sanded' ? 0.28 : 0.7,
-        metalness: state.texture === 'sanded' ? 0.06 : 0.0,
-      });
-      polishMesh = new THREE.Mesh(polishGeo, polishMat);
-      stickGroup.add(polishMesh);
-    }
+    // one continuous tapered tube, split into bark/polished material groups
+    // driven directly by the paint mask — any pattern along the length works,
+    // not just a single split point
+    const stickGeo = new TaperedTubeGeometry(
+      curve, 0, 1, 96, 20, 0.13, 0.21,
+      (t) => (mask[Math.min(mask.length - 1, Math.floor(t * mask.length))] ? 0 : 1)
+    );
+    const barkMat = new THREE.MeshStandardMaterial({
+      map: getBarkTexture(state.wood),
+      roughness: 0.85,
+      color: burnTintColor(0xffffff, state.burnt),
+    });
+    const polishMat = new THREE.MeshStandardMaterial({
+      color: burnTintColor(state.wood.polishColor, state.burnt),
+      roughness: state.texture === 'sanded' ? 0.28 : 0.7,
+      metalness: state.texture === 'sanded' ? 0.06 : 0.0,
+    });
+    stickMesh = new THREE.Mesh(stickGeo, [barkMat, polishMat]);
+    stickGroup.add(stickMesh);
 
     // metal tip at the bottom (t=0) end
     if (state.tip){
@@ -495,15 +568,15 @@
       stickGroup.add(gripMesh);
     }
 
-    // wood-burned text, placed as a small decal plane on the polished section
-    if (state.burnText.trim() && split < 0.7){
+    // wood-burned text, placed as a small decal plane roughly mid-shaft
+    if (state.burnText.trim()){
       const burnGeo = new THREE.PlaneGeometry(0.55, 0.16);
       const burnMat = new THREE.MeshBasicMaterial({
         map: makeBurnTextTexture(state.burnText.trim()),
         transparent: true,
         depthWrite: false,
       });
-      const placeT = Math.min(0.85, split + 0.12);
+      const placeT = 0.6;
       const pt = curve.getPointAt(placeT);
       burnMesh = new THREE.Mesh(burnGeo, burnMat);
       burnMesh.position.set(pt.x + 0.17, pt.y, pt.z);
@@ -512,7 +585,82 @@
     }
   }
 
+  // ===== Bark/polish paint tool =====
   rebuildStick();
+  let paintMode = 'bark';
+  const paintStrip = document.getElementById('paintStrip');
+  const cells = [];
+  for (let i = 0; i < PAINT_SEGMENTS; i++){
+    const cell = document.createElement('div');
+    cell.className = 'paint-cell';
+    cell.dataset.index = i;
+    paintStrip.appendChild(cell);
+    cells.push(cell);
+  }
+  function paintCellVisual(cell, i){
+    const isBark = state.barkMask[i];
+    cell.classList.toggle('is-bark', isBark);
+    cell.classList.toggle('is-polish', !isBark);
+    cell.style.backgroundImage = isBark ? `url('${state.wood.bark}')` : 'none';
+    cell.style.background = isBark ? '' : `#${state.wood.polishColor.toString(16).padStart(6, '0')}`;
+  }
+  function refreshPaintStripVisual(){
+    cells.forEach((cell, i) => paintCellVisual(cell, i));
+  }
+  refreshPaintStripVisual();
+
+  let isPainting = false;
+  function paintAt(clientX){
+    const rect = paintStrip.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    const idx = Math.min(PAINT_SEGMENTS - 1, Math.floor(ratio * PAINT_SEGMENTS));
+    if (state.barkMask[idx] !== (paintMode === 'bark')){
+      state.barkMask[idx] = paintMode === 'bark';
+      paintCellVisual(cells[idx], idx);
+      return true;
+    }
+    return false;
+  }
+  let paintChanged = false;
+  paintStrip.addEventListener('pointerdown', (e) => {
+    isPainting = true;
+    paintChanged = paintAt(e.clientX) || paintChanged;
+    paintStrip.setPointerCapture(e.pointerId);
+  });
+  paintStrip.addEventListener('pointermove', (e) => {
+    if (!isPainting) return;
+    paintChanged = paintAt(e.clientX) || paintChanged;
+  });
+  function endPaint(){
+    if (isPainting && paintChanged){ rebuildStick(); updatePrice(); }
+    isPainting = false;
+    paintChanged = false;
+  }
+  paintStrip.addEventListener('pointerup', endPaint);
+  paintStrip.addEventListener('pointercancel', endPaint);
+
+  document.getElementById('paintModeBark').addEventListener('click', () => {
+    paintMode = 'bark';
+    document.getElementById('paintModeBark').classList.add('active');
+    document.getElementById('paintModePolish').classList.remove('active');
+  });
+  document.getElementById('paintModePolish').addEventListener('click', () => {
+    paintMode = 'polish';
+    document.getElementById('paintModePolish').classList.add('active');
+    document.getElementById('paintModeBark').classList.remove('active');
+  });
+  document.getElementById('paintAllBark').addEventListener('click', () => {
+    state.barkMask = state.barkMask.map(() => true);
+    refreshPaintStripVisual(); rebuildStick(); updatePrice();
+  });
+  document.getElementById('paintAllPolish').addEventListener('click', () => {
+    state.barkMask = state.barkMask.map(() => false);
+    refreshPaintStripVisual(); rebuildStick(); updatePrice();
+  });
+  document.getElementById('paintHalfHalf').addEventListener('click', () => {
+    state.barkMask = state.barkMask.map((_, i) => i < PAINT_SEGMENTS * 0.5);
+    refreshPaintStripVisual(); rebuildStick(); updatePrice();
+  });
 
   // ===== Wood picker =====
   const swatchWrap = document.getElementById('woodSwatches');
@@ -528,37 +676,52 @@
       state.wood = wood;
       loadingEl.style.display = 'flex';
       loadingEl.style.opacity = '1';
+      refreshPaintStripVisual();
       rebuildStick();
     });
     swatchWrap.appendChild(el);
   });
 
-  // ===== Sliders =====
-  document.getElementById('barkSplit').addEventListener('input', (e) => {
-    state.barkSplit = e.target.value / 100;
-    rebuildStick();
-    updatePrice();
-  });
+  // ===== Bend slider =====
   document.getElementById('bendAmount').addEventListener('input', (e) => {
     state.bend = parseFloat(e.target.value);
     rebuildStick();
   });
 
-  // ===== Toggle groups =====
-  function wireToggle(id, onChange){
-    const group = document.getElementById(id);
-    group.querySelectorAll('.toggle-btn').forEach(btn => {
+  // ===== Rotate arrows =====
+  document.getElementById('rotateLeftBtn').addEventListener('click', () => {
+    const angle = Math.atan2(camera.position.z, camera.position.x) + 0.35;
+    const dist = Math.hypot(camera.position.x, camera.position.z);
+    camera.position.x = Math.cos(angle) * dist;
+    camera.position.z = Math.sin(angle) * dist;
+  });
+  document.getElementById('rotateRightBtn').addEventListener('click', () => {
+    const angle = Math.atan2(camera.position.z, camera.position.x) - 0.35;
+    const dist = Math.hypot(camera.position.x, camera.position.z);
+    camera.position.x = Math.cos(angle) * dist;
+    camera.position.z = Math.sin(angle) * dist;
+  });
+
+  // ===== Stepper controls (refined arrow-cycling selectors) =====
+  function wireStepper(id, onChange){
+    const el = document.getElementById(id);
+    const options = el.dataset.options.split(',');
+    const labels = el.dataset.labels.split(',');
+    const valueEl = el.querySelector('.stepper-value');
+    let idx = 0;
+    el.querySelectorAll('.stepper-arrow').forEach(btn => {
       btn.addEventListener('click', () => {
-        group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        onChange(btn.dataset.value);
+        const dir = parseInt(btn.dataset.dir);
+        idx = (idx + dir + options.length) % options.length;
+        valueEl.textContent = labels[idx];
+        onChange(options[idx]);
       });
     });
   }
-  wireToggle('textureToggle', (v) => { state.texture = v; rebuildStick(); });
-  wireToggle('burntToggle', (v) => { state.burnt = v === 'yes'; rebuildStick(); updatePrice(); });
-  wireToggle('gripToggle', (v) => { state.grip = v; rebuildStick(); updatePrice(); });
-  wireToggle('tipToggle', (v) => { state.tip = v === 'yes'; rebuildStick(); updatePrice(); });
+  wireStepper('textureStepper', (v) => { state.texture = v; rebuildStick(); });
+  wireStepper('burntStepper', (v) => { state.burnt = v === 'yes'; rebuildStick(); updatePrice(); });
+  wireStepper('gripStepper', (v) => { state.grip = v; rebuildStick(); updatePrice(); });
+  wireStepper('tipStepper', (v) => { state.tip = v === 'yes'; rebuildStick(); updatePrice(); });
 
   document.getElementById('burnText').addEventListener('input', (e) => {
     state.burnText = e.target.value;
@@ -578,6 +741,13 @@
   updatePrice();
 
   // ===== Save / Use design =====
+  function barkPercent(){
+    return Math.round(100 * state.barkMask.filter(Boolean).length / state.barkMask.length);
+  }
+  function barkMaskString(){
+    return state.barkMask.map(b => b ? '1' : '0').join('');
+  }
+
   document.getElementById('saveDesignBtn').addEventListener('click', async () => {
     const btn = document.getElementById('saveDesignBtn');
     btn.disabled = true;
@@ -587,7 +757,8 @@
       const [low, high] = priceText.replace(/\$/g, '').split('–').map(Number);
       const refCode = await window.__saveDesignToSupabase({
         wood: state.wood.id,
-        bark_split: state.barkSplit,
+        bark_split: barkPercent() / 100,
+        bark_mask: barkMaskString(),
         texture: state.texture,
         burnt: state.burnt,
         bend: state.bend,
@@ -612,7 +783,7 @@
   document.getElementById('useDesignBtn').addEventListener('click', () => {
     const summary = [
       `Wood: ${state.wood.name}`,
-      `Bark/polish split: ${Math.round(state.barkSplit * 100)}% bark`,
+      `Bark/polish pattern: ${barkPercent()}% bark (custom painted layout, ref code has exact pattern)`,
       `Finish: ${state.texture}${state.burnt ? ', burnt/charred' : ''}`,
       state.grip !== 'none' ? `Grip: ${state.grip} wrap` : null,
       state.tip ? 'Metal tip: yes' : null,
@@ -640,9 +811,9 @@
   function showTutorial(){
     if (localStorage.getItem('builder_tutorial_seen')) return;
     const steps = [
-      { target: '#canvasWrap', text: 'Drag anywhere on the preview to rotate the stick and see it from every angle.' },
+      { target: '.rotate-arrows', text: 'Drag the preview — or tap these arrows — to rotate the stick and see it from every angle.' },
       { target: '#woodSwatches', text: 'Tap a wood swatch to change the material — more species are coming soon.' },
-      { target: '#barkSplit', text: 'Slide to choose how much of the stick stays natural bark vs. sanded smooth.' },
+      { target: '#paintStrip', text: 'Drag across this strip like painting a real branch — mark exactly where bark stays and where it gets sanded smooth.' },
       { target: '#priceEstimate', text: "A rough price estimate updates live as you build — final pricing is always confirmed by email." },
     ];
     let i = 0;
