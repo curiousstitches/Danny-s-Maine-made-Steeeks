@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="require-auth.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Stick Builder (Beta) — Mr Steeeck</title>
 <meta name="description" content="An optional 3D preview tool to help you picture your custom steeeck before ordering.">
 <meta name="theme-color" content="#241a13">
@@ -18,137 +18,183 @@
 }
 </script>
 <style>
-  .builder-wrap{ display:flex; flex-direction:column; min-height:60vh; }
-  #builderCanvas{
-    width:100%; height:48vh; display:block; touch-action:none;
-    background:radial-gradient(circle at 50% 40%, #a88a68, #7a6248 80%);
-    cursor:grab;
+  html, body{ height:100%; overflow:hidden; }
+  nav{ flex-shrink:0; }
+
+  .builder-app{
+    display:flex; flex-direction:column;
+    height:100vh; height:100dvh;
   }
+  .builder-toolbar{
+    flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:0.8rem;
+    padding:0.55rem 1rem; background:var(--bark); color:#e0d3bd; flex-wrap:wrap;
+  }
+  .builder-toolbar .back-link{ color:var(--honey-bright); text-decoration:none; font-size:0.82rem; font-weight:600; white-space:nowrap; }
+  .builder-toolbar h1{ font-family:'Fraunces', serif; font-size:1.05rem; margin:0; white-space:nowrap; }
+  .builder-toolbar h1 span{ color:var(--honey-bright); font-size:0.68em; vertical-align:middle; }
+  .builder-toolbar .disclaimer-note{ font-size:0.74rem; color:#b8ac95; flex:1; min-width:180px; text-align:right; }
+
+  .builder-stage{
+    flex:1; display:flex; overflow:hidden; position:relative;
+    background:radial-gradient(circle at 50% 40%, #a88a68, #7a6248 80%);
+  }
+
+  .side-rail{
+    flex-shrink:0; display:flex; flex-direction:column; width:64px;
+    background:rgba(36,26,19,0.88); z-index:5;
+  }
+  .rail-tab{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.2rem;
+    padding:0.7rem 0.3rem; background:none; border:none; border-left:3px solid transparent;
+    color:#c9bda3; font-family:inherit; font-size:0.65rem; cursor:pointer; text-align:center;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .side-rail-right .rail-tab{ border-left:none; border-right:3px solid transparent; }
+  .rail-tab .rail-icon{ font-size:1.25rem; }
+  .rail-tab:hover{ background:rgba(255,255,255,0.06); color:#fff; }
+  .rail-tab.active{ background:rgba(255,255,255,0.1); color:var(--honey-bright); border-left-color:var(--honey); }
+  .side-rail-right .rail-tab.active{ border-left-color:transparent; border-right-color:var(--honey); }
+
+  .stage-center{ flex:1; position:relative; min-width:0; }
+  #builderCanvas{ width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
   #builderCanvas:active{ cursor:grabbing; }
   .builder-loading{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color:#3a2a1c; font-family:'Fraunces', serif; font-size:1.1rem;
     background:radial-gradient(circle at 50% 40%, #a88a68, #7a6248 80%);
-    pointer-events:none; transition:opacity 0.3s ease;
+    pointer-events:none; transition:opacity 0.3s ease; z-index:3;
   }
-  .builder-canvas-wrap{ position:relative; }
-
   .rotate-arrows{
-    display:flex; justify-content:center; gap:1rem; padding:0.7rem 0;
-    background:var(--parchment); border-bottom:1px solid #e3d5ba;
+    position:absolute; bottom:0.7rem; left:50%; transform:translateX(-50%);
+    display:flex; gap:0.8rem; z-index:4;
   }
   .rotate-btn{
-    width:40px; height:40px; border-radius:50%; border:1.5px solid var(--walnut);
-    background:#fff; color:var(--walnut); font-size:1.1rem; cursor:pointer;
+    width:38px; height:38px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.5);
+    background:rgba(20,14,9,0.55); color:#fff; font-size:1rem; cursor:pointer;
     display:flex; align-items:center; justify-content:center; transition:background 0.15s ease;
+    backdrop-filter:blur(2px);
   }
-  .rotate-btn:hover{ background:var(--honey); color:#fff; }
+  .rotate-btn:hover{ background:rgba(20,14,9,0.8); }
   .rotate-btn:active{ transform:scale(0.94); }
 
-  .stepper{
-    display:flex; align-items:center; gap:0; border:1.5px solid #d3c2a0; border-radius:8px;
-    overflow:hidden; width:fit-content;
+  /* ===== floating side panels ===== */
+  .panel-drawer{
+    position:absolute; top:0; bottom:0; width:min(320px, 82vw);
+    background:var(--parchment); z-index:10; overflow-y:auto;
+    box-shadow:0 0 30px rgba(0,0,0,0.4);
+    transform:translateX(-105%); transition:transform 0.28s ease;
+    padding:1.1rem 1.2rem 2rem;
+    pointer-events:none;
   }
-  .stepper-arrow{
-    width:38px; height:38px; border:none; background:var(--parchment); color:var(--walnut);
-    font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition:background 0.15s ease;
+  .panel-drawer.side-left{ left:64px; transform:translateX(-110%); }
+  .panel-drawer.side-right{ right:64px; transform:translateX(110%); }
+  .panel-drawer.open{ transform:translateX(0); pointer-events:auto; }
+  .panel-drawer h2{
+    font-family:'Fraunces', serif; color:var(--walnut); font-size:1.1rem; margin:0 0 0.9rem;
+    padding-right:2rem;
   }
-  .stepper-arrow:hover{ background:var(--honey); color:#fff; }
-  .stepper-value{
-    min-width:150px; text-align:center; padding:0.5rem 0.8rem; font-size:0.88rem;
-    font-weight:600; color:#4a3c2e; background:#fff;
+  .panel-close{
+    position:absolute; top:0.8rem; right:0.9rem; width:30px; height:30px; border-radius:50%;
+    border:none; background:rgba(74,46,30,0.12); color:var(--walnut); font-size:1.1rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .panel-section{ margin-bottom:1.4rem; }
+  .panel-section:last-child{ margin-bottom:0; }
+  .panel-section h3{
+    font-family:'Fraunces', serif; color:var(--walnut); font-size:0.95rem; margin:0 0 0.5rem;
   }
 
-  .paint-tool-wrap{ margin-bottom:0.6rem; }
-  .paint-mode-row{ display:flex; gap:0.6rem; margin-bottom:0.6rem; }
-  .paint-strip{
-    display:flex; height:44px; border-radius:8px; overflow:hidden; border:1.5px solid #d3c2a0;
-    cursor:pointer; touch-action:none; user-select:none;
-  }
-  .paint-cell{ flex:1; background-size:cover; background-position:center; }
-  .paint-cell.is-bark{ filter:brightness(0.75) saturate(1.1); }
-  .paint-cell.is-polish{ filter:brightness(1.15); }
-  .paint-quick-actions{ display:flex; gap:0.6rem; margin-top:0.6rem; }
-  .paint-quick-btn{
-    font-size:0.78rem; padding:0.35rem 0.7rem; border-radius:14px; border:1.5px solid #d3c2a0;
-    background:#fff; cursor:pointer; color:#6b5a40; font-family:inherit;
-  }
-  .paint-hint{ font-size:0.78rem; color:#8a7960; margin-top:0.5rem; }
-  .builder-controls{ padding:1.4rem 6vw 3rem; max-width:640px; margin:0 auto; width:100%; }
-  .builder-controls h2{
-    font-family:'Fraunces', serif; color:var(--walnut); font-size:1.15rem;
-    margin:1.6rem 0 0.6rem;
-  }
-  .builder-controls h2:first-of-type{ margin-top:0; }
-  .wood-swatches{ display:flex; gap:0.6rem; flex-wrap:wrap; }
+  .wood-swatches{ display:flex; gap:0.55rem; flex-wrap:wrap; }
   .wood-swatch{
-    width:48px; height:48px; border-radius:50%; border:3px solid transparent;
+    width:44px; height:44px; border-radius:50%; border:3px solid transparent;
     cursor:pointer; background-size:cover; background-position:center;
-    transition:border-color 0.2s ease, transform 0.2s ease; position:relative;
+    transition:border-color 0.2s ease, transform 0.2s ease;
   }
   .wood-swatch:hover{ transform:scale(1.08); }
   .wood-swatch.active{ border-color:var(--honey); }
   .wood-swatch.locked{ opacity:0.35; cursor:not-allowed; }
   .wood-swatch.locked:hover{ transform:none; }
-  .beta-note{
-    background:rgba(107,125,79,0.14); border:1px solid rgba(107,125,79,0.3);
-    border-radius:6px; padding:1rem 1.2rem; margin-bottom:0.4rem; font-size:0.88rem; color:#4a3c2e;
-  }
-  .beta-note strong{ color:var(--walnut); }
-  .builder-row{ display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.4rem; }
-  .builder-row label{ font-size:0.85rem; font-weight:600; color:var(--walnut); }
+
+  .builder-row{ display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.9rem; }
+  .builder-row:last-child{ margin-bottom:0; }
+  .builder-row label{ font-size:0.82rem; font-weight:600; color:var(--walnut); }
+  .builder-row .row-value{ font-size:0.78rem; color:#8a7960; font-weight:400; }
   .builder-row input[type="range"]{ width:100%; accent-color:var(--honey); }
-  .toggle-group{ display:flex; gap:0.6rem; flex-wrap:wrap; }
-  .toggle-btn{
-    padding:0.5rem 0.9rem; border-radius:20px; border:1.5px solid #d3c2a0;
-    background:#fff; font-size:0.85rem; cursor:pointer; transition:all 0.15s ease;
-    font-family:inherit; color:#4a3c2e;
+
+  .stepper{
+    display:flex; align-items:center; border:1.5px solid #d3c2a0; border-radius:8px;
+    overflow:hidden; width:100%;
   }
-  .toggle-btn.active{ background:var(--walnut); color:#fff; border-color:var(--walnut); }
+  .stepper-arrow{
+    width:36px; height:36px; flex-shrink:0; border:none; background:var(--parchment); color:var(--walnut);
+    font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .stepper-arrow:hover{ background:var(--honey); color:#fff; }
+  .stepper-value{ flex:1; text-align:center; padding:0.45rem 0.4rem; font-size:0.84rem; font-weight:600; color:#4a3c2e; background:#fff; }
+
+  .paint-mode-row{ display:flex; gap:0.5rem; margin-bottom:0.55rem; }
+  .paint-mode-btn{
+    flex:1; padding:0.45rem 0.5rem; border-radius:16px; border:1.5px solid #d3c2a0;
+    background:#fff; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#4a3c2e;
+  }
+  .paint-mode-btn.active{ background:var(--walnut); color:#fff; border-color:var(--walnut); }
+  .paint-strip{
+    display:flex; height:40px; border-radius:8px; overflow:hidden; border:1.5px solid #d3c2a0;
+    cursor:pointer; touch-action:none; user-select:none;
+  }
+  .paint-cell{ flex:1; background-size:cover; background-position:center; }
+  .paint-quick-actions{ display:flex; gap:0.45rem; margin-top:0.55rem; flex-wrap:wrap; }
+  .paint-quick-btn{
+    font-size:0.72rem; padding:0.3rem 0.6rem; border-radius:14px; border:1.5px solid #d3c2a0;
+    background:#fff; cursor:pointer; color:#6b5a40; font-family:inherit;
+  }
+  .paint-hint{ font-size:0.72rem; color:#8a7960; margin-top:0.5rem; line-height:1.4; }
+
   .builder-text-input{
-    width:100%; padding:0.6rem 0.8rem; border:1.5px solid #d3c2a0; border-radius:6px;
-    font-family:inherit; font-size:0.95rem;
+    width:100%; padding:0.55rem 0.7rem; border:1.5px solid #d3c2a0; border-radius:6px;
+    font-family:inherit; font-size:0.9rem;
   }
+
   .price-estimate{
-    background:var(--parchment); border:1px solid #e3d5ba; border-radius:8px;
-    padding:1.1rem 1.3rem; margin:1.6rem 0; text-align:center;
+    background:#fff; border:1px solid #e3d5ba; border-radius:8px;
+    padding:0.9rem 1rem; text-align:center; margin-bottom:1rem;
   }
-  .price-estimate .amount{ font-family:'Fraunces', serif; font-size:1.6rem; color:var(--walnut); }
-  .price-estimate .note{ font-size:0.78rem; color:#8a7960; margin-top:0.3rem; }
-  .builder-actions{ display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1rem; }
-  .builder-actions .btn-primary{ flex:1; min-width:180px; text-align:center; }
+  .price-estimate .amount{ font-family:'Fraunces', serif; font-size:1.4rem; color:var(--walnut); }
+  .price-estimate .note{ font-size:0.72rem; color:#8a7960; margin-top:0.25rem; }
+  .builder-actions{ display:flex; flex-direction:column; gap:0.6rem; }
+  .builder-actions .btn-primary{ text-align:center; }
   .btn-secondary{
-    flex:1; min-width:180px; text-align:center; padding:0.85rem 1.2rem; border-radius:6px;
+    text-align:center; padding:0.75rem 1rem; border-radius:6px;
     border:1.5px solid var(--walnut); color:var(--walnut); background:transparent;
-    font-weight:600; cursor:pointer; font-family:inherit; font-size:0.95rem;
+    font-weight:600; cursor:pointer; font-family:inherit; font-size:0.88rem;
   }
   .save-result{
     background:rgba(107,125,79,0.15); border:1px solid rgba(107,125,79,0.35);
-    border-radius:6px; padding:1rem 1.2rem; margin-top:1rem; text-align:center; display:none;
+    border-radius:6px; padding:0.8rem 1rem; margin-top:0.8rem; text-align:center; display:none; font-size:0.85rem;
   }
-  .save-result .code{ font-family:'Fraunces', serif; font-size:1.3rem; color:var(--walnut); font-weight:700; }
+  .save-result .code{ font-family:'Fraunces', serif; font-size:1.15rem; color:var(--walnut); font-weight:700; }
 
   /* ===== onboarding bubbles ===== */
   .tut-bubble{
-    position:absolute; z-index:50; max-width:230px; background:#241a13; color:#f0e5d3;
-    border:2px solid var(--honey); border-radius:10px; padding:0.8rem 1rem; font-size:0.85rem;
+    position:absolute; z-index:50; max-width:220px; background:#241a13; color:#f0e5d3;
+    border:2px solid var(--honey); border-radius:10px; padding:0.75rem 0.9rem; font-size:0.8rem;
     box-shadow:0 8px 20px rgba(0,0,0,0.4); line-height:1.4;
   }
-  .tut-bubble::after{
-    content:''; position:absolute; top:-9px; left:24px; width:14px; height:14px;
-    background:#241a13; border-left:2px solid var(--honey); border-top:2px solid var(--honey);
-    transform:rotate(45deg);
-  }
   .tut-bubble .tut-dismiss{
-    display:block; margin-top:0.6rem; color:var(--honey-bright); font-size:0.78rem;
+    display:block; margin-top:0.5rem; color:var(--honey-bright); font-size:0.75rem;
     cursor:pointer; text-decoration:underline; text-align:right;
   }
-  .tut-overlay-tip{
-    position:absolute; z-index:49; border:2px dashed var(--honey-bright); border-radius:10px;
-    pointer-events:none; animation:tutPulse 1.6s ease-in-out infinite;
+
+  @media (max-width:520px){
+    .side-rail{ width:52px; }
+    .rail-tab{ font-size:0.58rem; padding:0.55rem 0.2rem; }
+    .rail-tab .rail-icon{ font-size:1.1rem; }
+    .builder-toolbar .disclaimer-note{ display:none; }
+    .builder-toolbar h1{ font-size:0.92rem; }
+    .panel-drawer{ width:min(260px, 74vw); }
+    .panel-drawer.side-left{ left:52px; }
+    .panel-drawer.side-right{ right:52px; }
   }
-  @keyframes tutPulse{ 0%,100%{opacity:0.5;} 50%{opacity:1;} }
 </style>
 </head>
 <body>
@@ -178,39 +224,48 @@
   });
 </script>
 
-<div class="page-header bark-bg">
-  <a href="custom.html" class="back-btn">&larr; Back to Order Page</a>
-  <h1>Stick Builder <span style="font-size:0.55em; color:var(--honey-bright); vertical-align:middle;">BETA</span></h1>
-  <p>An optional way to picture your steeeck before ordering — totally your call whether to use it.</p>
-</div>
-
-<div class="builder-wrap">
-  <div class="builder-canvas-wrap" id="canvasWrap">
-    <canvas id="builderCanvas"></canvas>
-    <div class="builder-loading" id="builderLoading">Loading preview&hellip;</div>
-  </div>
-  <div class="rotate-arrows">
-    <button class="rotate-btn" id="rotateLeftBtn" aria-label="Rotate left" type="button">&#8592;</button>
-    <button class="rotate-btn" id="rotateRightBtn" aria-label="Rotate right" type="button">&#8594;</button>
+<div class="builder-app">
+  <div class="builder-toolbar">
+    <a href="custom.html" class="back-link">&larr; Order Page</a>
+    <h1>Stick Builder <span>BETA</span></h1>
+    <div class="disclaimer-note">Optional preview — your real piece won't be an exact match.</div>
   </div>
 
-  <div class="builder-controls">
-    <div class="beta-note">
-      <strong>This tool is completely optional.</strong> You can order with just the
-      form on our Order page and skip this entirely. And however a design looks
-      here, your actual piece will have natural variation — real wood grain,
-      bends, and knots are never exactly the same twice, and this preview is
-      meant to give you a feel for it, not an exact match.
+  <div class="builder-stage" id="builderStage">
+    <div class="side-rail side-rail-left">
+      <button class="rail-tab active" data-panel="wood"><span class="rail-icon">🪵</span>Wood</button>
+      <button class="rail-tab" data-panel="paint"><span class="rail-icon">🖌️</span>Paint</button>
+      <button class="rail-tab" data-panel="shape"><span class="rail-icon">📏</span>Shape</button>
     </div>
 
-    <h2 id="woodLabel">Wood</h2>
-    <div class="wood-swatches" id="woodSwatches"></div>
+    <div class="stage-center" id="canvasWrap">
+      <canvas id="builderCanvas"></canvas>
+      <div class="builder-loading" id="builderLoading">Loading preview&hellip;</div>
+      <div class="rotate-arrows">
+        <button class="rotate-btn" id="rotateLeftBtn" aria-label="Rotate left" type="button">&#8592;</button>
+        <button class="rotate-btn" id="rotateRightBtn" aria-label="Rotate right" type="button">&#8594;</button>
+      </div>
+    </div>
 
-    <h2>Paint bark &amp; polished areas</h2>
-    <div class="paint-tool-wrap">
+    <div class="side-rail side-rail-right">
+      <button class="rail-tab" data-panel="finish"><span class="rail-icon">✨</span>Finish</button>
+      <button class="rail-tab" data-panel="extras"><span class="rail-icon">🎀</span>Extras</button>
+      <button class="rail-tab" data-panel="order"><span class="rail-icon">💰</span>Order</button>
+    </div>
+
+    <!-- ===== LEFT panels ===== -->
+    <div class="panel-drawer side-left open" id="panel-wood">
+      <button class="panel-close" data-close-panel>&times;</button>
+      <h2>Wood</h2>
+      <div class="wood-swatches" id="woodSwatches"></div>
+    </div>
+
+    <div class="panel-drawer side-left" id="panel-paint">
+      <button class="panel-close" data-close-panel>&times;</button>
+      <h2>Paint bark &amp; polished areas</h2>
       <div class="paint-mode-row">
-        <button class="toggle-btn active" id="paintModeBark" type="button" data-mode="bark">🖌️ Paint Bark</button>
-        <button class="toggle-btn" id="paintModePolish" type="button" data-mode="polish">🖌️ Paint Polished</button>
+        <button class="paint-mode-btn active" id="paintModeBark" type="button" data-mode="bark">Paint Bark</button>
+        <button class="paint-mode-btn" id="paintModePolish" type="button" data-mode="polish">Paint Polished</button>
       </div>
       <div class="paint-strip" id="paintStrip"></div>
       <div class="paint-quick-actions">
@@ -218,71 +273,88 @@
         <button class="paint-quick-btn" id="paintAllPolish" type="button">All polished</button>
         <button class="paint-quick-btn" id="paintHalfHalf" type="button">Half &amp; half</button>
       </div>
-      <p class="paint-hint">Like drawing on a real branch — drag across the strip to mark exactly where bark stays on and where it's sanded smooth. Left = handle end, right = tip.</p>
+      <p class="paint-hint">Drag across the strip like painting a real branch — left = handle end, right = tip.</p>
     </div>
 
-    <h2>Polished finish</h2>
-    <div class="stepper" id="textureStepper" data-options="sanded,rough" data-labels="Sanded smooth,Rough-hewn">
-      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
-      <div class="stepper-value">Sanded smooth</div>
-      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
+    <div class="panel-drawer side-left" id="panel-shape">
+      <button class="panel-close" data-close-panel>&times;</button>
+      <h2>Shape</h2>
+      <div class="builder-row">
+        <label>Length <span class="row-value" id="lengthValue">55"</span></label>
+        <input type="range" id="lengthAmount" min="24" max="72" value="55">
+      </div>
+      <div class="builder-row">
+        <label>Bend</label>
+        <input type="range" id="bendAmount" min="-100" max="100" value="0">
+      </div>
     </div>
 
-    <h2>Burnt finish</h2>
-    <div class="stepper" id="burntStepper" data-options="no,yes" data-labels="Natural,Burnt / charred">
-      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
-      <div class="stepper-value">Natural</div>
-      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
+    <!-- ===== RIGHT panels ===== -->
+    <div class="panel-drawer side-right" id="panel-finish">
+      <button class="panel-close" data-close-panel>&times;</button>
+      <h2>Finish</h2>
+      <div class="panel-section">
+        <h3>Polished finish</h3>
+        <div class="stepper" id="textureStepper" data-options="sanded,rough" data-labels="Sanded smooth,Rough-hewn">
+          <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+          <div class="stepper-value">Sanded smooth</div>
+          <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3>Burnt finish</h3>
+        <div class="stepper" id="burntStepper" data-options="no,yes" data-labels="Natural,Burnt / charred">
+          <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+          <div class="stepper-value">Natural</div>
+          <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
+        </div>
+      </div>
     </div>
 
-    <h2>Bend</h2>
-    <div class="builder-row">
-      <label>Slight natural bend along the shaft</label>
-      <input type="range" id="bendAmount" min="-100" max="100" value="0">
+    <div class="panel-drawer side-right" id="panel-extras">
+      <button class="panel-close" data-close-panel>&times;</button>
+      <h2>Extras</h2>
+      <div class="panel-section">
+        <h3>Grip wrap</h3>
+        <div class="stepper" id="gripStepper" data-options="none,leather,paracord" data-labels="None,Leather wrap,Paracord wrap">
+          <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+          <div class="stepper-value">None</div>
+          <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3>Metal tip</h3>
+        <div class="stepper" id="tipStepper" data-options="no,yes" data-labels="No,Yes">
+          <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
+          <div class="stepper-value">No</div>
+          <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3>Wood-burned personalization</h3>
+        <input type="text" id="burnText" class="builder-text-input" maxlength="14" placeholder="e.g. J.D. or FAITH">
+      </div>
     </div>
 
-    <h2>Grip wrap</h2>
-    <div class="stepper" id="gripStepper" data-options="none,leather,paracord" data-labels="None,Leather wrap,Paracord wrap">
-      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
-      <div class="stepper-value">None</div>
-      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
-    </div>
-
-    <h2>Metal tip</h2>
-    <div class="stepper" id="tipStepper" data-options="no,yes" data-labels="No,Yes">
-      <button class="stepper-arrow" data-dir="-1" type="button">&#8592;</button>
-      <div class="stepper-value">No</div>
-      <button class="stepper-arrow" data-dir="1" type="button">&#8594;</button>
-    </div>
-
-    <h2>Wood-burned personalization <span style="font-weight:400; color:#8a7960;">(optional)</span></h2>
-    <div class="builder-row">
-      <label for="burnText">Initials, name, or short word to preview burned into the wood</label>
-      <input type="text" id="burnText" class="builder-text-input" maxlength="14" placeholder="e.g. J.D. or FAITH">
-    </div>
-
-    <div class="price-estimate">
-      <div class="amount" id="priceEstimate">$40–$55</div>
-      <div class="note">Rough estimate only — final pricing confirmed by email based on size, wood, and add-ons.</div>
-    </div>
-
-    <div class="builder-actions">
-      <button class="btn-primary" id="saveDesignBtn" type="button" style="border:none; cursor:pointer;">Save This Design</button>
-      <button class="btn-secondary" id="useDesignBtn" type="button">Use This Design to Order</button>
-    </div>
-    <div class="save-result" id="saveResult">
-      <div>Saved! Your reference code:</div>
-      <div class="code" id="refCodeDisplay">—</div>
-      <div style="font-size:0.8rem; color:#6b5a40; margin-top:0.4rem;">Mention this code by email or on your order and we'll know exactly what you built.</div>
+    <div class="panel-drawer side-right" id="panel-order">
+      <button class="panel-close" data-close-panel>&times;</button>
+      <h2>Order</h2>
+      <div class="price-estimate">
+        <div class="amount" id="priceEstimate">$40–$55</div>
+        <div class="note">Rough estimate only — final pricing confirmed by email.</div>
+      </div>
+      <div class="builder-actions">
+        <button class="btn-primary" id="saveDesignBtn" type="button" style="border:none; cursor:pointer;">Save This Design</button>
+        <button class="btn-secondary" id="useDesignBtn" type="button">Use This Design to Order</button>
+      </div>
+      <div class="save-result" id="saveResult">
+        <div>Saved! Your reference code:</div>
+        <div class="code" id="refCodeDisplay">—</div>
+        <div style="font-size:0.75rem; color:#6b5a40; margin-top:0.3rem;">Mention this code by email and we'll know exactly what you built.</div>
+      </div>
     </div>
   </div>
 </div>
-
-<footer class="bark-bg">
-  <div class="wordmark">Mr Steeeck</div>
-  <p>Handmade steeecks, staffs &amp; pokers.</p>
-  <p style="margin-top:0.8rem;"><a href="privacy.html" style="color:#8f8171; font-size:0.82rem; text-decoration:underline;">Privacy &amp; Terms</a></p>
-</footer>
 
 <script type="module">
   import { supabase, ADMIN_EMAILS } from './supabase-client.js';
@@ -327,6 +399,28 @@
   import * as THREE from 'three';
   import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+  // ===== Tab / panel switching =====
+  const rails = document.querySelectorAll('.rail-tab');
+  const panels = document.querySelectorAll('.panel-drawer');
+  function openPanel(name){
+    panels.forEach(p => p.classList.toggle('open', p.id === 'panel-' + name));
+    rails.forEach(r => r.classList.toggle('active', r.dataset.panel === name));
+  }
+  function closeAllPanels(){
+    panels.forEach(p => p.classList.remove('open'));
+    rails.forEach(r => r.classList.remove('active'));
+  }
+  rails.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const name = tab.dataset.panel;
+      const alreadyOpen = document.getElementById('panel-' + name).classList.contains('open');
+      alreadyOpen ? closeAllPanels() : openPanel(name);
+    });
+  });
+  document.querySelectorAll('[data-close-panel]').forEach(btn => {
+    btn.addEventListener('click', () => closeAllPanels());
+  });
+
   const WOODS = [
     { id: 'oak', name: 'Oak', bark: 'images/wood/bark-oak.webp', polishColor: 0xb8905a, available: true },
     { id: 'maple', name: 'Maple', bark: 'images/wood/bark-maple.webp', polishColor: 0xe0c99a, available: false },
@@ -339,13 +433,14 @@
   ];
 
   const PAINT_SEGMENTS = 24;
+  const BASE_LENGTH = 55;
   const state = {
     wood: WOODS[0],
-    // true = bark, false = polished, one entry per segment along the stick's length
     barkMask: Array.from({ length: PAINT_SEGMENTS }, (_, i) => i < PAINT_SEGMENTS * 0.5),
     texture: 'sanded',
     burnt: false,
     bend: 0,
+    length: BASE_LENGTH,
     grip: 'none',
     tip: false,
     burnText: '',
@@ -358,7 +453,7 @@
   const scene = new THREE.Scene();
   let { w, h } = sizeCanvas();
   const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-  camera.position.set(2.0, 0.1, 6.6);
+  camera.position.set(2.6, 0.1, 8.6);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -369,7 +464,7 @@
   controls.dampingFactor = 0.08;
   controls.enablePan = false;
   controls.minDistance = 3;
-  controls.maxDistance = 10;
+  controls.maxDistance = 11;
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.55));
   const keyLight = new THREE.DirectionalLight(0xffd9a0, 1.1);
@@ -397,7 +492,7 @@
     constructor(path, tStart, tEnd, tubularSegments, radialSegments, radiusTop, radiusBottom, materialIndexFn, precomputedFrames) {
       super();
       const positions = [], normals = [], uvs = [], indices = [];
-      const frames = precomputedFrames || path.computeFrenetFrames(96, false);
+      const frames = precomputedFrames || path.computeFrenetFrames(64, false);
       const frameCount = frames.normals.length;
       const frameAt = (t) => {
         const idx = Math.min(frameCount - 1, Math.max(0, Math.round(t * (frameCount - 1))));
@@ -434,7 +529,7 @@
           const localT = (i + 1) / tubularSegments;
           const nextMat = materialIndexFn(localT);
           if (nextMat !== currentGroupMat || i === tubularSegments - 1){
-            const endRing = i === tubularSegments - 1 ? i + 1 : i + 1;
+            const endRing = i + 1;
             this.addGroup(currentGroupStart * indicesPerRing, (endRing - currentGroupStart) * indicesPerRing, currentGroupMat);
             currentGroupStart = endRing;
             currentGroupMat = nextMat;
@@ -515,14 +610,15 @@
     ctx.shadowColor = 'rgba(90,40,10,0.6)';
     ctx.shadowBlur = 8;
     ctx.fillText(text.slice(0, 14), 256, 64);
-    const tex = new THREE.CanvasTexture(c);
-    return tex;
+    return new THREE.CanvasTexture(c);
   }
 
   function rebuildStick(){
     const curve = buildCurve(state.bend);
     const mask = state.barkMask;
     const sharedFrames = curve.computeFrenetFrames(64, false);
+
+    stickGroup.scale.set(1, state.length / BASE_LENGTH, 1);
 
     if (stickMesh) {
       stickGroup.remove(stickMesh);
@@ -533,10 +629,6 @@
     if (gripMesh) { stickGroup.remove(gripMesh); gripMesh.geometry.dispose(); gripMesh.material.dispose(); }
     if (burnMesh) { stickGroup.remove(burnMesh); burnMesh.geometry.dispose(); burnMesh.material.dispose(); }
 
-    // one continuous tapered tube, split into bark/polished material groups
-    // driven directly by the paint mask — any pattern along the length works,
-    // not just a single split point. Segment counts kept modest so this stays
-    // smooth to rebuild on phones, not just desktop.
     const stickGeo = new TaperedTubeGeometry(
       curve, 0, 1, 56, 12, 0.13, 0.21,
       (t) => (mask[Math.min(mask.length - 1, Math.floor(t * mask.length))] ? 0 : 1),
@@ -555,7 +647,6 @@
     stickMesh = new THREE.Mesh(stickGeo, [barkMat, polishMat]);
     stickGroup.add(stickMesh);
 
-    // metal tip at the bottom (t=0) end
     if (state.tip){
       const tipGeo = new THREE.ConeGeometry(0.14, 0.22, 12);
       const tipMat = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, roughness: 0.3, metalness: 0.85 });
@@ -565,7 +656,6 @@
       stickGroup.add(tipMesh);
     }
 
-    // grip wrap near the top (t=0.82 to 0.98)
     if (state.grip !== 'none'){
       const gripGeo = new TaperedTubeGeometry(curve, 0.8, 0.97, 18, 10, 0.145, 0.15, null, sharedFrames);
       const gripMat = new THREE.MeshStandardMaterial({
@@ -576,7 +666,6 @@
       stickGroup.add(gripMesh);
     }
 
-    // wood-burned text, placed as a small decal plane roughly mid-shaft
     if (state.burnText.trim()){
       const burnGeo = new THREE.PlaneGeometry(0.55, 0.16);
       const burnMat = new THREE.MeshBasicMaterial({
@@ -584,8 +673,7 @@
         transparent: true,
         depthWrite: false,
       });
-      const placeT = 0.6;
-      const pt = curve.getPointAt(placeT);
+      const pt = curve.getPointAt(0.6);
       burnMesh = new THREE.Mesh(burnGeo, burnMat);
       burnMesh.position.set(pt.x + 0.17, pt.y, pt.z);
       burnMesh.rotation.y = Math.PI / 2;
@@ -593,8 +681,9 @@
     }
   }
 
-  // ===== Bark/polish paint tool =====
   rebuildStick();
+
+  // ===== Bark/polish paint tool =====
   let paintMode = 'bark';
   const paintStrip = document.getElementById('paintStrip');
   const cells = [];
@@ -607,17 +696,13 @@
   }
   function paintCellVisual(cell, i){
     const isBark = state.barkMask[i];
-    cell.classList.toggle('is-bark', isBark);
-    cell.classList.toggle('is-polish', !isBark);
     cell.style.backgroundImage = isBark ? `url('${state.wood.bark}')` : 'none';
     cell.style.background = isBark ? '' : `#${state.wood.polishColor.toString(16).padStart(6, '0')}`;
   }
-  function refreshPaintStripVisual(){
-    cells.forEach((cell, i) => paintCellVisual(cell, i));
-  }
+  function refreshPaintStripVisual(){ cells.forEach((cell, i) => paintCellVisual(cell, i)); }
   refreshPaintStripVisual();
 
-  let isPainting = false;
+  let isPainting = false, paintChanged = false;
   function paintAt(clientX){
     const rect = paintStrip.getBoundingClientRect();
     const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
@@ -629,7 +714,6 @@
     }
     return false;
   }
-  let paintChanged = false;
   paintStrip.addEventListener('pointerdown', (e) => {
     isPainting = true;
     paintChanged = paintAt(e.clientX) || paintChanged;
@@ -646,9 +730,6 @@
   }
   paintStrip.addEventListener('pointerup', endPaint);
   paintStrip.addEventListener('pointercancel', endPaint);
-  // safety net: if a touch gesture gets interrupted (e.g. an interrupted drag
-  // that never fires pointerup/pointercancel on the strip itself), don't let
-  // the "currently painting" state get stuck forever
   document.addEventListener('pointerup', endPaint);
   document.addEventListener('pointercancel', endPaint);
 
@@ -695,14 +776,22 @@
     swatchWrap.appendChild(el);
   });
 
-  // ===== Bend slider (throttled to one rebuild per animation frame) =====
-  let bendRebuildPending = false;
+  // ===== Length + Bend sliders (throttled to one rebuild per frame) =====
+  let rebuildPending = false;
+  function scheduleRebuild(){
+    if (!rebuildPending){
+      rebuildPending = true;
+      requestAnimationFrame(() => { rebuildStick(); rebuildPending = false; });
+    }
+  }
+  document.getElementById('lengthAmount').addEventListener('input', (e) => {
+    state.length = parseFloat(e.target.value);
+    document.getElementById('lengthValue').textContent = state.length + '"';
+    scheduleRebuild();
+  });
   document.getElementById('bendAmount').addEventListener('input', (e) => {
     state.bend = parseFloat(e.target.value);
-    if (!bendRebuildPending){
-      bendRebuildPending = true;
-      requestAnimationFrame(() => { rebuildStick(); bendRebuildPending = false; });
-    }
+    scheduleRebuild();
   });
 
   // ===== Rotate arrows =====
@@ -719,7 +808,7 @@
     camera.position.z = Math.sin(angle) * dist;
   });
 
-  // ===== Stepper controls (refined arrow-cycling selectors) =====
+  // ===== Stepper controls =====
   function wireStepper(id, onChange){
     const el = document.getElementById(id);
     const options = el.dataset.options.split(',');
@@ -749,6 +838,7 @@
   // ===== Price estimate =====
   function updatePrice(){
     let low = 35, high = 45;
+    if (state.length > 60) { low += 5; high += 8; }
     if (state.grip !== 'none'){ low += 6; high += 10; }
     if (state.tip){ low += 5; high += 8; }
     if (state.burnText.trim()){ low += 8; high += 12; }
@@ -800,6 +890,7 @@
   document.getElementById('useDesignBtn').addEventListener('click', () => {
     const summary = [
       `Wood: ${state.wood.name}`,
+      `Length: ${state.length}"`,
       `Bark/polish pattern: ${barkPercent()}% bark (custom painted layout, ref code has exact pattern)`,
       `Finish: ${state.texture}${state.burnt ? ', burnt/charred' : ''}`,
       state.grip !== 'none' ? `Grip: ${state.grip} wrap` : null,
@@ -826,50 +917,42 @@
 
   // ===== First-visit tutorial bubbles =====
   function showTutorial(){
-    if (localStorage.getItem('builder_tutorial_seen')) return;
+    if (localStorage.getItem('builder_tutorial_seen_v2')) return;
     const steps = [
-      { target: '.rotate-arrows', text: 'Drag the preview — or tap these arrows — to rotate the stick and see it from every angle.' },
-      { target: '#woodSwatches', text: 'Tap a wood swatch to change the material — more species are coming soon.' },
-      { target: '#paintStrip', text: 'Drag across this strip like painting a real branch — mark exactly where bark stays and where it gets sanded smooth.' },
-      { target: '#priceEstimate', text: "A rough price estimate updates live as you build — final pricing is always confirmed by email." },
+      { target: '.side-rail-left', text: 'Tabs on the left control the wood, bark painting, and shape.' },
+      { target: '.side-rail-right', text: 'Tabs on the right handle finish, extras, and pricing.' },
+      { target: '.rotate-arrows', text: 'Drag the preview — or tap these arrows — to rotate it and see every angle.' },
     ];
     let i = 0;
     const bubble = document.createElement('div');
     bubble.className = 'tut-bubble';
-    document.body.appendChild(bubble);
-    const highlight = document.createElement('div');
-    highlight.className = 'tut-overlay-tip';
-    document.body.appendChild(highlight);
+    document.getElementById('builderStage').appendChild(bubble);
 
     function place(){
       const step = steps[i];
       const el = document.querySelector(step.target);
       if (!el){ next(); return; }
+      const stageRect = document.getElementById('builderStage').getBoundingClientRect();
       const rect = el.getBoundingClientRect();
-      const top = rect.bottom + window.scrollY + 12;
-      const left = Math.min(rect.left + window.scrollX, window.innerWidth - 250);
+      const top = Math.max(8, rect.top - stageRect.top + 8);
+      let left = rect.right - stageRect.left + 8;
+      if (left + 230 > stageRect.width) left = Math.max(8, rect.left - stageRect.left - 230);
       bubble.style.top = top + 'px';
       bubble.style.left = left + 'px';
       bubble.innerHTML = step.text + '<span class="tut-dismiss" id="tutNext">' +
-        (i < steps.length - 1 ? 'Got it, next tip &rarr;' : 'Got it, thanks!') + '</span>';
-      highlight.style.top = (rect.top + window.scrollY - 4) + 'px';
-      highlight.style.left = (rect.left + window.scrollX - 4) + 'px';
-      highlight.style.width = (rect.width + 8) + 'px';
-      highlight.style.height = (rect.height + 8) + 'px';
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (i < steps.length - 1 ? 'Next &rarr;' : 'Got it!') + '</span>';
       document.getElementById('tutNext').addEventListener('click', next);
     }
     function next(){
       i++;
       if (i >= steps.length){
         bubble.remove();
-        highlight.remove();
-        localStorage.setItem('builder_tutorial_seen', '1');
+        localStorage.setItem('builder_tutorial_seen_v2', '1');
         return;
       }
-      setTimeout(place, 400);
+      place();
     }
-    setTimeout(place, 800);
+    setTimeout(place, 700);
   }
   showTutorial();
 </script>
